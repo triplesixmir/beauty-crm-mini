@@ -10,7 +10,64 @@
 </head>
 <body>
 
+    <header>
+        <div>
+            <img src="img/logo.png" alt="logo" id="header-logo">
+            <h3>Beauty CRM</h3>
+        </div>
 
+        <img src="img/profilepicture.jpg" alt="profile picture" id="profile-picture">
+    </header>
+
+    <main class="container">
+
+            <aside>
+            <nav>
+                <ul>
+                    <li><a href="#">Дэшборд</a></li>
+                    <li><a href="#">Клиенты</a></li>
+                    <li><a href="#">Календарь</a></li>
+                    <li><a href="#">Сервисы</a></li>
+                    <li><a href="#">Финансы</a></li>
+                    <li><a href="#">Настройки</a></li>
+                </ul>
+            </nav>
+
+            </aside>
+
+        <div class="container">
+
+    <!--        Блок клиентов (недавние клиенты, ближайшие) -->
+            <section id="clients-block">
+                <div class="client-card">
+                    <div class="client-card__main-info">
+                        <img src="clients-pictures/yuliya_kornishonovna.jpg" alt="picture of Yuliya">
+                        <div>
+                            <h1>Юлия Корнишоновна</h1>
+                            <p>Постоянный клиент</p>
+                        </div>
+                    </div>
+
+                    <div class="client-card__details">
+                        <p><span>Телефон</span><a href="tel:+79991234567">+7 999 123-45-67</a></p>
+                        <p><span>Telegram</span><a href="https://t.me/yuliya_korni">@yuliya_korni</a></p>
+                    </div>
+
+                    <div class="client-card__details">
+                        <p><span>Последний визит</span>28 апреля 2026 — маникюр + покрытие</p>
+                        <p><span>Следующая запись</span>12 мая 2026, 15:30 — коррекция</p>
+                    </div>
+                </div>
+            </section>
+
+    <!--        Блок формы добавления нового клиента/записи (?) -->
+            <section id="form-block">
+
+            </section>
+
+        </div>
+
+    </main>
 
     <script src="js/app.js"></script>
 </body>
