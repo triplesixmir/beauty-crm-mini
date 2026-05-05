@@ -31,9 +31,9 @@ header div {
     gap: 10px;
 }
 
-#clients-block {
+#clients-section {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 24px;
 }
 
@@ -69,7 +69,12 @@ header div {
     }
 }
 
-.container {
+.content {
+    display: flex;
+    gap: 24px;
+}
+
+.layout {
     display: flex;
     gap: 24px;
 }

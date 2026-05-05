@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -19,7 +19,7 @@
         <img src="img/profilepicture.jpg" alt="profile picture" id="profile-picture">
     </header>
 
-    <main class="container">
+    <main class="layout">
 
             <aside>
             <nav>
@@ -35,34 +35,46 @@
 
             </aside>
 
-        <div class="container">
+        <div class="content">
 
     <!--        Блок клиентов (недавние клиенты, ближайшие) -->
-            <section id="clients-block">
-                <div class="client-card">
-                    <div class="client-card__main-info">
-                        <img src="clients-pictures/yuliya_kornishonovna.jpg" alt="picture of Yuliya">
-                        <div>
-                            <h1>Юлия Корнишоновна</h1>
-                            <p>Постоянный клиент</p>
+            <section id="clients-section">
+                <h1>Клиенты</h1>
+
+                <div id="clients-section__content">
+
+                    <div class="client-card">
+                        <div class="client-card__main-info">
+                            <img src="clients-pictures/yuliya_kornishonovna.jpg" alt="Фото Юлии Корнишоновны">
+                            <div>
+                                <h2>Юлия Корнишоновна</h2>
+                                <p>Постоянный клиент</p>
+                            </div>
+                        </div>
+
+                        <div class="client-card__details">
+                            <p><span>Телефон</span><a href="tel:+79991234567">+7 999 123-45-67</a></p>
+                            <p><span>Telegram</span><a href="https://t.me/yuliya_korni">@yuliya_korni</a></p>
+                        </div>
+
+                        <div class="client-card__details">
+                            <p><span>Последний визит</span>28 апреля 2026 — маникюр + покрытие</p>
+                            <p><span>Следующая запись</span>12 мая 2026, 15:30 — коррекция</p>
                         </div>
                     </div>
-
-                    <div class="client-card__details">
-                        <p><span>Телефон</span><a href="tel:+79991234567">+7 999 123-45-67</a></p>
-                        <p><span>Telegram</span><a href="https://t.me/yuliya_korni">@yuliya_korni</a></p>
-                    </div>
-
-                    <div class="client-card__details">
-                        <p><span>Последний визит</span>28 апреля 2026 — маникюр + покрытие</p>
-                        <p><span>Следующая запись</span>12 мая 2026, 15:30 — коррекция</p>
-                    </div>
                 </div>
+
             </section>
 
     <!--        Блок формы добавления нового клиента/записи (?) -->
-            <section id="form-block">
+            <section id="form-section">
+                <h1>Новый клиент</h1>
 
+                <div id="form-section__content">
+
+
+
+                </div>
             </section>
 
         </div>
