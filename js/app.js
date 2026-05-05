@@ -29,5 +29,27 @@ form.addEventListener('submit', function (event) {
 });
 
 function renderClients() {
+    clientsContainer.innerHTML = '';
 
+    clients.forEach(client => {
+        const card = document.createElement('div');
+        card.className = 'client-card';
+
+        card.innerHTML = `
+        <div class="client-card__main-info">
+            <img src="clients-pictures/default-profile-picture.jpg" alt="Фото клиента">
+            <div class="client-card__name">
+                <h2>${client.name}</h2>
+                <p>Новый клиент</p>
+            </div>
+        </div>
+
+        <div class="client-card__details">
+            <p><span>Телефон</span><a href="tel:${client.tel}">${client.tel}</a></p>
+            ${client.telegram ? `<p><span>Telegram</span>${client.telegram}</p>` : ''}
+        </div>
+        `;
+
+        clientsContainer.appendChild(card);
+        });
 }
