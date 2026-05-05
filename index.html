@@ -72,7 +72,29 @@
 
                 <div id="form-section__content">
 
+                    <form action="#" method="post" class="form" id="form">
 
+                        <fieldset>
+                            <label for="client-name">Имя клиента</label>
+                            <input type="text" name="client-name" id="client-name" placeholder="Введите имя клиента"
+                            required minlength="2" maxlength="20">
+                        </fieldset>
+
+                        <fieldset>
+                            <label for="client-tel">Телефон клиента</label>
+                            <input type="tel" name="client-tel" id="client-tel" placeholder="+7 999 123-45-67"
+                            required inputmode="tel">
+                        </fieldset>
+
+                        <fieldset>
+                            <label for="client-tg">Telegram клиента</label>
+                            <input type="text" name="client-tg" id="client-tg" placeholder="Введите Telegram клиента"
+                            required minlength="2" maxlength="20" value="@">
+                        </fieldset>
+
+                        <button type="submit">Добавить клиента</button>
+
+                    </form>
 
                 </div>
             </section>
@@ -81,6 +103,7 @@
 
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/inputmask.min.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

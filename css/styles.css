@@ -78,3 +78,15 @@ header div {
     display: flex;
     gap: 24px;
 }
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    > fieldset {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+}
