@@ -15,7 +15,7 @@ form.addEventListener('submit', function (event) {
     const telegram = document.getElementById('client-tg').value;
 
     const newClient = {
-        id: clients.length + 1,
+        id: Date.now(),
         name,
         tel,
         telegram
@@ -46,10 +46,22 @@ function renderClients() {
 
         <div class="client-card__details">
             <p><span>Телефон</span><a href="tel:${client.tel}">${client.tel}</a></p>
-            ${client.telegram ? `<p><span>Telegram</span>${client.telegram}</p>` : ''}
+            <p><span>Telegram</span>${client.telegram}</p>
         </div>
+        
+        <button class="client-card__delete-btn" data-id="${client.id}">Удалить</button>
         `;
 
         clientsContainer.appendChild(card);
         });
 }
+
+clientsContainer.addEventListener('click', function (event) {
+    if(event.target.classList.contains('client-card__delete-btn')) {
+        const clientId = Number(event.target.dataset.id);
+
+        clients = clients.filter(client => client.id !== clientId);
+
+        renderClients();
+    }
+});
