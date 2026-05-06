@@ -5,7 +5,14 @@ Inputmask("+7 999 999-99-99").mask("#client-tel");
 const form = document.getElementById('form');
 const clientsContainer = document.getElementById('clients-section__content');
 
-let clients = [];
+let clients = JSON.parse(localStorage.getItem('clients')) || [];
+renderClients();
+
+function saveClients() {
+
+    localStorage.setItem('clients', JSON.stringify(clients));
+
+}
 
 form.addEventListener('submit', function (event) {
     event.preventDefault();
@@ -22,6 +29,7 @@ form.addEventListener('submit', function (event) {
     };
 
     clients.push(newClient);
+    saveClients();
 
     renderClients();
 
@@ -61,6 +69,7 @@ clientsContainer.addEventListener('click', function (event) {
         const clientId = Number(event.target.dataset.id);
 
         clients = clients.filter(client => client.id !== clientId);
+        saveClients();
 
         renderClients();
     }
