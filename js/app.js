@@ -55,8 +55,20 @@ form.addEventListener('submit', function (event) {
     form.reset();
 });
 
+// Рендер клиентов
+
 function renderClients(clientsArray) {
     clientsContainer.innerHTML = '';
+
+    if (clientsArray.length === 0) {
+        const noClients = document.createElement('p');
+        noClients.className = 'no-clients';
+        noClients.innerHTML = `
+        Клиентов не найдено
+        `
+        clientsContainer.appendChild(noClients);
+        return;
+    }
 
     clientsArray.forEach(client => {
         const card = document.createElement('div');
