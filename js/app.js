@@ -1,13 +1,11 @@
 Inputmask("+7 999 999-99-99").mask("#client-tel");
 
-// Обработка добавления нового клиента
-
 const form = document.getElementById('form');
 const clientsContainer = document.getElementById('clients-section__content');
 
 let clients = JSON.parse(localStorage.getItem('clients')) || [];
 let editingClientId = null;
-renderClients();
+renderClients(clients);
 
 function saveClients() {
 
@@ -53,14 +51,14 @@ form.addEventListener('submit', function (event) {
 
     editingClientId = null;
     saveClients();
-    renderClients();
+    renderClients(clients);
     form.reset();
 });
 
-function renderClients() {
+function renderClients(clientsArray) {
     clientsContainer.innerHTML = '';
 
-    clients.forEach(client => {
+    clientsArray.forEach(client => {
         const card = document.createElement('div');
         card.className = 'client-card';
 
@@ -77,7 +75,7 @@ function renderClients() {
 
         <div class="client-card__details">
             <p><span>Телефон</span><a href="tel:+${cleanTel}">${client.tel}</a></p>
-            <p><span>Telegram</span><a href="https://t.me/${client.telegram.replace('@', '')}" target="_blank" rel="noopener noreferrer">${client.telegram}</a></p>
+            <p><span>Telegram</span><a href="https://t.me/${client.telegram.replace('@', '')}" target="_blank" rel="noopener noreferrer">@${client.telegram}</a></p>
         </div>
         
         <button class="client-card__delete-btn" data-id="${client.id}">Удалить</button>
@@ -96,7 +94,7 @@ clientsContainer.addEventListener('click', function (event) {
         clients = clients.filter(client => client.id !== clientId);
         saveClients();
 
-        renderClients();
+        renderClients(clients);
     }
 
     // Поведение кнопки при редактировании клиента
@@ -113,4 +111,18 @@ clientsContainer.addEventListener('click', function (event) {
         editingClientId = clientId;
 
     }
+});
+
+// Поиск клиента
+
+const searchInput = document.getElementById('search-input');
+
+searchInput.addEventListener('input', function () {
+    let searchTerm = searchInput.value.toLowerCase();
+
+    const filteredClients = clients.filter(client => {
+        return client.name.toLowerCase().includes(searchTerm);
+    });
+
+    renderClients(filteredClients);
 });

@@ -114,6 +114,15 @@ header div {
         border-radius: 4px;
         cursor: pointer;
     }
+
+    .client-card__edit-btn {
+        background-color: #cccccc;
+        color: black;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
 }
 
 .content {
