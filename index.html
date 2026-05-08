@@ -49,26 +49,6 @@
 
                 <div id="clients-section__content">
 
-<!--                    <div class="client-card">-->
-<!--                        <div class="client-card__main-info">-->
-<!--                            <img src="clients-pictures/yuliya_kornishonovna.jpg" alt="Фото Юлии Корнишоновны">-->
-<!--                            <div class="client-card__name">-->
-<!--                                <h2>Юлия Корнишоновна</h2>-->
-<!--                                <p>Постоянный клиент</p>-->
-<!--                            </div>-->
-<!--                        </div>-->
-
-<!--                        <div class="client-card__details">-->
-<!--                            <p><span>Телефон</span><a href="tel:+79991234567">+7 999 123-45-67</a></p>-->
-<!--                            <p><span>Telegram</span><a href="https://t.me/yuliya_korni">@yuliya_korni</a></p>-->
-<!--                        </div>-->
-
-<!--                        <div class="client-card__details">-->
-<!--                            <p><span>Последний визит</span>28 апреля 2026 — маникюр + покрытие</p>-->
-<!--                            <p><span>Следующая запись</span>12 мая 2026, 15:30 — коррекция</p>-->
-<!--                        </div>-->
-<!--                    </div>-->
-
                 </div>
 
             </section>
@@ -97,6 +77,18 @@
                             <label for="client-tg">Telegram клиента</label>
                             <input type="text" name="client-tg" id="client-tg" placeholder="Введите Telegram клиента"
                             required minlength="2" maxlength="20" value="@">
+                        </fieldset>
+
+                        <fieldset>
+                            <label for="client-last_visit">Дата посещения</label>
+                            <input type="date" name="client-last_visit" id="client-last_visit"
+                            required>
+                        </fieldset>
+
+                        <fieldset>
+                            <label for="client-total_spent">Всего потрачено</label>
+                            <input type="number" name="client-total_spent" id="client-total_spent"
+                            required min="1">
                         </fieldset>
 
                         <button type="submit">Добавить клиента</button>

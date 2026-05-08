@@ -59,12 +59,20 @@ header div {
     gap: 24px;
 }
 
+#clients-section__content {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
 .client-card {
     display: flex;
     flex-direction: column;
     border: 1px solid #ccc;
     border-radius: 8px;
     width: auto;
+    padding: 8px;
 
     .client-card__name {
         display: flex;
@@ -106,22 +114,31 @@ header div {
         }
     }
 
-    .client-card__delete-btn {
-        background-color: #f44336;
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 4px;
-        cursor: pointer;
-    }
+    .client-card__actions {
 
-    .client-card__edit-btn {
-        background-color: #cccccc;
-        color: black;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 4px;
-        cursor: pointer;
+        display: flex;
+        gap: 8px;
+        width: 100%;
+
+        .client-card__delete-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .client-card__edit-btn {
+            background-color: #cccccc;
+            color: black;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
     }
 }
 

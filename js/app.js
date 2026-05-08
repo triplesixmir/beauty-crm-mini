@@ -3,6 +3,11 @@ Inputmask("+7 999 999-99-99").mask("#client-tel");
 const form = document.getElementById('form');
 const clientsContainer = document.getElementById('clients-section__content');
 
+const dateInput = document.getElementById('client-last_visit');
+const today = new Date().toISOString().split('T')[0];
+dateInput.max = today;
+dateInput.value = today;
+
 let clients = JSON.parse(localStorage.getItem('clients')) || [];
 let editingClientId = null;
 renderClients(clients);
@@ -20,6 +25,8 @@ form.addEventListener('submit', function (event) {
     const name = document.getElementById('client-name').value;
     const tel = document.getElementById('client-tel').value;
     const telegram = document.getElementById('client-tg').value.replace('@', '');
+    const lastVisit = document.getElementById('client-last_visit').value;
+    const totalSpent = document.getElementById('client-total_spent').value;
 
     if (editingClientId) {
         // обновить клиента через map
@@ -29,7 +36,9 @@ form.addEventListener('submit', function (event) {
                    ...client,
                    name,
                    tel,
-                   telegram
+                   telegram,
+                   lastVisit,
+                   totalSpent
                }
            } else {
                return client;
@@ -42,7 +51,9 @@ form.addEventListener('submit', function (event) {
             id: Date.now(),
             name,
             tel,
-            telegram
+            telegram,
+            lastVisit,
+            totalSpent
         };
 
         clients.push(newClient);
@@ -88,10 +99,14 @@ function renderClients(clientsArray) {
         <div class="client-card__details">
             <p><span>Телефон</span><a href="tel:+${cleanTel}">${client.tel}</a></p>
             <p><span>Telegram</span><a href="https://t.me/${client.telegram.replace('@', '')}" target="_blank" rel="noopener noreferrer">@${client.telegram}</a></p>
+            <p><span>Последний визит</span>${client.lastVisit}</p>
+            <p><span>Всего потрачено</span>${client.totalSpent}</p>
         </div>
         
-        <button class="client-card__delete-btn" data-id="${client.id}">Удалить</button>
-        <button class="client-card__edit-btn" data-id="${client.id}">Редактировать</button>
+        <div class="client-card__actions">
+            <button class="client-card__edit-btn" data-id="${client.id}">Редактировать</button>
+            <button class="client-card__delete-btn" data-id="${client.id}">Удалить</button>
+        </div>
         `;
 
         clientsContainer.appendChild(card);
