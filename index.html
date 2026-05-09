@@ -14,36 +14,36 @@
 </head>
 <body>
 
-    <main class="layout">
+    <aside>
 
-            <aside>
+        <div class="logo-container">
+            <img src="img/logo.png" alt="logo" id="header-logo">
+            <h3>Beauty CRM</h3>
+        </div>
 
-                <div class="logo-container">
-                    <img src="img/logo.png" alt="logo" id="header-logo">
-                    <h3>Beauty CRM</h3>
-                </div>
+        <nav>
+            <ul>
+                <li><a href="#">Дэшборд</a></li>
+                <li><a href="#">Клиенты</a></li>
+                <li><a href="#">Календарь</a></li>
+                <li><a href="#">Сервисы</a></li>
+                <li><a href="#">Финансы</a></li>
+                <li><a href="#">Настройки</a></li>
+            </ul>
+        </nav>
 
-                <nav>
-                    <ul>
-                        <li><a href="#">Дэшборд</a></li>
-                        <li><a href="#">Клиенты</a></li>
-                        <li><a href="#">Календарь</a></li>
-                        <li><a href="#">Сервисы</a></li>
-                        <li><a href="#">Финансы</a></li>
-                        <li><a href="#">Настройки</a></li>
-                    </ul>
-                </nav>
+        <div class="sidebar-profile-container">
+            <img src="img/profilepicture.jpg" alt="profile picture" id="profile-picture">
+            <p>Михаил Ямской</p>
+        </div>
 
-                <div class="sidebar-profile-container">
-                    <img src="img/profilepicture.jpg" alt="profile picture" id="profile-picture">
-                    <p>Михаил Ямской</p>
-                </div>
+    </aside>
 
-            </aside>
+    <main class="dashboard">
 
-        <div class="content">
+        <div class="dashboard__top">
 
-    <!--        Блок клиентов (недавние клиенты, ближайшие) -->
+    <!--        Блок клиентов -->
             <section id="clients-section">
                 <h1>Клиенты</h1>
 
@@ -74,7 +74,7 @@
 
             </section>
 
-    <!--        Блок формы добавления нового клиента/записи (?) -->
+    <!--        Блок формы добавления нового клиента/редактирования -->
             <section id="form-section">
                 <h1>Новый клиент</h1>
 
@@ -117,6 +117,64 @@
                     </form>
 
                 </div>
+            </section>
+
+        </div>
+
+        <div class="dashboard__bottom">
+
+<!--            Блок записей -->
+            <section id="appointments-section">
+                <h1>Записи</h1>
+
+                <div class="content" id="appointments-section__content">
+
+                    <form id="appointment-form">
+                        <fieldset class="radio-fieldset">
+                            <label for="appointment-service-manicure">Маникюр
+                                <input type="radio" name="appointment-service" id="appointment-service-manicure"
+                                value="service-manicure">
+                            </label>
+
+                            <label for="appointment-service-pedicure">Педикюр
+                                <input type="radio" name="appointment-service" id="appointment-service-pedicure"
+                                value="service-pedicure">
+                            </label>
+
+                            <label for="appointment-service-haircut">Стрижка
+                                <input type="radio" name="appointment-service" id="appointment-service-haircut"
+                                value="service-haircut">
+                            </label>
+
+                            <label for="appointment-service-depilation">Депиляция
+                                <input type="radio" name="appointment-service" id="appointment-service-depilation"
+                                value="service-depilation">
+                            </label>
+
+                            <label for="appointment-service-laying">Укладка
+                                <input type="radio" name="appointment-service" id="appointment-service-laying"
+                                value="service-laying">
+                            </label>
+                        </fieldset>
+                        <fieldset class="input-fieldset">
+                            <label for="appointment-date">
+                                <input type="text" name="appointment-date" id="appointment-date">
+                            </label>
+
+                            <label for="appointment-time">
+                                <input type="text" name="appointment-time" id="appointment-time">
+                            </label>
+
+                            <label for="appointment-price">
+                                <input type="text" name="appointment-price" id="appointment-price">
+                            </label>
+                        </fieldset>
+
+                        <button type="submit">Добавить запись</button>
+                    </form>
+
+                </div>
+
             </section>
 
         </div>

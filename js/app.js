@@ -101,7 +101,7 @@ function renderClients(clientsArray) {
             <p><span>Телефон</span><a href="tel:+${cleanTel}">${client.tel}</a></p>
             <p><span>Telegram</span><a href="https://t.me/${client.telegram.replace('@', '')}" target="_blank" rel="noopener noreferrer">@${client.telegram}</a></p>
             <p><span>Последний визит</span>${client.lastVisit}</p>
-            <p><span>Всего потрачено</span>${client.totalSpent}</p>
+            <p><span>Всего потрачено</span>${client.totalSpent} ₽</p>
         </div>
         
         <div class="client-card__actions">
@@ -119,10 +119,16 @@ clientsContainer.addEventListener('click', function (event) {
     if(event.target.classList.contains('client-card__delete-btn')) {
         const clientId = Number(event.target.dataset.id);
 
-        clients = clients.filter(client => client.id !== clientId);
-        saveClients();
+        if (window.confirm('Вы уверены, что хотите удалить клиента?')) {
 
-        renderClients(clients);
+            clients = clients.filter(client => client.id !== clientId);
+            saveClients();
+
+            renderClients(clients);
+
+        } else {
+            return;
+        }
     }
 
     // Поведение кнопки при редактировании клиента
@@ -136,7 +142,7 @@ clientsContainer.addEventListener('click', function (event) {
         // Ищем каждый инпут и вставляем туда инфу нашего клиента
         document.getElementById('client-name').value = clientToEdit.name;
         document.getElementById('client-tel').value = clientToEdit.tel;
-        document.getElementById('client-tg').value = clientToEdit.telegram;
+        document.getElementById('client-tg').value = '@' + clientToEdit.telegram;
         document.getElementById('client-last_visit').value = clientToEdit.lastVisit;
         document.getElementById('client-total_spent').value = clientToEdit.totalSpent;
 
@@ -181,4 +187,8 @@ sortSelect.addEventListener('change', function () {
     } else {
         console.warn('Такая сортировка не предусмотрена:', sortOrder);
     }
-})
+});
+
+// Записи
+
+let appointments = []
