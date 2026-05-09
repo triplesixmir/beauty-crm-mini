@@ -61,6 +61,7 @@ form.addEventListener('submit', function (event) {
     }
 
     editingClientId = null;
+    document.getElementById('client-add-btn').textContent = 'Добавить клиента';
     saveClients();
     renderClients(clients);
     form.reset();
@@ -127,6 +128,8 @@ clientsContainer.addEventListener('click', function (event) {
     // Поведение кнопки при редактировании клиента
     if(event.target.classList.contains('client-card__edit-btn')) {
 
+        document.getElementById('client-add-btn').textContent = 'Обновить клиента';
+
         const clientId = Number(event.target.dataset.id);
         const clientToEdit = clients.find(client => client.id === clientId);
 
@@ -134,6 +137,8 @@ clientsContainer.addEventListener('click', function (event) {
         document.getElementById('client-name').value = clientToEdit.name;
         document.getElementById('client-tel').value = clientToEdit.tel;
         document.getElementById('client-tg').value = clientToEdit.telegram;
+        document.getElementById('client-last_visit').value = clientToEdit.lastVisit;
+        document.getElementById('client-total_spent').value = clientToEdit.totalSpent;
 
         editingClientId = clientId;
 
@@ -153,3 +158,27 @@ searchInput.addEventListener('input', function () {
 
     renderClients(filteredClients);
 });
+
+// Сортировка
+
+const sortSelect = document.getElementById('sort-clients');
+
+sortSelect.addEventListener('change', function () {
+    const sortOrder = sortSelect.value;
+
+    if(sortOrder === 'alphabet-up-sort') {
+        const sortedClients = [...clients].sort((a, b) => a.name.localeCompare(b.name))
+        renderClients(sortedClients);
+    } else if(sortOrder === 'alphabet-down-sort') {
+        const sortedClients = [...clients].sort((a, b) => b.name.localeCompare(a.name))
+        renderClients(sortedClients);
+    } else if(sortOrder === 'last-visit-sort') {
+        const sortedClients = [...clients].sort((a, b) => new Date(b.lastVisit) - new Date(a.lastVisit))
+        renderClients(sortedClients);
+    } else if(sortOrder === 'total-spent-sort') {
+        const sortedClients = [...clients].sort((a, b) => Number(b.totalSpent) - Number(a.totalSpent))
+        renderClients(sortedClients);
+    } else {
+        console.warn('Такая сортировка не предусмотрена:', sortOrder);
+    }
+})
