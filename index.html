@@ -14,28 +14,30 @@
 </head>
 <body>
 
-    <header>
-        <div>
-            <img src="img/logo.png" alt="logo" id="header-logo">
-            <h3>Beauty CRM</h3>
-        </div>
-
-        <img src="img/profilepicture.jpg" alt="profile picture" id="profile-picture">
-    </header>
-
     <main class="layout">
 
             <aside>
-            <nav>
-                <ul>
-                    <li><a href="#">Дэшборд</a></li>
-                    <li><a href="#">Клиенты</a></li>
-                    <li><a href="#">Календарь</a></li>
-                    <li><a href="#">Сервисы</a></li>
-                    <li><a href="#">Финансы</a></li>
-                    <li><a href="#">Настройки</a></li>
-                </ul>
-            </nav>
+
+                <div class="logo-container">
+                    <img src="img/logo.png" alt="logo" id="header-logo">
+                    <h3>Beauty CRM</h3>
+                </div>
+
+                <nav>
+                    <ul>
+                        <li><a href="#">Дэшборд</a></li>
+                        <li><a href="#">Клиенты</a></li>
+                        <li><a href="#">Календарь</a></li>
+                        <li><a href="#">Сервисы</a></li>
+                        <li><a href="#">Финансы</a></li>
+                        <li><a href="#">Настройки</a></li>
+                    </ul>
+                </nav>
+
+                <div class="sidebar-profile-container">
+                    <img src="img/profilepicture.jpg" alt="profile picture" id="profile-picture">
+                    <p>Михаил Ямской</p>
+                </div>
 
             </aside>
 
@@ -45,7 +47,26 @@
             <section id="clients-section">
                 <h1>Клиенты</h1>
 
-                <label for="search-input" class="visually-hidden"></label><input type="text" name="search-input" id="search-input" placeholder="Поиск клиента...">
+                <div class="clients-section__action-block">
+
+                    <div class="clients-section__action">
+
+                        <label for="sort-clients">Сортировка</label><select name="sort-clients" id="sort-clients">
+                            <option value="alphabet-up-sort">По имени А — Я</option>
+                            <option value="alphabet-down-sort">По имени Я — А</option>
+                            <option value="last-visit-sort">По дате последнего визита</option>
+                            <option value="total-spent-sort">По потраченной сумме</option>
+                        </select>
+
+                    </div>
+
+                    <div class="clients-section__action">
+
+                        <label for="search-input">Поиск клиентов</label><input type="text" name="search-input" id="search-input" placeholder="Поиск клиента...">
+
+                    </div>
+
+                </div>
 
                 <div id="clients-section__content">
 
