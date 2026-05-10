@@ -80,7 +80,7 @@
 
                 <div id="form-section__content">
 
-                    <form class="form" id="form">
+                    <form class="form" id="addClientForm">
 
                         <fieldset>
                             <label for="client-name">Имя клиента</label>
@@ -129,11 +129,15 @@
 
                 <div class="content" id="appointments-section__content">
 
+                    <div id="appointments-section__list">
+
+                    </div>
+
                     <form id="appointment-form">
                         <fieldset class="radio-fieldset">
                             <label for="appointment-service-manicure">Маникюр
                                 <input type="radio" name="appointment-service" id="appointment-service-manicure"
-                                value="service-manicure">
+                                value="service-manicure" checked>
                             </label>
 
                             <label for="appointment-service-pedicure">Педикюр
@@ -158,16 +162,22 @@
                         </fieldset>
                         <fieldset class="input-fieldset">
                             <label for="appointment-date">
-                                <input type="text" name="appointment-date" id="appointment-date">
+                                <input type="date" name="appointment-date" id="appointment-date">
                             </label>
 
                             <label for="appointment-time">
-                                <input type="text" name="appointment-time" id="appointment-time">
+                                <input type="time" name="appointment-time" id="appointment-time">
                             </label>
 
                             <label for="appointment-price">
-                                <input type="text" name="appointment-price" id="appointment-price">
+                                <input type="number" name="appointment-price" id="appointment-price">
                             </label>
+
+                            <label for="appointment-clients">Выберите клиента</label>
+                            <select name="appointment-clients" id="appointment-clients">
+
+                            </select>
+                            
                         </fieldset>
 
                         <button type="submit">Добавить запись</button>

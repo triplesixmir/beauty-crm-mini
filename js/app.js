@@ -1,7 +1,17 @@
 Inputmask("+7 999 999-99-99").mask("#client-tel");
 
-const form = document.getElementById('form');
+const addClientForm = document.getElementById('addClientForm');
+const appointmentForm = document.getElementById('appointment-form');
 const clientsContainer = document.getElementById('clients-section__content');
+const appointmentClientsSelect = document.getElementById('appointment-clients');
+const appointmentsList = document.getElementById('appointments-section__list');
+const services = {
+    'service-manicure': 'Маникюр',
+    'service-pedicure': 'Педикюр',
+    'service-haircut': 'Стрижка',
+    'service-depilation': 'Депиляция',
+    'service-laying': 'Укладка'
+};
 
 const dateInput = document.getElementById('client-last_visit');
 const today = new Date().toISOString().split('T')[0];
@@ -9,8 +19,11 @@ dateInput.max = today;
 dateInput.value = today;
 
 let clients = JSON.parse(localStorage.getItem('clients')) || [];
+let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
 let editingClientId = null;
 renderClients(clients);
+renderClientOptions();
+renderAppointments(appointments);
 
 function saveClients() {
 
@@ -19,7 +32,7 @@ function saveClients() {
 }
 
 // Добавление клиента
-form.addEventListener('submit', function (event) {
+addClientForm.addEventListener('submit', function (event) {
     event.preventDefault();
 
     const name = document.getElementById('client-name').value;
@@ -64,7 +77,9 @@ form.addEventListener('submit', function (event) {
     document.getElementById('client-add-btn').textContent = 'Добавить клиента';
     saveClients();
     renderClients(clients);
-    form.reset();
+    renderClientOptions();
+    addClientForm.reset();
+    dateInput.value = today;
 });
 
 // Рендер клиентов
@@ -92,8 +107,8 @@ function renderClients(clientsArray) {
         <div class="client-card__main-info">
             <img src="clients-pictures/default-profile-picture.jpg" alt="Фото клиента">
             <div class="client-card__name">
-                <h2>${client.name}</h2>
-                <p>Новый клиент</p>
+                <h4>${client.name}</h4>
+                <p>${client.id}</p>
             </div>
         </div>
 
@@ -114,7 +129,7 @@ function renderClients(clientsArray) {
         });
 }
 
-// Поведение кнопки при удалении клиента
+// Удаление клиента
 clientsContainer.addEventListener('click', function (event) {
     if(event.target.classList.contains('client-card__delete-btn')) {
         const clientId = Number(event.target.dataset.id);
@@ -125,13 +140,15 @@ clientsContainer.addEventListener('click', function (event) {
             saveClients();
 
             renderClients(clients);
+            renderClientOptions();
+            renderAppointments(appointments);
 
         } else {
             return;
         }
     }
 
-    // Поведение кнопки при редактировании клиента
+    // Редактирование клиента
     if(event.target.classList.contains('client-card__edit-btn')) {
 
         document.getElementById('client-add-btn').textContent = 'Обновить клиента';
@@ -191,4 +208,92 @@ sortSelect.addEventListener('change', function () {
 
 // Записи
 
-let appointments = []
+function renderClientOptions() {
+    appointmentClientsSelect.innerHTML = '';
+
+    clients.forEach(client => {
+        const option = document.createElement('option');
+        option.value = client.id;
+        option.textContent = client.name;
+        appointmentClientsSelect.appendChild(option);
+    });
+
+}
+
+function saveAppointments() {
+
+    localStorage.setItem('appointments', JSON.stringify(appointments));
+
+}
+
+appointmentForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    const clientId = Number(appointmentClientsSelect.value);
+    const date = document.getElementById('appointment-date').value;
+    const time = document.getElementById('appointment-time').value;
+    const price = Number(document.getElementById('appointment-price').value);
+    const service = document.querySelector('input[name="appointment-service"]:checked').value
+
+    const newAppointment = {
+        appointmentId: Date.now(),
+        clientId,
+        date,
+        time,
+        price,
+        service
+    }
+
+    appointments.push(newAppointment);
+    saveAppointments();
+    renderAppointments(appointments);
+    appointmentForm.reset();
+});
+
+function renderAppointments(appointmentsArray) {
+    appointmentsList.innerHTML = '';
+
+    if (appointmentsArray.length === 0) {
+        const noAppointments = document.createElement('p');
+        noAppointments.className = 'no-appointments';
+        noAppointments.innerHTML = `
+        Записей не найдено
+        `
+        appointmentsList.appendChild(noAppointments);
+        return;
+    }
+
+    appointmentsArray.forEach(appointment => {
+        const card = document.createElement('div');
+        card.className = 'appointment-card';
+        const client = clients.find(client => {
+            return client.id === appointment.clientId;
+        });
+
+        card.innerHTML = `
+            <p>Клиент: ${client ? client.name : 'Клиент удалён'}</p>
+            <p>Дата: ${appointment.date}</p>
+            <p>Время: ${appointment.time}</p>
+            <p>Услуга: ${services[appointment.service] || 'Неизвестная услуга'}</p>
+            <p>Цена: ${appointment.price} ₽</p>
+            
+            <button class="appointment-card__delete-btn" data-id="${appointment.appointmentId}">
+                Удалить
+            </button>
+        `;
+
+        appointmentsList.appendChild(card);
+    });
+}
+
+appointmentsList.addEventListener('click', function (event) {
+    if (event.target.classList.contains('appointment-card__delete-btn')) {
+        const appointmentId = Number(event.target.dataset.id);
+
+        if (window.confirm('Вы уверены, что хотите удалить запись?')) {
+            appointments = appointments.filter(appointment => appointment.appointmentId !== appointmentId);
+            saveAppointments();
+            renderAppointments(appointments);
+        }
+    }
+});
