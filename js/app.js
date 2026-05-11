@@ -18,6 +18,7 @@ const today = new Date().toISOString().split('T')[0];
 dateInput.max = today;
 dateInput.value = today;
 
+let visibleClientsCount = 4;
 let clients = JSON.parse(localStorage.getItem('clients')) || [];
 let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
 let editingClientId = null;
@@ -86,7 +87,7 @@ addClientForm.addEventListener('submit', function (event) {
 // Рендер клиентов
 
 function renderLatestClients(clientsArray) {
-    const latestClients = [...clientsArray].slice(0, 4);
+    const latestClients = [...clientsArray].slice(0, visibleClientsCount);
 
     renderClients(latestClients);
 }
@@ -133,8 +134,22 @@ function renderClients(clientsArray) {
         `;
 
         clientsContainer.appendChild(card);
-        });
+    });
+
+    const showMoreButton = document.createElement('button');
+    showMoreButton.className = 'show-more-btn';
+    showMoreButton.id = 'show-more-btn';
+    showMoreButton.textContent = 'Показать еще';
+
+    clientsContainer.appendChild(showMoreButton);
 }
+
+clientsContainer.addEventListener('click', function (event) {
+    if (event.target.classList.contains('show-more-btn')) {
+        visibleClientsCount += 4;
+        renderLatestClients(clients, visibleClientsCount);
+    }
+});
 
 // Удаление клиента
 clientsContainer.addEventListener('click', function (event) {
@@ -260,10 +275,6 @@ appointmentForm.addEventListener('submit', function (event) {
     renderNearestAppointments();
     appointmentForm.reset();
 });
-
-// const nearestAppointments = [...appointments].filter((appointment) => appointment.date >= today);
-// nearestAppointments.sort((a, b) => new Date(a.date) - new Date(b.date));
-// nearestAppointments.slice(0, 5);
 
 function renderNearestAppointments() {
     const nearestAppointments = [...appointments]
