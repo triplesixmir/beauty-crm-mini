@@ -23,7 +23,8 @@ let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
 let editingClientId = null;
 renderClients(clients);
 renderClientOptions();
-renderAppointments(appointments);
+// renderAppointments(appointments);
+renderNearestAppointments();
 
 function saveClients() {
 
@@ -141,7 +142,8 @@ clientsContainer.addEventListener('click', function (event) {
 
             renderClients(clients);
             renderClientOptions();
-            renderAppointments(appointments);
+            // renderAppointments(appointments);
+            renderNearestAppointments();
 
         } else {
             return;
@@ -220,6 +222,8 @@ function renderClientOptions() {
 
 }
 
+// Сохранение записей
+
 function saveAppointments() {
 
     localStorage.setItem('appointments', JSON.stringify(appointments));
@@ -246,10 +250,25 @@ appointmentForm.addEventListener('submit', function (event) {
 
     appointments.push(newAppointment);
     saveAppointments();
-    renderAppointments(appointments);
+    // renderAppointments(appointments);
+    renderNearestAppointments();
     appointmentForm.reset();
 });
 
+// const nearestAppointments = [...appointments].filter((appointment) => appointment.date >= today);
+// nearestAppointments.sort((a, b) => new Date(a.date) - new Date(b.date));
+// nearestAppointments.slice(0, 5);
+
+function renderNearestAppointments() {
+    const nearestAppointments = [...appointments]
+        .filter(appointment => appointment.date >= today)
+        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .slice(0, 5);
+
+    renderAppointments(nearestAppointments);
+}
+
+// Рендер записей
 function renderAppointments(appointmentsArray) {
     appointmentsList.innerHTML = '';
 
@@ -293,7 +312,8 @@ appointmentsList.addEventListener('click', function (event) {
         if (window.confirm('Вы уверены, что хотите удалить запись?')) {
             appointments = appointments.filter(appointment => appointment.appointmentId !== appointmentId);
             saveAppointments();
-            renderAppointments(appointments);
+            // renderAppointments(appointments);
+            renderNearestAppointments();
         }
     }
 });
