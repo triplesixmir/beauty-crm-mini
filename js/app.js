@@ -3,6 +3,7 @@ Inputmask("+7 999 999-99-99").mask("#client-tel");
 const addClientForm = document.getElementById('addClientForm');
 const appointmentForm = document.getElementById('appointment-form');
 const clientsContainer = document.getElementById('clients-section__content');
+const clientsActionsContainer = document.getElementById('add-client-btn-container');
 const appointmentClientsSelect = document.getElementById('appointment-clients');
 const appointmentsList = document.getElementById('appointments-section__list');
 const services = {
@@ -24,7 +25,6 @@ let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
 let editingClientId = null;
 renderLatestClients(clients);
 renderClientOptions();
-// renderAppointments(appointments);
 renderNearestAppointments();
 
 function saveClients() {
@@ -76,12 +76,14 @@ addClientForm.addEventListener('submit', function (event) {
     }
 
     editingClientId = null;
-    document.getElementById('client-add-btn').textContent = 'Добавить клиента';
+    document.getElementById('submit-client-btn').textContent = 'Добавить клиента';
     saveClients();
     renderLatestClients(clients);
     renderClientOptions();
     addClientForm.reset();
     dateInput.value = today;
+    renderNearestAppointments();
+    document.getElementById('add-client-modal').classList.add('hidden');
 });
 
 // Рендер клиентов
@@ -90,6 +92,15 @@ function renderLatestClients(clientsArray) {
     const latestClients = [...clientsArray].slice(0, visibleClientsCount);
 
     renderClients(latestClients);
+
+    if (clientsArray.length <= visibleClientsCount) return;
+
+    const showMoreButton = document.createElement('button');
+    showMoreButton.className = 'show-more-btn';
+    showMoreButton.id = 'show-more-btn';
+    showMoreButton.textContent = 'Показать еще';
+
+    clientsContainer.appendChild(showMoreButton);
 }
 
 function renderClients(clientsArray) {
@@ -136,18 +147,12 @@ function renderClients(clientsArray) {
         clientsContainer.appendChild(card);
     });
 
-    const showMoreButton = document.createElement('button');
-    showMoreButton.className = 'show-more-btn';
-    showMoreButton.id = 'show-more-btn';
-    showMoreButton.textContent = 'Показать еще';
-
-    clientsContainer.appendChild(showMoreButton);
 }
 
 clientsContainer.addEventListener('click', function (event) {
     if (event.target.classList.contains('show-more-btn')) {
         visibleClientsCount += 4;
-        renderLatestClients(clients, visibleClientsCount);
+        renderLatestClients(clients);
     }
 });
 
@@ -163,7 +168,6 @@ clientsContainer.addEventListener('click', function (event) {
 
             renderLatestClients(clients);
             renderClientOptions();
-            // renderAppointments(appointments);
             renderNearestAppointments();
 
         } else {
@@ -174,7 +178,8 @@ clientsContainer.addEventListener('click', function (event) {
     // Редактирование клиента
     if(event.target.classList.contains('client-card__edit-btn')) {
 
-        document.getElementById('client-add-btn').textContent = 'Обновить клиента';
+        document.getElementById('add-client-modal').classList.remove('hidden');
+        document.getElementById('submit-client-btn').textContent = 'Обновить клиента';
 
         const clientId = Number(event.target.dataset.id);
         const clientToEdit = clients.find(client => client.id === clientId);
@@ -271,7 +276,6 @@ appointmentForm.addEventListener('submit', function (event) {
 
     appointments.push(newAppointment);
     saveAppointments();
-    // renderAppointments(appointments);
     renderNearestAppointments();
     appointmentForm.reset();
 });
@@ -329,8 +333,28 @@ appointmentsList.addEventListener('click', function (event) {
         if (window.confirm('Вы уверены, что хотите удалить запись?')) {
             appointments = appointments.filter(appointment => appointment.appointmentId !== appointmentId);
             saveAppointments();
-            // renderAppointments(appointments);
             renderNearestAppointments();
         }
     }
+});
+
+// Появление модалки
+clientsActionsContainer.addEventListener('click', function (event) {
+    if (event.target.id === 'open-add-client-modal-btn') {
+        const modal = document.querySelector('.add-client-modal');
+        modal.classList.remove('hidden');
+    }
+});
+
+// Закрытие модалки
+
+document.querySelector('.add-client-modal__close-btn').addEventListener('click', function () {
+    const modal = document.querySelector('.add-client-modal');
+    modal.classList.add('hidden');
+
+    // Сброс состояния при закрытии модалки на "Отменить"
+    editingClientId = null;
+    document.getElementById('submit-client-btn').textContent = 'Добавить клиента';
+    addClientForm.reset();
+    dateInput.value = today;
 });

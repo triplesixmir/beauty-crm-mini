@@ -66,6 +66,12 @@
 
                     </div>
 
+                    <div class="clients-section__action" id="add-client-btn-container">
+
+                        <button id="open-add-client-modal-btn">Добавить клиента</button>
+
+                    </div>
+
                 </div>
 
                 <div id="clients-section__content">
@@ -75,49 +81,6 @@
             </section>
 
     <!--        Блок формы добавления нового клиента/редактирования -->
-            <section id="form-section">
-                <h1>Новый клиент</h1>
-
-                <div id="form-section__content">
-
-                    <form class="form" id="addClientForm">
-
-                        <fieldset>
-                            <label for="client-name">Имя клиента</label>
-                            <input type="text" name="client-name" id="client-name" placeholder="Введите имя клиента"
-                            required minlength="2" maxlength="20">
-                        </fieldset>
-
-                        <fieldset>
-                            <label for="client-tel">Телефон клиента</label>
-                            <input type="tel" name="client-tel" id="client-tel" placeholder="+7 999 123-45-67"
-                            required inputmode="tel">
-                        </fieldset>
-
-                        <fieldset>
-                            <label for="client-tg">Telegram клиента</label>
-                            <input type="text" name="client-tg" id="client-tg" placeholder="Введите Telegram клиента"
-                            required minlength="2" maxlength="20" value="@">
-                        </fieldset>
-
-                        <fieldset>
-                            <label for="client-last_visit">Дата посещения</label>
-                            <input type="date" name="client-last_visit" id="client-last_visit"
-                            required>
-                        </fieldset>
-
-                        <fieldset>
-                            <label for="client-total_spent">Всего потрачено</label>
-                            <input type="number" name="client-total_spent" id="client-total_spent"
-                            required min="1">
-                        </fieldset>
-
-                        <button type="submit" id="client-add-btn">Добавить клиента</button>
-
-                    </form>
-
-                </div>
-            </section>
 
         </div>
 
@@ -193,6 +156,54 @@
         </div>
 
     </main>
+
+    <section id="modals">
+
+        <div class="add-client-modal hidden" id="add-client-modal">
+
+            <form class="form" id="addClientForm">
+
+                <fieldset>
+                    <label for="client-name">Имя клиента</label>
+                    <input type="text" name="client-name" id="client-name" placeholder="Введите имя клиента"
+                           required minlength="2" maxlength="20">
+                </fieldset>
+
+                <fieldset>
+                    <label for="client-tel">Телефон клиента</label>
+                    <input type="tel" name="client-tel" id="client-tel" placeholder="+7 999 123-45-67"
+                           required inputmode="tel">
+                </fieldset>
+
+                <fieldset>
+                    <label for="client-tg">Telegram клиента</label>
+                    <input type="text" name="client-tg" id="client-tg" placeholder="Введите Telegram клиента"
+                           required minlength="2" maxlength="20" value="@">
+                </fieldset>
+
+                <fieldset>
+                    <label for="client-last_visit">Дата посещения</label>
+                    <input type="date" name="client-last_visit" id="client-last_visit"
+                           required>
+                </fieldset>
+
+                <fieldset>
+                    <label for="client-total_spent">Всего потрачено</label>
+                    <input type="number" name="client-total_spent" id="client-total_spent"
+                           required min="1">
+                </fieldset>
+
+
+                <div class="add-client-modal__buttons">
+                    <button type="submit" id="submit-client-btn">Добавить клиента</button>
+                    <button type="button" class="add-client-modal__close-btn">Отменить</button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </section>
 
     <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/inputmask.min.js"></script>
     <script src="js/app.js"></script>
