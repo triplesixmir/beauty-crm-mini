@@ -21,7 +21,7 @@ dateInput.value = today;
 let clients = JSON.parse(localStorage.getItem('clients')) || [];
 let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
 let editingClientId = null;
-renderClients(clients);
+renderLatestClients(clients);
 renderClientOptions();
 // renderAppointments(appointments);
 renderNearestAppointments();
@@ -77,13 +77,19 @@ addClientForm.addEventListener('submit', function (event) {
     editingClientId = null;
     document.getElementById('client-add-btn').textContent = 'Добавить клиента';
     saveClients();
-    renderClients(clients);
+    renderLatestClients(clients);
     renderClientOptions();
     addClientForm.reset();
     dateInput.value = today;
 });
 
 // Рендер клиентов
+
+function renderLatestClients(clientsArray) {
+    const latestClients = [...clientsArray].slice(0, 4);
+
+    renderClients(latestClients);
+}
 
 function renderClients(clientsArray) {
     clientsContainer.innerHTML = '';
@@ -140,7 +146,7 @@ clientsContainer.addEventListener('click', function (event) {
             clients = clients.filter(client => client.id !== clientId);
             saveClients();
 
-            renderClients(clients);
+            renderLatestClients(clients);
             renderClientOptions();
             // renderAppointments(appointments);
             renderNearestAppointments();
@@ -181,7 +187,7 @@ searchInput.addEventListener('input', function () {
         return client.name.toLowerCase().includes(searchTerm);
     });
 
-    renderClients(filteredClients);
+    renderLatestClients(filteredClients);
 });
 
 // Сортировка
@@ -193,16 +199,16 @@ sortSelect.addEventListener('change', function () {
 
     if(sortOrder === 'alphabet-up-sort') {
         const sortedClients = [...clients].sort((a, b) => a.name.localeCompare(b.name))
-        renderClients(sortedClients);
+        renderLatestClients(sortedClients);
     } else if(sortOrder === 'alphabet-down-sort') {
         const sortedClients = [...clients].sort((a, b) => b.name.localeCompare(a.name))
-        renderClients(sortedClients);
+        renderLatestClients(sortedClients);
     } else if(sortOrder === 'last-visit-sort') {
         const sortedClients = [...clients].sort((a, b) => new Date(b.lastVisit) - new Date(a.lastVisit))
-        renderClients(sortedClients);
+        renderLatestClients(sortedClients);
     } else if(sortOrder === 'total-spent-sort') {
         const sortedClients = [...clients].sort((a, b) => Number(b.totalSpent) - Number(a.totalSpent))
-        renderClients(sortedClients);
+        renderLatestClients(sortedClients);
     } else {
         console.warn('Такая сортировка не предусмотрена:', sortOrder);
     }
@@ -262,7 +268,7 @@ appointmentForm.addEventListener('submit', function (event) {
 function renderNearestAppointments() {
     const nearestAppointments = [...appointments]
         .filter(appointment => appointment.date >= today)
-        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .sort((a, b) => new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time))
         .slice(0, 5);
 
     renderAppointments(nearestAppointments);
