@@ -1,5 +1,6 @@
 Inputmask("+7 999 999-99-99").mask("#client-tel");
 
+//<editor-fold desc="Получение HTML элементов">
 const htmlBodyElement = document.querySelector('body');
 const addClientForm = document.getElementById('addClientForm');
 const appointmentForm = document.getElementById('appointment-form');
@@ -7,6 +8,10 @@ const clientsContainer = document.getElementById('clients-section__content');
 const clientsActionsContainer = document.getElementById('add-client-btn-container');
 const appointmentClientsSelect = document.getElementById('appointment-clients');
 const appointmentsList = document.getElementById('appointments-section__list');
+const dateInput = document.getElementById('client-last_visit');
+//</editor-fold>
+
+//<editor-fold desc="UI-mapping массивы">
 const services = {
     'service-manicure': 'Маникюр',
     'service-pedicure': 'Педикюр',
@@ -14,35 +19,37 @@ const services = {
     'service-depilation': 'Депиляция',
     'service-laying': 'Укладка'
 };
+//</editor-fold>
 
-const dateInput = document.getElementById('client-last_visit');
 const today = new Date().toISOString().split('T')[0];
 dateInput.max = today;
 dateInput.value = today;
 
-let visibleClientsCount = 5;
 let clients = JSON.parse(localStorage.getItem('clients')) || [];
 let currentClientsView = clients;
-let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+let visibleClientsCount = 5;
 let editingClientId = null;
+let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
 
-//region Форматирование даты и стоимости
+//<editor-fold desc="Форматирование даты и стоимости">
 function formatDate(dateString) { return new Intl.DateTimeFormat("ru-RU", {
-    dateStyle: "full",}).format(new Date(dateString)); }
+    dateStyle: 'full',}).format(new Date(dateString)); }
 function formatMoney(price) { return new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB", maximumFractionDigits: 0 }).format(price) }
-//endregion
+//</editor-fold>
 
 renderLatestClients(currentClientsView);
 renderClientOptions();
 renderNearestAppointments();
 
+//<editor-fold desc="Сохранение массива клиентов">
 function saveClients() {
 
     localStorage.setItem('clients', JSON.stringify(clients));
 
 }
+//</editor-fold>
 
-// Добавление клиента
+//<editor-fold desc="Обновление/добавление клиента">
 addClientForm.addEventListener('submit', function (event) {
     event.preventDefault();
 
@@ -92,8 +99,9 @@ addClientForm.addEventListener('submit', function (event) {
     renderNearestAppointments();
     closeClientModal();
 });
+//</editor-fold>
 
-//region Рендер клиентов
+//<editor-fold desc="Рендер клиентов">
 function renderLatestClients(clientsArray) {
     const latestClients = [...clientsArray].slice(0, visibleClientsCount);
 
@@ -156,16 +164,18 @@ function renderClients(clientsArray) {
     });
 
 }
-//endregion
+//</editor-fold>
 
+//<editor-fold desc="Обработка нажатия по 'Показать еще'">
 clientsContainer.addEventListener('click', function (event) {
     if (event.target.classList.contains('show-more-btn')) {
         visibleClientsCount += 5;
         renderLatestClients(currentClientsView);
     }
 });
+//</editor-fold>
 
-// Удаление клиента
+//<editor-fold desc="Удаление и редактирование клиента">
 clientsContainer.addEventListener('click', function (event) {
     if(event.target.classList.contains('client-card__delete-btn')) {
         const clientId = Number(event.target.dataset.id);
@@ -205,9 +215,9 @@ clientsContainer.addEventListener('click', function (event) {
 
     }
 });
+//</editor-fold>
 
-// Поиск клиента
-
+//<editor-fold desc="Поиск клиентов">
 const searchInput = document.getElementById('search-input');
 
 searchInput.addEventListener('input', function () {
@@ -220,8 +230,9 @@ searchInput.addEventListener('input', function () {
     visibleClientsCount = 4;
     renderLatestClients(currentClientsView);
 });
+//</editor-fold>
 
-//region Сортировка клиентов
+//<editor-fold desc="Сортировка клиентов">
 const sortSelect = document.getElementById('sort-clients');
 
 sortSelect.addEventListener('change', function () {
@@ -244,10 +255,9 @@ sortSelect.addEventListener('change', function () {
         console.warn('Такая сортировка не предусмотрена:', sortOrder);
     }
 });
-//endregion
+//</editor-fold>
 
-// Записи
-
+//<editor-fold desc="Рендер клиентов при создании записи">
 function renderClientOptions() {
     appointmentClientsSelect.innerHTML = '';
 
@@ -259,22 +269,26 @@ function renderClientOptions() {
     });
 
 }
+//</editor-fold>
 
-// Сохранение записей
-
+//<editor-fold desc="Сохранение массива при создании записи">
 function saveAppointments() {
 
     localStorage.setItem('appointments', JSON.stringify(appointments));
 
 }
+//</editor-fold>
 
+//<editor-fold desc="Сброс формы после редактирования/создания клиента">
 function resetClientForm() {
     editingClientId = null;
     document.getElementById('submit-client-btn').textContent = 'Добавить клиента';
     addClientForm.reset();
     dateInput.value = today;
 }
+//</editor-fold>
 
+//<editor-fold desc="Обработка создания новой записи">
 appointmentForm.addEventListener('submit', function (event) {
     event.preventDefault();
 
@@ -298,7 +312,9 @@ appointmentForm.addEventListener('submit', function (event) {
     renderNearestAppointments();
     appointmentForm.reset();
 });
+//</editor-fold>
 
+//<editor-fold desc="Рендер БЛИЖАЙШИХ записей">
 function renderNearestAppointments() {
     const nearestAppointments = [...appointments]
         .filter(appointment => appointment.date >= today)
@@ -307,8 +323,9 @@ function renderNearestAppointments() {
 
     renderAppointments(nearestAppointments);
 }
+//</editor-fold>
 
-// Рендер записей
+//<editor-fold desc="Рендер ВСЕХ записей">
 function renderAppointments(appointmentsArray) {
     appointmentsList.innerHTML = '';
 
@@ -346,8 +363,9 @@ function renderAppointments(appointmentsArray) {
         appointmentsList.appendChild(card);
     });
 }
+//</editor-fold>
 
-// Удаление записи
+//<editor-fold desc="Удаление записи">
 appointmentsList.addEventListener('click', function (event) {
     if (event.target.classList.contains('appointment-card__delete-btn')) {
         const appointmentId = Number(event.target.dataset.id);
@@ -359,8 +377,9 @@ appointmentsList.addEventListener('click', function (event) {
         }
     }
 });
+//</editor-fold>
 
-// Появление модалки
+//<editor-fold desc="Отрытие модалки">
 clientsActionsContainer.addEventListener('click', function (event) {
     if (event.target.id === 'open-add-client-modal-btn') {
         openClientModal()
@@ -368,18 +387,18 @@ clientsActionsContainer.addEventListener('click', function (event) {
         resetClientForm();
     }
 });
+//</editor-fold>
 
-// Закрытие модалки
-
+//<editor-fold desc="Закрытие модалки">
 document.querySelector('.add-client-modal__close-btn').addEventListener('click', function () {
     closeClientModal()
 
     // Сброс состояния при закрытии модалки на "Отменить"
     resetClientForm();
 });
+//</editor-fold>
 
-// Функции для открытия/закрытия модалки
-
+//<editor-fold desc="Функции скрытия/показа модалки">
 function openClientModal() {
     document.getElementById('add-client-modal').classList.remove('hidden');
 }
@@ -387,8 +406,9 @@ function openClientModal() {
 function closeClientModal() {
     document.getElementById('add-client-modal').classList.add('hidden');
 }
+//</editor-fold>
 
-// Выход из модалки по нажатию Escape
+//<editor-fold desc="Выход из модалки по нажатию Escape">
 htmlBodyElement.addEventListener('keydown', function (event) {
     if (event.key === 'Escape') {
         if (!document.getElementById('add-client-modal').classList.contains('hidden')) {
@@ -396,10 +416,13 @@ htmlBodyElement.addEventListener('keydown', function (event) {
         }
     }
 });
+//</editor-fold>
 
+//<editor-fold desc="Выход из модалки по нажатию на бэкдроп">
 document.getElementById('add-client-modal').addEventListener('click', function (event) {
     if (event.target.id === 'add-client-modal') {
         closeClientModal();
         resetClientForm();
     }
 });
+//</editor-fold>
