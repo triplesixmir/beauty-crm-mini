@@ -147,9 +147,61 @@ aside > nav > ul > li > a:hover {
     gap: 24px;
 }
 
+.dashboard__stats,
 .dashboard__top,
 .dashboard__bottom {
     width: 100%;
+}
+
+.dashboard__stats {
+    display: flex;
+    flex-direction: row;
+    gap: 18px;
+
+    .stats-item {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        background-color: var(--surface);
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        width: 100%;
+        box-shadow: var(--shadow-sm);
+
+        .stats-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+
+            h2,
+            p {
+                margin: 0;
+            }
+
+            h2 {
+                font-size: 24px;
+                letter-spacing: -0.04em;
+            }
+        }
+    }
+
+    .stats-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 64px;
+        height: 64px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--bg);
+        box-shadow: var(--shadow-sm);
+
+        > img {
+            width: 32px;
+            height: 32px;
+        }
+    }
 }
 
 #clients-section,
@@ -221,6 +273,7 @@ aside > nav > ul > li > a:hover {
 
 #open-add-client-modal-btn,
 #show-more-btn,
+#show-more-appointments-btn,
 #appointment-form > button,
 #submit-client-btn {
     min-height: 42px;
