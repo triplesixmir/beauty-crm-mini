@@ -64,6 +64,11 @@ addClientForm.addEventListener('submit', function (event) {
   const lastVisit = document.getElementById('client-last_visit').value;
   const totalSpent = document.getElementById('client-total_spent').value;
 
+  if (!name || !tel || !telegram || !lastVisit || !totalSpent) {
+    alert('Пожалуйста, заполните все поля');
+    return;
+  }
+
   if (!telegramRegex.test(telegram)) {
     alert('Telegram должен быть 5-32 символа: латиница, цифры и _, первый символ буква');
     return;
@@ -112,6 +117,10 @@ addClientForm.addEventListener('submit', function (event) {
 });
 //</editor-fold>
 
+// TODO: переработать CSS-отображение информации о клиентах (все полетело из-за изменения принципа работы функции)
+
+// TODO: допилить тут обработку данных через JS, не все было переделано
+
 //<editor-fold desc="Рендер клиентов">
 function renderLatestClients(clientsArray) {
   const latestClients = [...clientsArray].slice(0, visibleClientsCount);
@@ -134,9 +143,8 @@ function renderClients(clientsArray) {
   if (clientsArray.length === 0) {
     const noClients = document.createElement('p');
     noClients.className = 'no-clients';
-    noClients.innerHTML = `
-        Клиентов не найдено
-        `
+    noClients.textContent = 'Клиентов не найдено';
+
     clientsContainer.appendChild(noClients);
     return;
   }
@@ -152,17 +160,17 @@ function renderClients(clientsArray) {
     card.innerHTML = `
         <div class="client-card__main-info">
             <img src="clients-pictures/default-profile-picture.jpg" alt="Фото клиента">
-            <div class="client-card__name">
-                <h2>${client.name}</h2>
-                <p>${client.id}</p>
+            <div class="client-card__identity">
+                <h2 class="client-card__name"></h2>
+                <p class="client-card__id">${client.id}</p>
             </div>
         </div>
 
         <div class="client-card__details">
-            <p><span>Телефон</span><a href="tel:+${cleanTel}">${client.tel}</a></p>
-            <p><span>Telegram</span><a href="https://t.me/${client.telegram.replace('@', '')}" target="_blank" rel="noopener noreferrer">@${client.telegram}</a></p>
-            <p><span>Последний визит</span>${localeDate}</p>
-            <p><span>Всего потрачено</span>${totalSpent}</p>
+            <p>Телефон<a class="client-card__tel"></a></p>
+            <p>Telegram<a class="client-card__telegram" target="_blank" rel="noopener noreferrer"></a></p>
+            <p>Последний визит<span class="client-card__last-visit"></span></p>
+            <p>Всего потрачено<span class="client-card__total-spent"></span></p>
         </div>
         
         <div class="client-card__actions">
@@ -170,6 +178,20 @@ function renderClients(clientsArray) {
             <button class="client-card__delete-btn" data-id="${client.id}">Удалить</button>
         </div>
         `;
+
+    // Вставка переменных через textContent для безопасности от XSS-атак
+    const clientCardNameField = card.querySelector('.client-card__name');
+    clientCardNameField.textContent = client.name;
+    const clientCardTelField = card.querySelector('.client-card__tel');
+    clientCardTelField.textContent = client.tel;
+    clientCardTelField.href = `tel:+${cleanTel}`;
+    const clientCardTelegramField = card.querySelector('.client-card__telegram');
+    clientCardTelegramField.textContent = `@${client.telegram}`;
+    clientCardTelegramField.href = `https://t.me/${client.telegram.replace('@', '')}`;
+    const clientCardDateField = card.querySelector('.client-card__last-visit');
+    clientCardDateField.textContent = localeDate;
+    const clientCardTotalSpentField = card.querySelector('.client-card__total-spent');
+    clientCardTotalSpentField.textContent = totalSpent;
 
     clientsContainer.appendChild(card);
   });
@@ -273,7 +295,7 @@ sortSelect.addEventListener('change', function () {
     currentClientsView = [...clients].sort((a, b) => Number(b.totalSpent) - Number(a.totalSpent));
     renderLatestClients(currentClientsView);
   } else {
-    console.warn('Такая сортировка не предусмотрена:', sortOrder);
+    alert("Такая сортировка не предусмотрена: " + sortOrder);
   }
 });
 //</editor-fold>
@@ -369,6 +391,8 @@ function renderNearestAppointments() {
 }
 //</editor-fold>
 
+// TODO: переписать принцип рендера через textContent вместо innerHTML, для этого использовать хелпер-функцию
+
 //<editor-fold desc="Рендер ВСЕХ записей">
 function renderAppointments(appointmentsArray) {
   appointmentsList.innerHTML = '';
@@ -376,9 +400,8 @@ function renderAppointments(appointmentsArray) {
   if (appointmentsArray.length === 0) {
     const noAppointments = document.createElement('p');
     noAppointments.className = 'no-appointments';
-    noAppointments.innerHTML = `
-        Записей не найдено
-        `
+    noAppointments.textContent = 'Записей не найдено';
+
     appointmentsList.appendChild(noAppointments);
     return;
   }
