@@ -32,7 +32,7 @@ let currentClientsView = clients;
 let visibleClientsCount = 5;
 let editingClientId = null;
 let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
-let visibleAppointmentsCount = 6;
+let visibleAppointmentsCount = 8;
 
 //<editor-fold desc="Форматирование даты и стоимости">
 function formatDate(dateString) { return new Intl.DateTimeFormat("ru-RU", {
@@ -59,9 +59,15 @@ addClientForm.addEventListener('submit', function (event) {
 
   const name = document.getElementById('client-name').value;
   const tel = document.getElementById('client-tel').value;
-  const telegram = document.getElementById('client-tg').value.replace('@', '');
+  const telegram = document.getElementById('client-tg').value.trim().replace(/^@/, '');
+  const telegramRegex = /^[a-zA-Z]\w{4,31}$/;
   const lastVisit = document.getElementById('client-last_visit').value;
   const totalSpent = document.getElementById('client-total_spent').value;
+
+  if (!telegramRegex.test(telegram)) {
+    alert('Telegram должен быть 5-32 символа: латиница, цифры и _, первый символ буква');
+    return;
+  }
 
   if (editingClientId) {
     // обновить клиента через map
@@ -139,7 +145,7 @@ function renderClients(clientsArray) {
     const card = document.createElement('div');
     card.className = 'client-card';
 
-    const cleanTel = client.tel.replace(/\D/g, '');
+    const cleanTel = client.tel.replaceAll(/\D/g, '');
     const localeDate = formatDate(client.lastVisit);
     const totalSpent = formatMoney(client.totalSpent);
 
@@ -147,7 +153,7 @@ function renderClients(clientsArray) {
         <div class="client-card__main-info">
             <img src="clients-pictures/default-profile-picture.jpg" alt="Фото клиента">
             <div class="client-card__name">
-                <h4>${client.name}</h4>
+                <h2>${client.name}</h2>
                 <p>${client.id}</p>
             </div>
         </div>
@@ -194,7 +200,7 @@ clientsContainer.addEventListener('click', function (event) {
   if(event.target.classList.contains('client-card__delete-btn')) {
     const clientId = Number(event.target.dataset.id);
 
-    if (window.confirm('Вы уверены, что хотите удалить клиента?')) {
+    if (globalThis.confirm('Вы уверены, что хотите удалить клиента?')) {
 
       clients = clients.filter(client => client.id !== clientId);
       saveClients();
@@ -242,7 +248,7 @@ searchInput.addEventListener('input', function () {
     return client.name.toLowerCase().includes(searchTerm);
   });
 
-  visibleClientsCount = 4;
+  visibleClientsCount = 5;
   renderLatestClients(currentClientsView);
 });
 //</editor-fold>
@@ -252,7 +258,7 @@ const sortSelect = document.getElementById('sort-clients');
 
 sortSelect.addEventListener('change', function () {
   const sortOrder = sortSelect.value;
-  visibleClientsCount = 4;
+  visibleClientsCount = 5;
 
   if(sortOrder === 'alphabet-up-sort') {
     currentClientsView = [...clients].sort((a, b) => a.name.localeCompare(b.name));
@@ -307,11 +313,23 @@ function resetClientForm() {
 appointmentForm.addEventListener('submit', function (event) {
   event.preventDefault();
 
-  const clientId = Number(appointmentClientsSelect.value);
+  const selectedClientId = appointmentClientsSelect.value;
   const date = document.getElementById('appointment-date').value;
   const time = document.getElementById('appointment-time').value;
   const price = Number(document.getElementById('appointment-price').value);
   const service = document.querySelector('input[name="appointment-service"]:checked').value
+
+  if (!selectedClientId) {
+    globalThis.alert('Выберите клиента!');
+    return;
+  }
+
+  const clientId = Number(selectedClientId);
+
+  if (!clients.some(client => client.id === clientId)) {
+    globalThis.alert('Такой клиент не найден!');
+    return;
+  }
 
   const newAppointment = {
     appointmentId: Date.now(),
@@ -396,7 +414,7 @@ appointmentsList.addEventListener('click', function (event) {
   if (event.target.classList.contains('appointment-card__delete-btn')) {
     const appointmentId = Number(event.target.dataset.id);
 
-    if (window.confirm('Вы уверены, что хотите удалить запись?')) {
+    if (globalThis.confirm('Вы уверены, что хотите удалить запись?')) {
       appointments = appointments.filter(appointment => appointment.appointmentId !== appointmentId);
       saveAppointments();
       renderNearestAppointments();
@@ -525,3 +543,4 @@ function renderDashboardStats() {
 
 }
 //</editor-fold>
+
