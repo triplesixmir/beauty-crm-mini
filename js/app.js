@@ -498,7 +498,10 @@ document.getElementById('add-client-modal').addEventListener('click', function (
 //<editor-fold desc="Рендер дэшборд-статистики">
 function renderDashboardStats() {
   const clientsCount = clients.length;
-  const appointmentsCount = appointments.length;
+
+  const futureAppointments = [...appointments]
+    .filter(appointment => appointment.date >= today)
+  const appointmentsCount = futureAppointments.length;
 
   const initialValue = 0;
   const overallMoney = formatMoney(clients.reduce((accumulator, client) => {
