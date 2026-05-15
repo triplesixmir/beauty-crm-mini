@@ -1,0 +1,12 @@
+export const dom= {
+  htmlBodyElement: document.querySelector('body'),
+  htmlMainElement: document.querySelector('.dashboard'),
+  addClientForm: document.getElementById('addClientForm'),
+  appointmentForm: document.getElementById('appointment-form'),
+  clientsContainer: document.getElementById('clients-section__content'),
+  clientsActionsContainer: document.getElementById('add-client-btn-container'),
+  appointmentsContainer: document.getElementById('appointments-section__content'),
+  appointmentClientsSelect: document.getElementById('appointment-clients'),
+  appointmentsList: document.getElementById('appointments-section__list'),
+  dateInput: document.getElementById('client-last_visit'),
+};
