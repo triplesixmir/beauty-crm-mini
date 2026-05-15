@@ -83,16 +83,16 @@ export function renderClients(clientsArray) {
 
 }
 
-dom.clientsContainer.addEventListener('click', function (event) {
+function handleClientsShowMoreButtonClick(event) {
   if (event.target.classList.contains('show-more-btn')) {
     states.visibleClientsCount += 5;
     renderLatestClients(states.currentClientsView);
   }
-});
+}
 
 // TODO: переработать CSS-отображение информации о клиентах (все полетело из-за изменения принципа работы функции)
 
-dom.addClientForm.addEventListener('submit', function (event) {
+function handleClientsFormSubmit(event) {
   event.preventDefault();
 
   const name = document.getElementById('client-name').value;
@@ -151,10 +151,10 @@ dom.addClientForm.addEventListener('submit', function (event) {
   renderClientOptions();
   renderNearestAppointments();
   renderDashboardStats();
-  closeClientModal();
-});
+  hideClientModal();
+}
 
-dom.clientsContainer.addEventListener('click', function (event) {
+function handleClientsDeleteEdit(event) {
   if(event.target.classList.contains('client-card__delete-btn')) {
     const clientId = Number(event.target.dataset.id);
 
@@ -177,7 +177,7 @@ dom.clientsContainer.addEventListener('click', function (event) {
   // Редактирование клиента
   if(event.target.classList.contains('client-card__edit-btn')) {
 
-    openClientModal()
+    showClientModal()
     document.getElementById('submit-client-btn').textContent = 'Обновить клиента';
 
     const clientId = Number(event.target.dataset.id);
@@ -193,12 +193,10 @@ dom.clientsContainer.addEventListener('click', function (event) {
     states.editingClientId = clientId;
     renderDashboardStats()
   }
-});
+}
 
-const searchInput = document.getElementById('search-input');
-
-searchInput.addEventListener('input', function () {
-  let searchTerm = searchInput.value.toLowerCase();
+function handleSearchInputChange(event) {
+  const searchTerm = event.target.value.toLowerCase();
 
   states.currentClientsView = states.clients.filter(client => {
     return client.name.toLowerCase().includes(searchTerm);
@@ -206,12 +204,10 @@ searchInput.addEventListener('input', function () {
 
   states.visibleClientsCount = 5;
   renderLatestClients(states.currentClientsView);
-});
+}
 
-const sortSelect = document.getElementById('sort-clients');
-
-sortSelect.addEventListener('change', function () {
-  const sortOrder = sortSelect.value;
+function handleSortSelectChange(event) {
+  const sortOrder = event.target.value;
   states.visibleClientsCount = 5;
 
   if(sortOrder === 'alphabet-up-sort') {
@@ -229,7 +225,7 @@ sortSelect.addEventListener('change', function () {
   } else {
     alert("Такая сортировка не предусмотрена: " + sortOrder);
   }
-});
+}
 
 function resetClientForm() {
   states.editingClientId = null;
@@ -238,12 +234,12 @@ function resetClientForm() {
   dom.dateInput.value = today;
 }
 
-dom.clientsContainer.addEventListener('click', function (event) {
-  if (event.target.classList.contains('show-more-btn')) {
-    states.visibleClientsCount += 5;
-    renderLatestClients(states.currentClientsView);
+function handleClientsShowMoreButton(event) {
+    if (event.target.classList.contains('show-more-btn')) {
+      states.visibleClientsCount += 5;
+      renderLatestClients(states.currentClientsView);
+    }
   }
-});
 
 function saveClients() {
 
@@ -251,7 +247,7 @@ function saveClients() {
 
 }
 
-export function renderClientOptions() {
+function renderClientOptions() {
   dom.appointmentClientsSelect.innerHTML = '';
 
   states.clients.forEach(client => {
@@ -263,39 +259,37 @@ export function renderClientOptions() {
 
 }
 
-dom.clientsActionsContainer.addEventListener('click', function (event) {
-  if (event.target.id === 'open-add-client-modal-btn') {
-    openClientModal()
+function handleOpenClientModal(event) {
+    if (event.target.id === 'open-add-client-modal-btn') {
+      showClientModal()
+      resetClientForm();
+    }
+  }
 
+function handleCloseClientModalButton(event) {
+    hideClientModal()
     resetClientForm();
   }
-});
 
-document.querySelector('.add-client-modal__close-btn').addEventListener('click', function () {
-  closeClientModal()
-
-  resetClientForm();
-});
-
-function openClientModal() {
+function showClientModal() {
   document.getElementById('add-client-modal').classList.remove('hidden');
 }
 
-function closeClientModal() {
+function hideClientModal() {
   document.getElementById('add-client-modal').classList.add('hidden');
 }
 
-dom.htmlBodyElement.addEventListener('keydown', function (event) {
+function handleCloseClientModalEscape(event) {
   if (event.key === 'Escape') {
     if (!document.getElementById('add-client-modal').classList.contains('hidden')) {
-      closeClientModal();
+      hideClientModal();
     }
   }
-});
+}
 
-document.getElementById('add-client-modal').addEventListener('click', function (event) {
+function handleCloseClientModalBackdrop(event) {
   if (event.target.id === 'add-client-modal') {
-    closeClientModal();
+    hideClientModal();
     resetClientForm();
   }
-});
+}
