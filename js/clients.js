@@ -9,42 +9,56 @@ export function initClients() {
   dom.addClientForm.addEventListener('submit', handleAddClientFormSubmit);
   dom.clientsContainer.addEventListener('click', handleClientsShowMoreButtonClick);
   dom.clientsContainer.addEventListener('click', handleClientsDeleteEdit);
-  dom.clientsSection.addEventListener('input', handleSearchInputChange);
-  dom.clientsSection.addEventListener('change', handleSortSelectChange);
   dom.clientsSection.addEventListener('click', handleOpenClientModal);
   dom.addClientModalCloseButton.addEventListener('click', handleCloseClientModalButton);
   dom.htmlBodyElement.addEventListener('keydown', handleCloseClientModalEscape);
   dom.addClientModal.addEventListener('click', handleCloseClientModalBackdrop);
+  dom.clientsSortSelect.addEventListener('change', handleSortSelectChange);
+  dom.clientsSearchInput.addEventListener('input', handleSearchInput);
+
   renderLatestClients(states.clients);
   renderClientOptions();
 }
 
-function updateClientsView(event) {
+function updateClientsView() {
 
-  let result = [...states.clients].filter(client => {
-    return client.name.toLowerCase().includes(states.searchTerm);
-  });
+  let result = [...states.clients];
 
-  states.sortOrder = event.target.value;
-
-  if(states.sortOrder === 'alphabet-up-sort') {
-    states.currentClientsView = [...states.clients].sort((a, b) => a.name.localeCompare(b.name));
-    renderLatestClients(states.currentClientsView);
-  } else if(states.sortOrder === 'alphabet-down-sort') {
-    states.currentClientsView = [...states.clients].sort((a, b) => b.name.localeCompare(a.name));
-    renderLatestClients(states.currentClientsView);
-  } else if(states.sortOrder === 'last-visit-sort') {
-    states.currentClientsView = [...states.clients].sort((a, b) => new Date(b.lastVisit) - new Date(a.lastVisit));
-    renderLatestClients(states.currentClientsView);
-  } else if(states.sortOrder === 'total-spent-sort') {
-    states.currentClientsView = [...states.clients].sort((a, b) => Number(b.totalSpent) - Number(a.totalSpent));
-    renderLatestClients(states.currentClientsView);
-  } else {
-    alert("Такая сортировка не предусмотрена: " + states.sortOrder);
+  if (states.searchTerm) {
+    result = result.filter(client =>
+    client.name.toLowerCase().includes(states.searchTerm)
+    );
   }
 
+  if (states.sortOrder !== 'default-sort') {
+
+    if(states.sortOrder === 'alphabet-up-sort') {
+      result.sort((a, b) => a.name.localeCompare(b.name));
+    } else if(states.sortOrder === 'alphabet-down-sort') {
+      result.sort((a, b) => b.name.localeCompare(a.name));
+    } else if(states.sortOrder === 'last-visit-sort') {
+      result.sort((a, b) => new Date(b.lastVisit) - new Date(a.lastVisit));
+    } else if(states.sortOrder === 'total-spent-sort') {
+      result.sort((a, b) => Number(b.totalSpent) - Number(a.totalSpent));
+    } else {
+      alert("Такая сортировка не предусмотрена: " + states.sortOrder);
+    }
+
+  }
+
+  states.currentClientsView = result;
   states.visibleClientsCount = 5;
-  renderLatestClients(result);
+  renderLatestClients(states.currentClientsView);
+}
+
+function handleSearchInput(event) {
+  states.searchTerm = event.target.value.toLowerCase();
+  updateClientsView();
+}
+
+function handleSortSelectChange(event) {
+  states.sortOrder = event.target.value;
+  updateClientsView();
 }
 export function renderLatestClients(clientsArray) {
   const latestClients = [...clientsArray].slice(0, states.visibleClientsCount);
@@ -233,27 +247,6 @@ function handleClientsDeleteEdit(event) {
 
     states.editingClientId = clientId;
     renderDashboardStats()
-  }
-}
-
-function handleSortSelectChange(event) {
-  states.sortOrder = event.target.value;
-  states.visibleClientsCount = 5;
-
-  if(states.sortOrder === 'alphabet-up-sort') {
-    states.currentClientsView = [...states.clients].sort((a, b) => a.name.localeCompare(b.name));
-    renderLatestClients(states.currentClientsView);
-  } else if(states.sortOrder === 'alphabet-down-sort') {
-    states.currentClientsView = [...states.clients].sort((a, b) => b.name.localeCompare(a.name));
-    renderLatestClients(states.currentClientsView);
-  } else if(states.sortOrder === 'last-visit-sort') {
-    states.currentClientsView = [...states.clients].sort((a, b) => new Date(b.lastVisit) - new Date(a.lastVisit));
-    renderLatestClients(states.currentClientsView);
-  } else if(states.sortOrder === 'total-spent-sort') {
-    states.currentClientsView = [...states.clients].sort((a, b) => Number(b.totalSpent) - Number(a.totalSpent));
-    renderLatestClients(states.currentClientsView);
-  } else {
-    alert("Такая сортировка не предусмотрена: " + states.sortOrder);
   }
 }
 

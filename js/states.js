@@ -12,6 +12,6 @@ export const states = {
   appointments,
   visibleAppointmentsCount: 8,
   searchTerm: '',
-  sortOrder: 'alphabet-up-sort',
+  sortOrder: 'default-sort',
 }
 

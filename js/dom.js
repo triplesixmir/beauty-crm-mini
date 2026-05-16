@@ -12,4 +12,6 @@ export const dom= {
   appointmentClientsSelect: document.getElementById('appointment-clients'),
   appointmentsList: document.getElementById('appointments-section__list'),
   dateInput: document.getElementById('client-last_visit'),
+  clientsSearchInput: document.getElementById('search-input'),
+  clientsSortSelect: document.getElementById('sort-clients'),
 };
