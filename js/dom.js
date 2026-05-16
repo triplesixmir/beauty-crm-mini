@@ -3,6 +3,7 @@ export const dom= {
   htmlMainElement: document.querySelector('.dashboard'),
   addClientForm: document.getElementById('addClientForm'),
   appointmentForm: document.getElementById('appointment-form'),
+  clientsSection: document.getElementById('clients-section'),
   clientsContainer: document.getElementById('clients-section__content'),
   clientsActionsContainer: document.getElementById('add-client-btn-container'),
   appointmentsContainer: document.getElementById('appointments-section__content'),

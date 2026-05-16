@@ -5,6 +5,18 @@ import {renderDashboardStats} from "./dashboard.js";
 import {saveToStorage} from "./storage.js";
 import {renderNearestAppointments} from "./appointments.js";
 
+export function initClients() {
+  dom.addClientForm.addEventListener('submit', handleAddClientFormSubmit);
+  dom.clientsContainer.addEventListener('click', handleClientsShowMoreButtonClick);
+  dom.clientsContainer.addEventListener('click', handleClientsDeleteEdit);
+  dom.clientsContainer.addEventListener('input', handleSearchInputChange);
+  dom.clientsContainer.addEventListener('change', handleSortSelectChange);
+  dom.clientsContainer.addEventListener('click', handleOpenClientModal);
+  dom.clientsContainer.addEventListener('click', handleCloseClientModalButton);
+  dom.clientsContainer.addEventListener('keydown', handleCloseClientModalEscape);
+  dom.clientsContainer.addEventListener('click', handleCloseClientModalBackdrop);
+  renderLatestClients(states.clients);
+}
 export function renderLatestClients(clientsArray) {
   const latestClients = [...clientsArray].slice(0, states.visibleClientsCount);
 
@@ -92,7 +104,7 @@ function handleClientsShowMoreButtonClick(event) {
 
 // TODO: переработать CSS-отображение информации о клиентах (все полетело из-за изменения принципа работы функции)
 
-function handleClientsFormSubmit(event) {
+function handleAddClientFormSubmit(event) {
   event.preventDefault();
 
   const name = document.getElementById('client-name').value;
@@ -196,6 +208,7 @@ function handleClientsDeleteEdit(event) {
 }
 
 function handleSearchInputChange(event) {
+  if (event.target.id !== 'search-input') return;
   const searchTerm = event.target.value.toLowerCase();
 
   states.currentClientsView = states.clients.filter(client => {
@@ -234,20 +247,13 @@ function resetClientForm() {
   dom.dateInput.value = today;
 }
 
-function handleClientsShowMoreButton(event) {
-    if (event.target.classList.contains('show-more-btn')) {
-      states.visibleClientsCount += 5;
-      renderLatestClients(states.currentClientsView);
-    }
-  }
-
 function saveClients() {
 
   saveToStorage('clients', states.clients)
 
 }
 
-function renderClientOptions() {
+export function renderClientOptions() {
   dom.appointmentClientsSelect.innerHTML = '';
 
   states.clients.forEach(client => {
@@ -266,7 +272,7 @@ function handleOpenClientModal(event) {
     }
   }
 
-function handleCloseClientModalButton(event) {
+function handleCloseClientModalButton() {
     hideClientModal()
     resetClientForm();
   }
