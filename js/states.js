@@ -11,5 +11,7 @@ export const states = {
   editingClientId: null,
   appointments,
   visibleAppointmentsCount: 8,
+  searchTerm: '',
+  sortOrder: 'alphabet-up-sort',
 }
 

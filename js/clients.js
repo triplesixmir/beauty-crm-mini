@@ -18,6 +18,34 @@ export function initClients() {
   renderLatestClients(states.clients);
   renderClientOptions();
 }
+
+function updateClientsView(event) {
+
+  let result = [...states.clients].filter(client => {
+    return client.name.toLowerCase().includes(states.searchTerm);
+  });
+
+  states.sortOrder = event.target.value;
+
+  if(states.sortOrder === 'alphabet-up-sort') {
+    states.currentClientsView = [...states.clients].sort((a, b) => a.name.localeCompare(b.name));
+    renderLatestClients(states.currentClientsView);
+  } else if(states.sortOrder === 'alphabet-down-sort') {
+    states.currentClientsView = [...states.clients].sort((a, b) => b.name.localeCompare(a.name));
+    renderLatestClients(states.currentClientsView);
+  } else if(states.sortOrder === 'last-visit-sort') {
+    states.currentClientsView = [...states.clients].sort((a, b) => new Date(b.lastVisit) - new Date(a.lastVisit));
+    renderLatestClients(states.currentClientsView);
+  } else if(states.sortOrder === 'total-spent-sort') {
+    states.currentClientsView = [...states.clients].sort((a, b) => Number(b.totalSpent) - Number(a.totalSpent));
+    renderLatestClients(states.currentClientsView);
+  } else {
+    alert("Такая сортировка не предусмотрена: " + states.sortOrder);
+  }
+
+  states.visibleClientsCount = 5;
+  renderLatestClients(result);
+}
 export function renderLatestClients(clientsArray) {
   const latestClients = [...clientsArray].slice(0, states.visibleClientsCount);
 
@@ -208,36 +236,24 @@ function handleClientsDeleteEdit(event) {
   }
 }
 
-function handleSearchInputChange(event) {
-  if (event.target.id !== 'search-input') return;
-  const searchTerm = event.target.value.toLowerCase();
-
-  states.currentClientsView = states.clients.filter(client => {
-    return client.name.toLowerCase().includes(searchTerm);
-  });
-
-  states.visibleClientsCount = 5;
-  renderLatestClients(states.currentClientsView);
-}
-
 function handleSortSelectChange(event) {
-  const sortOrder = event.target.value;
+  states.sortOrder = event.target.value;
   states.visibleClientsCount = 5;
 
-  if(sortOrder === 'alphabet-up-sort') {
+  if(states.sortOrder === 'alphabet-up-sort') {
     states.currentClientsView = [...states.clients].sort((a, b) => a.name.localeCompare(b.name));
     renderLatestClients(states.currentClientsView);
-  } else if(sortOrder === 'alphabet-down-sort') {
+  } else if(states.sortOrder === 'alphabet-down-sort') {
     states.currentClientsView = [...states.clients].sort((a, b) => b.name.localeCompare(a.name));
     renderLatestClients(states.currentClientsView);
-  } else if(sortOrder === 'last-visit-sort') {
+  } else if(states.sortOrder === 'last-visit-sort') {
     states.currentClientsView = [...states.clients].sort((a, b) => new Date(b.lastVisit) - new Date(a.lastVisit));
     renderLatestClients(states.currentClientsView);
-  } else if(sortOrder === 'total-spent-sort') {
+  } else if(states.sortOrder === 'total-spent-sort') {
     states.currentClientsView = [...states.clients].sort((a, b) => Number(b.totalSpent) - Number(a.totalSpent));
     renderLatestClients(states.currentClientsView);
   } else {
-    alert("Такая сортировка не предусмотрена: " + sortOrder);
+    alert("Такая сортировка не предусмотрена: " + states.sortOrder);
   }
 }
 
