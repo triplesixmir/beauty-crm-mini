@@ -1,6 +1,8 @@
 export const dom= {
   htmlBodyElement: document.querySelector('body'),
   htmlMainElement: document.querySelector('.dashboard'),
+  addClientModal: document.getElementById('add-client-modal'),
+  addClientModalCloseButton: document.querySelector('.add-client-modal__close-btn'),
   addClientForm: document.getElementById('addClientForm'),
   appointmentForm: document.getElementById('appointment-form'),
   clientsSection: document.getElementById('clients-section'),

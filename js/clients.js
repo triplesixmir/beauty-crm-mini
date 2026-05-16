@@ -9,13 +9,14 @@ export function initClients() {
   dom.addClientForm.addEventListener('submit', handleAddClientFormSubmit);
   dom.clientsContainer.addEventListener('click', handleClientsShowMoreButtonClick);
   dom.clientsContainer.addEventListener('click', handleClientsDeleteEdit);
-  dom.clientsContainer.addEventListener('input', handleSearchInputChange);
-  dom.clientsContainer.addEventListener('change', handleSortSelectChange);
-  dom.clientsContainer.addEventListener('click', handleOpenClientModal);
-  dom.clientsContainer.addEventListener('click', handleCloseClientModalButton);
-  dom.clientsContainer.addEventListener('keydown', handleCloseClientModalEscape);
-  dom.clientsContainer.addEventListener('click', handleCloseClientModalBackdrop);
+  dom.clientsSection.addEventListener('input', handleSearchInputChange);
+  dom.clientsSection.addEventListener('change', handleSortSelectChange);
+  dom.clientsSection.addEventListener('click', handleOpenClientModal);
+  dom.addClientModalCloseButton.addEventListener('click', handleCloseClientModalButton);
+  dom.htmlBodyElement.addEventListener('keydown', handleCloseClientModalEscape);
+  dom.addClientModal.addEventListener('click', handleCloseClientModalBackdrop);
   renderLatestClients(states.clients);
+  renderClientOptions();
 }
 export function renderLatestClients(clientsArray) {
   const latestClients = [...clientsArray].slice(0, states.visibleClientsCount);

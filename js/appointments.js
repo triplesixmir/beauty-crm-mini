@@ -9,7 +9,14 @@ import {
   today
 } from "./utils.js";
 
-dom.appointmentForm.addEventListener('submit', function (event) {
+export function initAppointments() {
+  renderNearestAppointments();
+  dom.appointmentForm.addEventListener('submit', handleAppointmentFormSubmit);
+  dom.appointmentsList.addEventListener('click', handleAppointmentDelete);
+  dom.appointmentsContainer.addEventListener('click', handleShowMoreAppointmentsButtonClick);
+}
+
+function handleAppointmentFormSubmit(event) {
   event.preventDefault();
 
   const selectedClientId = dom.appointmentClientsSelect.value;
@@ -44,7 +51,7 @@ dom.appointmentForm.addEventListener('submit', function (event) {
   renderNearestAppointments();
   renderDashboardStats();
   dom.appointmentForm.reset();
-});
+}
 
 export function renderNearestAppointments() {
   const nearestAppointments = [...states.appointments]
@@ -65,7 +72,7 @@ export function renderNearestAppointments() {
   dom.appointmentsList.appendChild(showMoreButton);
 }
 
-function renderAppointments(appointmentsArray) {
+export function renderAppointments(appointmentsArray) {
   dom.appointmentsList.innerHTML = '';
 
   if (appointmentsArray.length === 0) {
@@ -110,7 +117,7 @@ function renderAppointments(appointmentsArray) {
   });
 }
 
-dom.appointmentsList.addEventListener('click', function (event) {
+function handleAppointmentDelete(event) {
   if (event.target.classList.contains('appointment-card__delete-btn')) {
     const appointmentId = Number(event.target.dataset.id);
 
@@ -121,14 +128,14 @@ dom.appointmentsList.addEventListener('click', function (event) {
       renderDashboardStats();
     }
   }
-});
+}
 
-dom.appointmentsContainer.addEventListener('click', function (event) {
+function handleShowMoreAppointmentsButtonClick(event) {
   if (event.target.classList.contains('show-more-btn')) {
     states.visibleAppointmentsCount += 6;
     renderNearestAppointments()
   }
-});
+}
 
 function saveAppointments() {
 
