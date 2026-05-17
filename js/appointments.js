@@ -43,20 +43,41 @@ function handleAppointmentFormSubmit(event) {
     return;
   }
 
-  const newAppointment = {
-    appointmentId: Date.now(),
-    clientId,
-    date,
-    time,
-    price,
-    service
+  if (states.editingAppointmentId) {
+    states.appointments = states.appointments.map(appointment => {
+      if (appointment.appointmentId === states.editingAppointmentId) {
+        return {
+          ...appointment,
+          clientId,
+          date,
+          time,
+          price,
+          service
+        };
+      } else {
+        return appointment;
+      }
+    });
+
+  } else {
+
+    const newAppointment = {
+      appointmentId: Date.now(),
+      clientId,
+      date,
+      time,
+      price,
+      service
+    };
+
+    states.appointments.push(newAppointment);
+
   }
 
-  states.appointments.push(newAppointment);
+  states.editingAppointmentId = null;
   saveAppointments();
   renderNearestAppointments();
   renderDashboardStats();
-  dom.appointmentForm.reset();
   hideAppointmentModal();
 }
 
@@ -110,11 +131,13 @@ export function renderAppointments(appointmentsArray) {
             <button class="appointment-card__delete-btn">
                 Удалить
             </button>
-            <button class="appointment-card__edit-btn" data-id="${appointment.appointmentId}">
+            <button class="appointment-card__edit-btn">
                 Редактировать
             </button>
         `;
 
+    const appointmentCardEditButton = card.querySelector('.appointment-card__edit-btn');
+    appointmentCardEditButton.dataset.id = appointment.appointmentId;
     setTextForSelector(card, '.appointment-card__client', `Клиент: ${client ? client.name : 'Клиент удалён'}`);
     setTextForSelector(card, '.appointment-card__date', `Дата: ${date}`);
     setTextForSelector(card, '.appointment-card__time', `Время: ${appointment.time}`);
@@ -148,7 +171,10 @@ function handleShowMoreAppointmentsButtonClick(event) {
 }
 
 function handleOpenAppointmentModalClick(event) {
+  states.editingAppointmentId = null;
+  document.getElementById('appointment-submit-btn').textContent = 'Добавить запись';
   event.preventDefault();
+  dom.appointmentForm.reset();
   showAppointmentModal();
 }
 
@@ -156,6 +182,7 @@ function handleEditAppointmentButtonClick(event) {
   if (event.target.classList.contains('appointment-card__edit-btn')) {
     const appointmentId = Number(event.target.dataset.id);
     const appointmentToEdit = states.appointments.find(appointment => appointment.appointmentId === appointmentId);
+    states.editingAppointmentId = appointmentId;
 
     document.getElementById('appointment-clients').value = appointmentToEdit.clientId;
     document.getElementById('appointment-date').value = appointmentToEdit.date;
@@ -164,6 +191,7 @@ function handleEditAppointmentButtonClick(event) {
     document.querySelector(`input[name="appointment-service"][value="${appointmentToEdit.service}"]`).checked = true;
 
     showAppointmentModal();
+    document.getElementById('appointment-submit-btn').textContent = 'Сохранить';
   }
 }
 
@@ -181,7 +209,6 @@ function handleCloseAppointmentModalEscape(event) {
 
 function handleCloseAppointmentModalButton(event) {
   if (event.target.classList.contains('close-modal-btn')) {
-    dom.appointmentForm.reset();
     hideAppointmentModal();
   }
 }
@@ -197,5 +224,6 @@ function showAppointmentModal() {
 }
 
 function hideAppointmentModal() {
+  states.editingAppointmentId = null;
   dom.appointmentModal.classList.add('hidden');
 }

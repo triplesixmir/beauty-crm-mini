@@ -9,6 +9,7 @@ export const states = {
   currentClientsView,
   visibleClientsCount: 5,
   editingClientId: null,
+  editingAppointmentId: null,
   appointments,
   visibleAppointmentsCount: 8,
   searchTerm: '',
@@ -17,10 +18,10 @@ export const states = {
 
 export const appointmentFilters = {
   searchTerm: '',
-    clientId: 'all',
-    dateFrom: '',
-    dateTo: '',
-    onlyFuture: true,
-    sortOrder: 'date-up',
+  clientId: 'all',
+  dateFrom: '',
+  dateTo: '',
+  onlyFuture: true,
+  sortOrder: 'date-up',
 }
 

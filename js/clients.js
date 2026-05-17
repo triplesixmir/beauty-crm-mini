@@ -26,19 +26,19 @@ function updateClientsView() {
 
   if (states.searchTerm) {
     result = result.filter(client =>
-    client.name.toLowerCase().includes(states.searchTerm)
+      client.name.toLowerCase().includes(states.searchTerm)
     );
   }
 
   if (states.sortOrder !== 'default-sort') {
 
-    if(states.sortOrder === 'alphabet-up-sort') {
+    if (states.sortOrder === 'alphabet-up-sort') {
       result.sort((a, b) => a.name.localeCompare(b.name));
-    } else if(states.sortOrder === 'alphabet-down-sort') {
+    } else if (states.sortOrder === 'alphabet-down-sort') {
       result.sort((a, b) => b.name.localeCompare(a.name));
-    } else if(states.sortOrder === 'last-visit-sort') {
+    } else if (states.sortOrder === 'last-visit-sort') {
       result.sort((a, b) => new Date(b.lastVisit) - new Date(a.lastVisit));
-    } else if(states.sortOrder === 'total-spent-sort') {
+    } else if (states.sortOrder === 'total-spent-sort') {
       result.sort((a, b) => Number(b.totalSpent) - Number(a.totalSpent));
     } else {
       alert("Такая сортировка не предусмотрена: " + states.sortOrder);
@@ -60,6 +60,7 @@ function handleSortSelectChange(event) {
   states.sortOrder = event.target.value;
   updateClientsView();
 }
+
 export function renderLatestClients(clientsArray) {
   const latestClients = [...clientsArray].slice(0, states.visibleClientsCount);
 
@@ -170,7 +171,7 @@ function handleAddClientFormSubmit(event) {
   if (states.editingClientId) {
     // обновить клиента через map
     states.clients = states.clients.map(client => {
-      if(client.id === states.editingClientId) {
+      if (client.id === states.editingClientId) {
         return {
           ...client,
           name,
@@ -210,7 +211,7 @@ function handleAddClientFormSubmit(event) {
 }
 
 function handleClientsDeleteEdit(event) {
-  if(event.target.classList.contains('client-card__delete-btn')) {
+  if (event.target.classList.contains('client-card__delete-btn')) {
     const clientId = Number(event.target.dataset.id);
 
     if (globalThis.confirm('Вы уверены, что хотите удалить клиента?')) {
@@ -230,7 +231,7 @@ function handleClientsDeleteEdit(event) {
   }
 
   // Редактирование клиента
-  if(event.target.classList.contains('client-card__edit-btn')) {
+  if (event.target.classList.contains('client-card__edit-btn')) {
 
     showClientModal()
     document.getElementById('submit-client-btn').textContent = 'Обновить клиента';
@@ -276,16 +277,16 @@ export function renderClientOptions() {
 }
 
 function handleOpenClientModal(event) {
-    if (event.target.id === 'open-add-client-modal-btn') {
-      showClientModal()
-      resetClientForm();
-    }
-  }
-
-function handleCloseClientModalButton() {
-    hideClientModal()
+  if (event.target.id === 'open-add-client-modal-btn') {
+    showClientModal()
     resetClientForm();
   }
+}
+
+function handleCloseClientModalButton() {
+  hideClientModal()
+  resetClientForm();
+}
 
 function showClientModal() {
   document.getElementById('add-client-modal').classList.remove('hidden');
