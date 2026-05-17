@@ -14,6 +14,12 @@ export function initAppointments() {
   dom.appointmentForm.addEventListener('submit', handleAppointmentFormSubmit);
   dom.appointmentsList.addEventListener('click', handleAppointmentDelete);
   dom.appointmentsContainer.addEventListener('click', handleShowMoreAppointmentsButtonClick);
+  dom.appointmentsContainer.addEventListener('click', handleEditAppointmentButtonClick);
+  dom.appointmentModal.addEventListener('click', handleCloseAppointmentModalButton);
+  dom.htmlBodyElement.addEventListener('keydown', handleCloseAppointmentModalEscape);
+  dom.appointmentModal.addEventListener('click', handleCloseAppointmentModalBackdrop);
+  document.getElementById('open-appointment-modal-btn')
+    .addEventListener('click', handleOpenAppointmentModalClick);
 }
 
 function handleAppointmentFormSubmit(event) {
@@ -51,6 +57,7 @@ function handleAppointmentFormSubmit(event) {
   renderNearestAppointments();
   renderDashboardStats();
   dom.appointmentForm.reset();
+  hideAppointmentModal();
 }
 
 export function renderNearestAppointments() {
@@ -103,6 +110,9 @@ export function renderAppointments(appointmentsArray) {
             <button class="appointment-card__delete-btn">
                 Удалить
             </button>
+            <button class="appointment-card__edit-btn" data-id="${appointment.appointmentId}">
+                Редактировать
+            </button>
         `;
 
     setTextForSelector(card, '.appointment-card__client', `Клиент: ${client ? client.name : 'Клиент удалён'}`);
@@ -137,8 +147,55 @@ function handleShowMoreAppointmentsButtonClick(event) {
   }
 }
 
+function handleOpenAppointmentModalClick(event) {
+  event.preventDefault();
+  showAppointmentModal();
+}
+
+function handleEditAppointmentButtonClick(event) {
+  if (event.target.classList.contains('appointment-card__edit-btn')) {
+    const appointmentId = Number(event.target.dataset.id);
+    const appointmentToEdit = states.appointments.find(appointment => appointment.appointmentId === appointmentId);
+
+    document.getElementById('appointment-clients').value = appointmentToEdit.clientId;
+    document.getElementById('appointment-date').value = appointmentToEdit.date;
+    document.getElementById('appointment-time').value = appointmentToEdit.time;
+    document.getElementById('appointment-price').value = appointmentToEdit.price;
+    document.querySelector(`input[name="appointment-service"][value="${appointmentToEdit.service}"]`).checked = true;
+
+    showAppointmentModal();
+  }
+}
+
+function handleCloseAppointmentModalBackdrop(event) {
+  if (event.target.classList.contains('appointment-modal')) {
+    hideAppointmentModal();
+  }
+}
+
+function handleCloseAppointmentModalEscape(event) {
+  if (event.key === 'Escape') {
+    hideAppointmentModal();
+  }
+}
+
+function handleCloseAppointmentModalButton(event) {
+  if (event.target.classList.contains('close-modal-btn')) {
+    dom.appointmentForm.reset();
+    hideAppointmentModal();
+  }
+}
+
 function saveAppointments() {
 
   localStorage.setItem('appointments', JSON.stringify(states.appointments));
 
+}
+
+function showAppointmentModal() {
+  dom.appointmentModal.classList.remove('hidden');
+}
+
+function hideAppointmentModal() {
+  dom.appointmentModal.classList.add('hidden');
 }

@@ -15,3 +15,12 @@ export const states = {
   sortOrder: 'default-sort',
 }
 
+export const appointmentFilters = {
+  searchTerm: '',
+    clientId: 'all',
+    dateFrom: '',
+    dateTo: '',
+    onlyFuture: true,
+    sortOrder: 'date-up',
+}
+

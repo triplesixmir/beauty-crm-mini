@@ -487,6 +487,7 @@ aside > nav > ul > li > a:hover {
     gap: 10px;
 }
 
+.appointment-modal,
 .add-client-modal {
     position: fixed;
     inset: 0;
@@ -499,6 +500,7 @@ aside > nav > ul > li > a:hover {
     z-index: 1000;
 }
 
+.appointment-modal.hidden,
 .add-client-modal.hidden {
     display: none;
 }

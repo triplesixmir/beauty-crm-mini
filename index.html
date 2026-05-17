@@ -144,6 +144,53 @@
     <section id="appointments-section">
       <h1>Записи</h1>
 
+      <div class="appointments-section__action-block">
+
+        <div class="appointments-section__action">
+
+          <button type="button" id="filter-btn">Фильтры</button>
+
+        </div>
+
+        <div class="appointments-section__action">
+
+          <label for="sort-appointments">Сортировка</label>
+          <select
+            name="sort-appointments"
+            id="sort-appointments"
+          >
+            <option value="default-sort">По умолчанию</option>
+            <option value="date-up">Самые новые</option>
+            <option value="date-down">Самые старые</option>
+            <option value="top-price-sort">Дороже</option>
+            <option value="low-price-sort">Дешевле</option>
+          </select>
+
+        </div>
+
+        <div class="appointments-section__action">
+
+          <label for="search-appointments-input">Поиск записей</label>
+          <input
+            type="text"
+            name="search-appointments-input"
+            id="search-appointments-input"
+            placeholder="Поиск записей..."
+          >
+
+        </div>
+
+        <div
+          class="appointments-section__action"
+          id="add-appointment-btn-container"
+        >
+
+          <button id="open-appointment-modal-btn">Добавить запись</button>
+
+        </div>
+
+      </div>
+
       <div
         class="content"
         id="appointments-section__content"
@@ -152,97 +199,6 @@
         <div id="appointments-section__list">
 
         </div>
-
-        <form id="appointment-form">
-          <fieldset class="radio-fieldset">
-            <label for="appointment-service-manicure">Маникюр
-              <input
-                type="radio"
-                name="appointment-service"
-                id="appointment-service-manicure"
-                value="service-manicure"
-                checked
-              >
-            </label>
-
-            <label for="appointment-service-pedicure">Педикюр
-              <input
-                type="radio"
-                name="appointment-service"
-                id="appointment-service-pedicure"
-                value="service-pedicure"
-              >
-            </label>
-
-            <label for="appointment-service-haircut">Стрижка
-              <input
-                type="radio"
-                name="appointment-service"
-                id="appointment-service-haircut"
-                value="service-haircut"
-              >
-            </label>
-
-            <label for="appointment-service-depilation">Депиляция
-              <input
-                type="radio"
-                name="appointment-service"
-                id="appointment-service-depilation"
-                value="service-depilation"
-              >
-            </label>
-
-            <label for="appointment-service-laying">Укладка
-              <input
-                type="radio"
-                name="appointment-service"
-                id="appointment-service-laying"
-                value="service-laying"
-              >
-            </label>
-          </fieldset>
-          <fieldset class="input-fieldset">
-            <label for="appointment-date">
-              <input
-                type="date"
-                name="appointment-date"
-                id="appointment-date"
-                required
-              >
-            </label>
-
-            <label for="appointment-time">
-              <input
-                type="time"
-                name="appointment-time"
-                id="appointment-time"
-                required
-              >
-            </label>
-
-            <label for="appointment-price">
-              <input
-                type="number"
-                name="appointment-price"
-                id="appointment-price"
-                placeholder="Введите стоимость услуги"
-                min="1"
-                required
-              >
-            </label>
-
-            <label for="appointment-clients">Выберите клиента</label>
-            <select
-              name="appointment-clients"
-              id="appointment-clients"
-            >
-
-            </select>
-
-          </fieldset>
-
-          <button type="submit">Добавить запись</button>
-        </form>
 
       </div>
 
@@ -342,9 +298,111 @@
 
   </div>
 
+  <div
+    class="appointment-modal hidden"
+    id="appointment-modal"
+  >
+
+    <form id="appointment-form">
+      <fieldset class="radio-fieldset">
+        <label for="appointment-service-manicure">Маникюр
+          <input
+            type="radio"
+            name="appointment-service"
+            id="appointment-service-manicure"
+            value="service-manicure"
+            checked
+          >
+        </label>
+
+        <label for="appointment-service-pedicure">Педикюр
+          <input
+            type="radio"
+            name="appointment-service"
+            id="appointment-service-pedicure"
+            value="service-pedicure"
+          >
+        </label>
+
+        <label for="appointment-service-haircut">Стрижка
+          <input
+            type="radio"
+            name="appointment-service"
+            id="appointment-service-haircut"
+            value="service-haircut"
+          >
+        </label>
+
+        <label for="appointment-service-depilation">Депиляция
+          <input
+            type="radio"
+            name="appointment-service"
+            id="appointment-service-depilation"
+            value="service-depilation"
+          >
+        </label>
+
+        <label for="appointment-service-laying">Укладка
+          <input
+            type="radio"
+            name="appointment-service"
+            id="appointment-service-laying"
+            value="service-laying"
+          >
+        </label>
+      </fieldset>
+      <fieldset class="input-fieldset">
+        <label for="appointment-date">
+          <input
+            type="date"
+            name="appointment-date"
+            id="appointment-date"
+            required
+          >
+        </label>
+
+        <label for="appointment-time">
+          <input
+            type="time"
+            name="appointment-time"
+            id="appointment-time"
+            required
+          >
+        </label>
+
+        <label for="appointment-price">
+          <input
+            type="number"
+            name="appointment-price"
+            id="appointment-price"
+            placeholder="Введите стоимость услуги"
+            min="1"
+            required
+          >
+        </label>
+
+        <label for="appointment-clients">Выберите клиента</label>
+        <select
+          name="appointment-clients"
+          id="appointment-clients"
+        >
+
+        </select>
+
+      </fieldset>
+
+      <button type="submit">Добавить запись</button>
+      <button type="button" class="close-modal-btn">Отменить</button>
+    </form>
+
+  </div>
+
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/inputmask.min.js"></script>
-<script type="module" src="js/app.js"></script>
+<script
+  type="module"
+  src="js/app.js"
+></script>
 </body>
 </html>

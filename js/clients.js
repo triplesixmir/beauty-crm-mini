@@ -141,7 +141,7 @@ export function renderClients(clientsArray) {
 function handleClientsShowMoreButtonClick(event) {
   if (event.target.classList.contains('show-more-btn')) {
     states.visibleClientsCount += 5;
-    renderLatestClients(states.currentClientsView);
+    updateClientsView();
   }
 }
 
@@ -202,7 +202,7 @@ function handleAddClientFormSubmit(event) {
   resetClientForm();
   saveClients();
   states.currentClientsView = states.clients;
-  renderLatestClients(states.currentClientsView);
+  updateClientsView();
   renderClientOptions();
   renderNearestAppointments();
   renderDashboardStats();
@@ -219,7 +219,7 @@ function handleClientsDeleteEdit(event) {
       saveClients();
 
       states.currentClientsView = states.clients;
-      renderLatestClients(states.currentClientsView);
+      updateClientsView();
       renderClientOptions();
       renderNearestAppointments();
       renderDashboardStats();
