@@ -1,5 +1,5 @@
 import {dom} from "./dom.js";
-import {states} from "./states.js";
+import {appointmentFilters, states} from "./states.js";
 import {renderDashboardStats} from "./dashboard.js";
 import {
   formatDate,
@@ -10,14 +10,16 @@ import {
 } from "./utils.js";
 
 export function initAppointments() {
-  renderNearestAppointments();
+  updateAppointmentsView();
   dom.appointmentForm.addEventListener('submit', handleAppointmentFormSubmit);
   dom.appointmentsList.addEventListener('click', handleAppointmentDelete);
-  dom.appointmentsContainer.addEventListener('click', handleShowMoreAppointmentsButtonClick);
+  dom.appointmentsList.addEventListener('click', handleShowMoreAppointmentsButtonClick);
   dom.appointmentsContainer.addEventListener('click', handleEditAppointmentButtonClick);
   dom.appointmentModal.addEventListener('click', handleCloseAppointmentModalButton);
   dom.htmlBodyElement.addEventListener('keydown', handleCloseAppointmentModalEscape);
   dom.appointmentModal.addEventListener('click', handleCloseAppointmentModalBackdrop);
+  dom.appointmentSearchInput.addEventListener('input', handleAppointmentSearchInput);
+  dom.appointmentSortSelect.addEventListener('change', handleAppointmentSortSelectChange);
   document.getElementById('open-appointment-modal-btn')
     .addEventListener('click', handleOpenAppointmentModalClick);
 }
@@ -76,7 +78,7 @@ function handleAppointmentFormSubmit(event) {
 
   states.editingAppointmentId = null;
   saveAppointments();
-  renderNearestAppointments();
+  updateAppointmentsView();
   renderDashboardStats();
   hideAppointmentModal();
 }
@@ -86,18 +88,8 @@ export function renderNearestAppointments() {
     .filter(appointment => appointment.date >= today)
     .sort((a, b) => new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time))
     .slice(0, states.visibleAppointmentsCount);
-  const futureAppointments = [...states.appointments].filter(appointment => appointment.date >= today);
 
   renderAppointments(nearestAppointments);
-
-  if (futureAppointments.length <= states.visibleAppointmentsCount) return;
-
-  const showMoreButton = document.createElement('button');
-  showMoreButton.className = 'show-more-btn';
-  showMoreButton.id = 'show-more-appointments-btn';
-  showMoreButton.textContent = 'Показать еще';
-
-  dom.appointmentsList.appendChild(showMoreButton);
 }
 
 export function renderAppointments(appointmentsArray) {
@@ -157,7 +149,7 @@ function handleAppointmentDelete(event) {
     if (globalThis.confirm('Вы уверены, что хотите удалить запись?')) {
       states.appointments = states.appointments.filter(appointment => appointment.appointmentId !== appointmentId);
       saveAppointments();
-      renderNearestAppointments();
+      updateAppointmentsView();
       renderDashboardStats();
     }
   }
@@ -165,8 +157,8 @@ function handleAppointmentDelete(event) {
 
 function handleShowMoreAppointmentsButtonClick(event) {
   if (event.target.classList.contains('show-more-btn')) {
-    states.visibleAppointmentsCount += 6;
-    renderNearestAppointments()
+    states.visibleAppointmentsCount += 8;
+    updateAppointmentsView()
   }
 }
 
@@ -226,4 +218,71 @@ function showAppointmentModal() {
 function hideAppointmentModal() {
   states.editingAppointmentId = null;
   dom.appointmentModal.classList.add('hidden');
+}
+
+function handleAppointmentSearchInput(event) {
+  appointmentFilters.searchTerm = event.target.value.toLowerCase();
+  states.visibleAppointmentsCount = 8
+  updateAppointmentsView();
+}
+
+function handleAppointmentSortSelectChange(event) {
+  appointmentFilters.sortOrder = event.target.value;
+  states.visibleAppointmentsCount = 8
+  updateAppointmentsView();
+}
+
+// TODO: нужно еще добавить в HTML блок с фильтрами (либо поп-апом его сделать, либо сайд-баром)
+
+export function updateAppointmentsView() {
+  let result = [...states.appointments];
+
+  if (appointmentFilters.clientId !== 'all') {
+    result = result.filter(appointment =>
+    appointment.clientId === Number(appointmentFilters.clientId))
+  }
+
+  if (appointmentFilters.searchTerm) {
+    result = result.filter(appointment => {
+      const client = states.clients.find(client => client.id === appointment.clientId)
+      return client?.name.toLowerCase().includes(appointmentFilters.searchTerm)
+    });
+  }
+
+  if (appointmentFilters.onlyFuture === true) {
+    result = result.filter(appointment => appointment.date >= today);
+  }
+
+  if (appointmentFilters.dateFrom) {
+    result = result.filter(appointment => appointment.date >= appointmentFilters.dateFrom);
+  }
+
+  if (appointmentFilters.dateTo) {
+    result = result.filter(appointment => appointment.date <= appointmentFilters.dateTo);
+  }
+
+  if (appointmentFilters.sortOrder !== 'default-sort') {
+
+    if (appointmentFilters.sortOrder === 'top-price-sort') {
+      result.sort((a, b) => Number(b.price) - Number(a.price));
+    } else if (appointmentFilters.sortOrder === 'low-price-sort') {
+      result.sort((a, b) => Number(a.price) - Number(b.price));
+    } else if (appointmentFilters.sortOrder === 'date-up-sort') {
+      result.sort((a, b) => new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time));
+    } else if (appointmentFilters.sortOrder === 'date-down-sort') {
+      result.sort((a, b) => new Date(b.date + 'T' + b.time) - new Date(a.date + 'T' + a.time));
+    }
+
+  }
+
+  renderAppointments(result.slice(0, states.visibleAppointmentsCount));
+
+  if (result.length <= states.visibleAppointmentsCount) return;
+
+  const showMoreButton = document.createElement('button');
+  showMoreButton.className = 'show-more-btn';
+  showMoreButton.id = 'show-more-appointments-btn';
+  showMoreButton.textContent = 'Показать еще';
+
+  dom.appointmentsList.appendChild(showMoreButton);
 }

@@ -3,7 +3,7 @@ import {dom} from "./dom.js";
 import {formatDate, formatMoney, setTextForSelector, today} from "./utils.js";
 import {renderDashboardStats} from "./dashboard.js";
 import {saveToStorage} from "./storage.js";
-import {renderNearestAppointments} from "./appointments.js";
+import {updateAppointmentsView} from "./appointments.js";
 
 export function initClients() {
   dom.addClientForm.addEventListener('submit', handleAddClientFormSubmit);
@@ -47,17 +47,18 @@ function updateClientsView() {
   }
 
   states.currentClientsView = result;
-  states.visibleClientsCount = 5;
   renderLatestClients(states.currentClientsView);
 }
 
 function handleSearchInput(event) {
   states.searchTerm = event.target.value.toLowerCase();
+  states.visibleClientsCount = 5;
   updateClientsView();
 }
 
 function handleSortSelectChange(event) {
   states.sortOrder = event.target.value;
+  states.visibleClientsCount = 5;
   updateClientsView();
 }
 
@@ -205,7 +206,7 @@ function handleAddClientFormSubmit(event) {
   states.currentClientsView = states.clients;
   updateClientsView();
   renderClientOptions();
-  renderNearestAppointments();
+  updateAppointmentsView();
   renderDashboardStats();
   hideClientModal();
 }
@@ -222,7 +223,7 @@ function handleClientsDeleteEdit(event) {
       states.currentClientsView = states.clients;
       updateClientsView();
       renderClientOptions();
-      renderNearestAppointments();
+      updateAppointmentsView();
       renderDashboardStats();
 
     } else {

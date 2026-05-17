@@ -15,4 +15,6 @@ export const dom= {
   dateInput: document.getElementById('client-last_visit'),
   clientsSearchInput: document.getElementById('search-input'),
   clientsSortSelect: document.getElementById('sort-clients'),
+  appointmentSearchInput: document.getElementById('search-appointments-input'),
+  appointmentSortSelect: document.getElementById('sort-appointments'),
 };

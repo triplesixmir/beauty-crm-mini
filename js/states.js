@@ -22,6 +22,6 @@ export const appointmentFilters = {
   dateFrom: '',
   dateTo: '',
   onlyFuture: true,
-  sortOrder: 'date-up',
+  sortOrder: 'default-sort',
 }
 
