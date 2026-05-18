@@ -411,6 +411,67 @@
 
 </section>
 
+<section id="popups">
+
+  <div
+    class="appointments-filters-popup hidden"
+    id="appointments-filters-popup"
+  >
+
+    <label
+      for="appointments-filters-popup__option-only-future"
+      id="appointments-filters-popup__label-only-future"
+    >
+      <input
+        type="checkbox"
+        name="appointments-filters-popup__option-only-future"
+        id="appointments-filters-popup__option-only-future"
+        class="appointments-filters-popup__option"
+        checked
+      >
+      Только будущие записи
+    </label>
+
+    <label for="appointments-filters-popup__option-client">
+      Выберите клиента
+      <select
+        name="appointments-filters-popup__option-client"
+        id="appointments-filters-popup__option-client"
+        class="appointments-filters-popup__option"
+      >
+        <!--  Сюда вставляются options с JS -->
+      </select>
+    </label>
+
+    <div class="appointments-filters-popup__dates-container">
+      <label for="appointments-filters-popup__dates-input-from">От
+        <input
+          type="date"
+          class="appointments-filters-popup__dates-input"
+          id="appointments-filters-popup__dates-input-from"
+        >
+      </label>
+
+      <label for="appointments-filters-popup__dates-input-to">До
+        <input
+          type="date"
+          class="appointments-filters-popup__dates-input"
+          id="appointments-filters-popup__dates-input-to"
+        >
+      </label>
+    </div>
+
+    <button
+      type="button"
+      class="appointments-filters-popup__button"
+      id="appointments-filters-popup__reset-filters-button"
+    >Сбросить фильтры
+    </button>
+
+  </div>
+
+</section>
+
 <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/inputmask.min.js"></script>
 <script
   type="module"

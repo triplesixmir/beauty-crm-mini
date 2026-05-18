@@ -20,6 +20,14 @@ export function initAppointments() {
   dom.appointmentModal.addEventListener('click', handleCloseAppointmentModalBackdrop);
   dom.appointmentSearchInput.addEventListener('input', handleAppointmentSearchInput);
   dom.appointmentSortSelect.addEventListener('change', handleAppointmentSortSelectChange);
+  dom.appointmentsFiltersButton.addEventListener('click', handleToggleAppointmentFiltersPopup);
+  dom.htmlBodyElement.addEventListener('keydown', handleCloseAppointmentFiltersPopupEscape);
+  dom.appointmentFiltersPopupOptionClientSelect.addEventListener('change', handleAppointmentFiltersPopupClientSelectChange);
+  dom.appointmentsFiltersPopupOnlyFutureLabel.addEventListener('change', handleAppointmentFiltersPopupOnlyFutureToggle);
+  dom.appointmentsFiltersPopupDateFromSelector.addEventListener('change', handleAppointmentFiltersPopupDateFromChange);
+  dom.appointmentsFiltersPopupDateToSelector.addEventListener('change', handleAppointmentFiltersPopupDateToChange);
+  dom.appointmentsFiltersPopupResetButton.addEventListener('click', handleAppointmentFiltersPopupResetButtonClick);
+  document.addEventListener('click', handleCloseAppointmentFiltersPopupOnOutsideClick);
   document.getElementById('open-appointment-modal-btn')
     .addEventListener('click', handleOpenAppointmentModalClick);
 }
@@ -159,7 +167,7 @@ function handleAppointmentDelete(event) {
 
 function handleShowMoreAppointmentsButtonClick(event) {
   if (event.target.classList.contains('show-more-btn')) {
-    states.visibleAppointmentsCount += 8;
+    states.visibleAppointmentsCount += 4;
     updateAppointmentsView()
   }
 }
@@ -224,13 +232,13 @@ function hideAppointmentModal() {
 
 function handleAppointmentSearchInput(event) {
   appointmentFilters.searchTerm = event.target.value.toLowerCase();
-  states.visibleAppointmentsCount = 8
+  states.visibleAppointmentsCount = 4
   updateAppointmentsView();
 }
 
 function handleAppointmentSortSelectChange(event) {
   appointmentFilters.sortOrder = event.target.value;
-  states.visibleAppointmentsCount = 8
+  states.visibleAppointmentsCount = 4
   updateAppointmentsView();
 }
 
@@ -287,4 +295,109 @@ export function updateAppointmentsView() {
   showMoreButton.textContent = 'Показать еще';
 
   dom.appointmentsList.appendChild(showMoreButton);
+}
+
+function renderAppointmentsFiltersPopupClientSelectOptions() {
+  dom.appointmentFiltersPopupOptionClientSelect.innerHTML = '';
+
+  const allOption = document.createElement('option');
+  allOption.value = 'all';
+  allOption.textContent = 'Все клиенты';
+  dom.appointmentFiltersPopupOptionClientSelect.appendChild(allOption);
+
+  states.clients.forEach(client => {
+    const option = document.createElement('option');
+    option.value = client.id;
+    option.textContent = client.name;
+
+    dom.appointmentFiltersPopupOptionClientSelect.appendChild(option);
+  });
+
+  dom.appointmentFiltersPopupOptionClientSelect.value = appointmentFilters.clientId;
+
+}
+
+function showAppointmentsFiltersPopup() {
+  dom.appointmentsFiltersPopup.classList.remove('hidden');
+  appointmentFilters.isPopupOpen = true;
+
+  dom.htmlBodyElement.classList.add('popup-open');
+  renderAppointmentsFiltersPopupClientSelectOptions();
+
+  handleAppointmentsFiltersPopupPosition();
+}
+
+function hideAppointmentsFiltersPopup() {
+  dom.appointmentsFiltersPopup.classList.add('hidden');
+  appointmentFilters.isPopupOpen = false;
+
+  dom.htmlBodyElement.classList.remove('popup-open');
+}
+
+function handleToggleAppointmentFiltersPopup() {
+  appointmentFilters.isPopupOpen ? hideAppointmentsFiltersPopup() : showAppointmentsFiltersPopup();
+}
+
+function handleAppointmentsFiltersPopupPosition() {
+  const buttonRect = dom.appointmentsFiltersButton.getBoundingClientRect();
+
+  dom.appointmentsFiltersPopup.style.left = `${buttonRect.left}px`;
+  dom.appointmentsFiltersPopup.style.top = `${buttonRect.bottom + 16}px`;
+}
+
+function handleCloseAppointmentFiltersPopupOnOutsideClick(event) {
+  const isClickInsidePopup = dom.appointmentsFiltersPopup.contains(event.target);
+  const isClickOnFilterButton = dom.appointmentsFiltersButton.contains(event.target);
+
+  if (!isClickInsidePopup && !isClickOnFilterButton) {
+    hideAppointmentsFiltersPopup();
+  }
+}
+
+function handleCloseAppointmentFiltersPopupEscape(event) {
+  if (event.key === 'Escape') {
+    hideAppointmentsFiltersPopup();
+  }
+}
+
+function handleAppointmentFiltersPopupClientSelectChange(event) {
+  appointmentFilters.clientId = event.target.value;
+
+  states.visibleAppointmentsCount = 4;
+  updateAppointmentsView();
+}
+
+function handleAppointmentFiltersPopupOnlyFutureToggle(event) {
+  appointmentFilters.onlyFuture = event.target.checked;
+
+  states.visibleAppointmentsCount = 4;
+  updateAppointmentsView();
+}
+
+function handleAppointmentFiltersPopupDateFromChange(event) {
+  appointmentFilters.dateFrom = event.target.value;
+
+  states.visibleAppointmentsCount = 4;
+  updateAppointmentsView();
+}
+
+function handleAppointmentFiltersPopupDateToChange(event) {
+  appointmentFilters.dateTo = event.target.value;
+
+  states.visibleAppointmentsCount = 4;
+  updateAppointmentsView();
+}
+
+function handleAppointmentFiltersPopupResetButtonClick(event) {
+  appointmentFilters.clientId = 'all';
+  appointmentFilters.onlyFuture = true;
+  appointmentFilters.dateFrom = '';
+  appointmentFilters.dateTo = '';
+  dom.appointmentsFiltersPopupDateFromSelector.value = '';
+  dom.appointmentsFiltersPopupDateToSelector.value = '';
+  dom.appointmentFiltersPopupOptionClientSelect.value = 'all';
+  dom.appointmentsFiltersPopupOnlyFutureCheckbox.checked = true;
+
+  states.visibleAppointmentsCount = 4;
+  updateAppointmentsView();
 }

@@ -17,4 +17,12 @@ export const dom= {
   clientsSortSelect: document.getElementById('sort-clients'),
   appointmentSearchInput: document.getElementById('search-appointments-input'),
   appointmentSortSelect: document.getElementById('sort-appointments'),
+  appointmentFiltersPopupOptionClientSelect: document.getElementById('appointments-filters-popup__option-client'),
+  appointmentsFiltersPopup: document.getElementById('appointments-filters-popup'),
+  appointmentsFiltersButton: document.getElementById('filter-btn'),
+  appointmentsFiltersPopupOnlyFutureLabel: document.getElementById('appointments-filters-popup__label-only-future'),
+  appointmentsFiltersPopupDateFromSelector: document.getElementById('appointments-filters-popup__dates-input-from'),
+  appointmentsFiltersPopupDateToSelector: document.getElementById('appointments-filters-popup__dates-input-to'),
+  appointmentsFiltersPopupResetButton: document.getElementById('appointments-filters-popup__reset-filters-button'),
+  appointmentsFiltersPopupOnlyFutureCheckbox: document.getElementById('appointments-filters-popup__option-only-future'),
 };

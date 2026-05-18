@@ -31,6 +31,10 @@ body {
     color: var(--text);
 }
 
+body.popup-open {
+    overflow: hidden;
+}
+
 button,
 input,
 select {
@@ -307,6 +311,7 @@ aside > nav > ul > li > a:hover {
 }
 
 #filter-btn {
+    position: relative;
     min-height: 42px;
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
@@ -613,6 +618,113 @@ aside > nav > ul > li > a:hover {
     color: var(--text);
 }
 
+#popups {
+    position: relative;
+    z-index: 900;
+}
+
+.appointments-filters-popup {
+    position: fixed;
+    width: min(360px, calc(100vw - 56px));
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    box-shadow: var(--shadow-md);
+}
+
+.appointments-filters-popup.hidden {
+    display: none;
+}
+
+.appointments-filters-popup::before {
+    content: "";
+    position: absolute;
+    top: -7px;
+    left: 42px;
+    width: 14px;
+    height: 14px;
+    border-left: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    transform: rotate(45deg);
+}
+
+.appointments-filters-popup label {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.appointments-filters-popup label:has(input[type="checkbox"]) {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface-muted);
+    cursor: pointer;
+}
+
+.appointments-filters-popup__option,
+.appointments-filters-popup__dates-input {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+}
+
+.appointments-filters-popup__option:focus,
+.appointments-filters-popup__dates-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+#appointments-filters-popup__option-only-future {
+    width: 18px;
+    min-height: 18px;
+    accent-color: var(--accent);
+}
+
+.appointments-filters-popup__dates-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 12px;
+}
+
+.appointments-filters-popup__dates-container label {
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.appointments-filters-popup__button {
+    min-height: 42px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--primary-soft);
+    color: var(--text);
+    padding: 10px 16px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.appointments-filters-popup__button:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
 @media (max-width: 1100px) {
     body {
         flex-direction: column;
@@ -642,6 +754,11 @@ aside > nav > ul > li > a:hover {
     #appointment-form {
         position: static;
     }
+
+    .appointments-filters-popup {
+        right: 18px;
+        top: 340px;
+    }
 }
 
 @media (max-width: 720px) {
@@ -658,5 +775,21 @@ aside > nav > ul > li > a:hover {
     #clients-section,
     #appointments-section {
         padding: 16px;
+    }
+
+    .appointments-filters-popup {
+        position: fixed;
+        inset: auto 12px 12px 12px;
+        width: auto;
+        max-height: calc(100vh - 24px);
+        overflow: auto;
+    }
+
+    .appointments-filters-popup::before {
+        display: none;
+    }
+
+    .appointments-filters-popup__dates-container {
+        grid-template-columns: 1fr;
     }
 }
