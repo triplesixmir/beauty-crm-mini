@@ -120,12 +120,14 @@ export function renderAppointments(appointmentsArray) {
             <p class="appointment-card__service"></p>
             <p class="appointment-card__price"></p>
             
-            <button class="appointment-card__delete-btn">
-                Удалить
-            </button>
-            <button class="appointment-card__edit-btn">
-                Редактировать
-            </button>
+            <div class="appointment-card__actions">
+              <button class="appointment-card__edit-btn">
+                  Редактировать
+              </button>
+              <button class="appointment-card__delete-btn">
+                  Удалить
+              </button>
+            </div>
         `;
 
     const appointmentCardEditButton = card.querySelector('.appointment-card__edit-btn');

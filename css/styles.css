@@ -226,20 +226,30 @@ aside > nav > ul > li > a:hover {
     letter-spacing: -0.04em;
 }
 
-.clients-section__action-block {
+.clients-section__action-block,
+.appointments-section__action-block {
     display: grid;
-    grid-template-columns: 220px minmax(220px, 1fr) auto;
     gap: 12px;
     align-items: end;
 }
 
-.clients-section__action {
+.clients-section__action-block {
+    grid-template-columns: 220px minmax(220px, 1fr) auto;
+}
+
+.appointments-section__action-block {
+    grid-template-columns: auto 220px minmax(220px, 1fr) auto;
+}
+
+.clients-section__action,
+.appointments-section__action {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
 .clients-section__action label,
+.appointments-section__action label,
 .input-fieldset label,
 #addClientForm label {
     font-size: 13px;
@@ -249,6 +259,8 @@ aside > nav > ul > li > a:hover {
 
 .clients-section__action select,
 .clients-section__action input,
+.appointments-section__action select,
+.appointments-section__action input,
 .input-fieldset input,
 .input-fieldset select,
 #addClientForm input {
@@ -264,6 +276,8 @@ aside > nav > ul > li > a:hover {
 
 .clients-section__action select:focus,
 .clients-section__action input:focus,
+.appointments-section__action select:focus,
+.appointments-section__action input:focus,
 .input-fieldset input:focus,
 .input-fieldset select:focus,
 #addClientForm input:focus {
@@ -272,9 +286,8 @@ aside > nav > ul > li > a:hover {
 }
 
 #open-add-client-modal-btn,
-#show-more-btn,
-#show-more-appointments-btn,
-#appointment-form > button,
+#open-appointment-modal-btn,
+#appointment-submit-btn,
 #submit-client-btn {
     min-height: 42px;
     border: none;
@@ -286,16 +299,37 @@ aside > nav > ul > li > a:hover {
     font-weight: 700;
 }
 
+#open-add-client-modal-btn,
+#open-appointment-modal-btn,
+#appointment-submit-btn,
+#submit-client-btn {
+    background: var(--accent);
+}
+
+#filter-btn {
+    min-height: 42px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--primary-soft);
+    color: var(--text);
+    padding: 10px 16px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
 #open-add-client-modal-btn:hover,
+#open-appointment-modal-btn:hover,
+#filter-btn:hover,
 #show-more-btn:hover,
-#appointment-form > button:hover,
+#show-more-appointments-btn:hover,
+#appointment-submit-btn:hover,
 #submit-client-btn:hover {
     box-shadow: var(--shadow-sm);
 }
 
 #clients-section__content {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 14px;
 }
 
@@ -307,7 +341,7 @@ aside > nav > ul > li > a:hover {
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     background: var(--surface);
-    padding: 16px;
+    padding: 18px;
     box-shadow: var(--shadow-sm);
 }
 
@@ -315,6 +349,7 @@ aside > nav > ul > li > a:hover {
     display: flex;
     gap: 14px;
     align-items: center;
+    min-height: 112px;
 }
 
 .client-card__main-info > img {
@@ -325,23 +360,32 @@ aside > nav > ul > li > a:hover {
     background: var(--primary-soft);
 }
 
-.client-card__name {
+.client-card__identity {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 8px;
     min-width: 0;
 }
 
-.client-card__name > h2 {
+.client-card__name {
     margin: 0;
-    font-size: 18px;
-    letter-spacing: -0.03em;
+    min-height: 58px;
+    color: var(--text);
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
 }
 
-.client-card__name > p {
+.client-card__id {
     margin: 0;
-    color: var(--text-muted);
-    font-size: 14px;
+    color: var(--accent);
+    font-size: 15px;
+    font-weight: 700;
 }
 
 .client-card__details {
@@ -358,27 +402,32 @@ aside > nav > ul > li > a:hover {
     flex-direction: column;
     gap: 4px;
     font-size: 14px;
-    color: var(--text-muted);
+    color: var(--text);
+    font-weight: 500;
 }
 
+.client-card__details a,
 .client-card__details span,
 .appointment-card span {
-    color: var(--text);
-    font-weight: 700;
+    color: var(--text-muted);
+    font-weight: 500;
 }
 
-.client-card__actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
+.client-card__actions,
+.appointment-card__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     margin-top: auto;
 }
 
 .client-card__edit-btn,
 .client-card__delete-btn,
+.appointment-card__edit-btn,
 .appointment-card__delete-btn,
 .show-more-clients-btn,
-.add-client-modal__close-btn {
+.add-client-modal__close-btn,
+.close-modal-btn {
     border: none;
     border-radius: var(--radius-sm);
     padding: 10px 12px;
@@ -386,7 +435,9 @@ aside > nav > ul > li > a:hover {
     font-weight: 700;
 }
 
-.client-card__edit-btn {
+.client-card__edit-btn,
+.appointment-card__edit-btn,
+.close-modal-btn {
     background: var(--primary-soft);
     color: var(--text);
 }
@@ -397,11 +448,32 @@ aside > nav > ul > li > a:hover {
     color: var(--danger);
 }
 
-.show-more-clients-btn {
+.appointment-card__edit-btn,
+.appointment-card__delete-btn {
+    width: 100%;
+}
+
+.show-more-clients-btn,
+#show-more-btn,
+#show-more-appointments-btn {
     justify-self: center;
     grid-column: 1 / -1;
-    background: var(--primary-soft);
-    color: var(--text);
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface-muted);
+    color: var(--text-muted);
+    padding: 10px 16px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+#show-more-btn:hover,
+#show-more-appointments-btn:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent);
 }
 
 .dashboard__bottom {
@@ -416,15 +488,12 @@ aside > nav > ul > li > a:hover {
 }
 
 #appointments-section__content {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 380px;
-    gap: 18px;
-    align-items: start;
+    display: block;
 }
 
 #appointments-section__list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 14px;
 }
 
@@ -433,15 +502,18 @@ aside > nav > ul > li > a:hover {
 }
 
 #appointment-form {
-    position: sticky;
-    top: 28px;
+    width: 100%;
+    max-width: 520px;
+    max-height: calc(100vh - 48px);
+    overflow: auto;
     display: flex;
     flex-direction: column;
     gap: 14px;
-    padding: 18px;
+    padding: 24px;
     border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    background: var(--surface-muted);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    box-shadow: var(--shadow-md);
 }
 
 .radio-fieldset,
@@ -525,6 +597,10 @@ aside > nav > ul > li > a:hover {
     gap: 7px;
 }
 
+#appointment-form > button {
+    width: 100%;
+}
+
 .add-client-modal__buttons {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -558,6 +634,7 @@ aside > nav > ul > li > a:hover {
     }
 
     .clients-section__action-block,
+    .appointments-section__action-block,
     #appointments-section__content {
         grid-template-columns: 1fr;
     }
@@ -568,7 +645,8 @@ aside > nav > ul > li > a:hover {
 }
 
 @media (max-width: 720px) {
-    .clients-section__action-block {
+    .clients-section__action-block,
+    .appointments-section__action-block {
         gap: 10px;
     }
 

@@ -7,7 +7,7 @@ const currentClientsView = clients;
 export const states = {
   clients,
   currentClientsView,
-  visibleClientsCount: 5,
+  visibleClientsCount: 4,
   editingClientId: null,
   editingAppointmentId: null,
   appointments,

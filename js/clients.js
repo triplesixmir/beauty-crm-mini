@@ -52,13 +52,13 @@ function updateClientsView() {
 
 function handleSearchInput(event) {
   states.searchTerm = event.target.value.toLowerCase();
-  states.visibleClientsCount = 5;
+  states.visibleClientsCount = 4;
   updateClientsView();
 }
 
 function handleSortSelectChange(event) {
   states.sortOrder = event.target.value;
-  states.visibleClientsCount = 5;
+  states.visibleClientsCount = 4;
   updateClientsView();
 }
 
@@ -142,7 +142,7 @@ export function renderClients(clientsArray) {
 
 function handleClientsShowMoreButtonClick(event) {
   if (event.target.classList.contains('show-more-btn')) {
-    states.visibleClientsCount += 5;
+    states.visibleClientsCount += 4;
     updateClientsView();
   }
 }
