@@ -15,5 +15,5 @@ export const services = {
   'service-pedicure': 'Педикюр',
   'service-haircut': 'Стрижка',
   'service-depilation': 'Депиляция',
-  'service-laying': 'Укладка'
+  'service-laying': 'Укладка',
 };

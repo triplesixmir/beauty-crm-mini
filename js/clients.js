@@ -155,7 +155,7 @@ function handleAddClientFormSubmit(event) {
   const name = document.getElementById('client-name').value;
   const tel = document.getElementById('client-tel').value;
   const telegram = document.getElementById('client-tg').value.trim().replace(/^@/, '');
-  const telegramRegex = /^[a-zA-Z]\w{4,31}$/;
+  const telegramRegex = /^[a-zA-Z][\w.]{4,31}$/;
   const lastVisit = document.getElementById('client-last_visit').value;
   const totalSpent = document.getElementById('client-total_spent').value;
 
@@ -165,7 +165,7 @@ function handleAddClientFormSubmit(event) {
   }
 
   if (!telegramRegex.test(telegram)) {
-    alert('Telegram должен быть 5-32 символа: латиница, цифры и _, первый символ буква');
+    alert('Telegram должен быть 5-32 символа: латиница, цифры, точки и _, первый символ буква');
     return;
   }
 

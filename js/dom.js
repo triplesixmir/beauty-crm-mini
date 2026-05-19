@@ -25,4 +25,5 @@ export const dom= {
   appointmentsFiltersPopupDateToSelector: document.getElementById('appointments-filters-popup__dates-input-to'),
   appointmentsFiltersPopupResetButton: document.getElementById('appointments-filters-popup__reset-filters-button'),
   appointmentsFiltersPopupOnlyFutureCheckbox: document.getElementById('appointments-filters-popup__option-only-future'),
+  toastsContainer: document.getElementById('toasts'),
 };

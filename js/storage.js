@@ -3,7 +3,16 @@ export function saveToStorage(key, value) {
 }
 
 export function loadFromStorage(key, fallback) {
-  return JSON.parse(localStorage.getItem(key)) || fallback;
-}
+  try {
+    const data = localStorage.getItem(key);
 
-// TODO: сделать fallback для loadFromStorage
+    if (data === null) {
+      return fallback;
+    }
+
+    return JSON.parse(data);
+  } catch (error) {
+    console.warn(`Не удалось прочитать ${key} из localStorage:`, error);
+    return fallback;
+  }
+}
