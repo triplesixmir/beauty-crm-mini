@@ -8,6 +8,8 @@ import {
   setTextForSelector,
   today
 } from "./utils.js";
+import {showToast} from "./toasts.js";
+import {showConfirm} from "./confirm.js";
 
 export function initAppointments() {
   updateAppointmentsView();
@@ -42,14 +44,14 @@ function handleAppointmentFormSubmit(event) {
   const service = document.querySelector('input[name="appointment-service"]:checked').value
 
   if (!selectedClientId) {
-    globalThis.alert('Выберите клиента!');
+    showToast({title: 'Ошибка', text: 'Не выбран клиент', type: 'error', duration: 5000})
     return;
   }
 
   const clientId = Number(selectedClientId);
 
   if (!states.clients.some(client => client.id === clientId)) {
-    globalThis.alert('Такой клиент не найден!');
+    showToast({title: 'Ошибка', text: 'Клиент не найден', type: 'error', duration: 5000})
     return;
   }
 
@@ -68,7 +70,7 @@ function handleAppointmentFormSubmit(event) {
         return appointment;
       }
     });
-
+    showToast({title: 'Успешно', text: 'Запись успешно отредактирована', type: 'success', duration: 5000})
   } else {
 
     const newAppointment = {
@@ -81,7 +83,7 @@ function handleAppointmentFormSubmit(event) {
     };
 
     states.appointments.push(newAppointment);
-
+    showToast({title: 'Успешно', text: 'Запись успешно создана', type: 'success', duration: 5000})
   }
 
   states.editingAppointmentId = null;
@@ -89,15 +91,6 @@ function handleAppointmentFormSubmit(event) {
   updateAppointmentsView();
   renderDashboardStats();
   hideAppointmentModal();
-}
-
-export function renderNearestAppointments() {
-  const nearestAppointments = [...states.appointments]
-    .filter(appointment => appointment.date >= today)
-    .sort((a, b) => new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time))
-    .slice(0, states.visibleAppointmentsCount);
-
-  renderAppointments(nearestAppointments);
 }
 
 export function renderAppointments(appointmentsArray) {
@@ -152,16 +145,23 @@ export function renderAppointments(appointmentsArray) {
   });
 }
 
-function handleAppointmentDelete(event) {
+async function handleAppointmentDelete(event) {
   if (event.target.classList.contains('appointment-card__delete-btn')) {
     const appointmentId = Number(event.target.dataset.id);
 
-    if (globalThis.confirm('Вы уверены, что хотите удалить запись?')) {
-      states.appointments = states.appointments.filter(appointment => appointment.appointmentId !== appointmentId);
-      saveAppointments();
-      updateAppointmentsView();
-      renderDashboardStats();
-    }
+    const isConfirmed = await showConfirm({
+      title: 'Удаление записи',
+      text: 'Вы уверены, что хотите удалить запись? Это действие будет невозможно отменить'
+    });
+
+    if (!isConfirmed) { return; }
+
+    states.appointments = states.appointments.filter(appointment => appointment.appointmentId !== appointmentId);
+    showToast({title: 'Успешно', text: 'Запись успешно удалена', type: 'success', duration: 5000})
+    saveAppointments();
+    updateAppointmentsView();
+    renderDashboardStats();
+
   }
 }
 
@@ -399,5 +399,6 @@ function handleAppointmentFiltersPopupResetButtonClick(event) {
   dom.appointmentsFiltersPopupOnlyFutureCheckbox.checked = true;
 
   states.visibleAppointmentsCount = 4;
+  showToast({title: 'Фильтры сброшены', text: 'Все фильтры были успешно сброшены', type: 'info', duration: 5000})
   updateAppointmentsView();
 }

@@ -4,18 +4,18 @@ export function showToast({ title, text, type = 'info', duration = 5000 }) {
   const toast = document.createElement('div');
   toast.className = `toast toast--${type}`;
 
+  const closeButton = document.createElement('button');
+  closeButton.type = 'button';
+  closeButton.textContent = '×';
+
   const titleElement = document.createElement('h3');
   titleElement.textContent = title;
 
   const textElement = document.createElement('p');
   textElement.textContent = text;
 
-  const closeButton = document.createElement('button');
-  closeButton.type = 'button';
-  closeButton.textContent = '×';
-
-  toast.append(titleElement, textElement, closeButton);
-  dom.toastsContainer.appendChild(toast);
+  toast.append(closeButton, titleElement, textElement);
+  dom.toastsSection.appendChild(toast);
 
   let closeTimerId = setTimeout(closeToast, duration);
   let isClosing = false;

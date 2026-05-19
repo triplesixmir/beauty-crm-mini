@@ -4,6 +4,8 @@ import {formatDate, formatMoney, setTextForSelector, today} from "./utils.js";
 import {renderDashboardStats} from "./dashboard.js";
 import {saveToStorage} from "./storage.js";
 import {updateAppointmentsView} from "./appointments.js";
+import {showToast} from "./toasts.js";
+import {showConfirm} from "./confirm.js";
 
 export function initClients() {
   dom.addClientForm.addEventListener('submit', handleAddClientFormSubmit);
@@ -41,7 +43,7 @@ function updateClientsView() {
     } else if (states.sortOrder === 'total-spent-sort') {
       result.sort((a, b) => Number(b.totalSpent) - Number(a.totalSpent));
     } else {
-      alert("Такая сортировка не предусмотрена: " + states.sortOrder);
+      showToast({title: 'Ошибка', text: 'Такая сортировка не предусмотрена: ' + states.sortOrder, type: 'error', duration: 5000})
     }
 
   }
@@ -160,12 +162,12 @@ function handleAddClientFormSubmit(event) {
   const totalSpent = document.getElementById('client-total_spent').value;
 
   if (!name || !tel || !telegram || !lastVisit || !totalSpent) {
-    alert('Пожалуйста, заполните все поля');
+    showToast({title: 'Ошибка', text: 'Пожалуйста, заполните все поля', type: 'error', duration: 5000})
     return;
   }
 
   if (!telegramRegex.test(telegram)) {
-    alert('Telegram должен быть 5-32 символа: латиница, цифры, точки и _, первый символ буква');
+    showToast({title: 'Неверный Telegram', text: 'Telegram должен быть 5-32 символа: латиница, цифры, точки и _, первый символ буква', type: 'error', duration: 5000})
     return;
   }
 
@@ -185,6 +187,7 @@ function handleAddClientFormSubmit(event) {
         return client;
       }
     });
+    showToast({title: 'Успешно', text: 'Клиент успешно отредактирован', type: 'success', duration: 5000})
 
   } else {
     // создать newClient и push
@@ -198,7 +201,7 @@ function handleAddClientFormSubmit(event) {
     };
 
     states.clients.push(newClient);
-
+    showToast({title: 'Успешно', text: 'Клиент успешно добавлен', type: 'success', duration: 5000})
   }
 
   resetClientForm();
@@ -211,24 +214,27 @@ function handleAddClientFormSubmit(event) {
   hideClientModal();
 }
 
-function handleClientsDeleteEdit(event) {
+async function handleClientsDeleteEdit(event) {
   if (event.target.classList.contains('client-card__delete-btn')) {
     const clientId = Number(event.target.dataset.id);
 
-    if (globalThis.confirm('Вы уверены, что хотите удалить клиента?')) {
+    const isConfirmed = await showConfirm({
+      title: 'Удаление клиента',
+      text: 'Вы уверены, что хотите удалить клиента? Это действие будет невозможно отменить'
+    });
 
-      states.clients = states.clients.filter(client => client.id !== clientId);
-      saveClients();
+    if (!isConfirmed) { return; }
 
-      states.currentClientsView = states.clients;
-      updateClientsView();
-      renderClientOptions();
-      updateAppointmentsView();
-      renderDashboardStats();
+    states.clients = states.clients.filter(client => client.id !== clientId);
+    saveClients();
 
-    } else {
-      return;
-    }
+    states.currentClientsView = states.clients;
+    updateClientsView();
+    renderClientOptions();
+    updateAppointmentsView();
+    renderDashboardStats();
+    showToast({ title: 'Клиент удален', text: 'Клиент был успешно удален', type: 'success', duration: 5000 })
+
   }
 
   // Редактирование клиента

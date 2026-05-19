@@ -9,6 +9,12 @@
     --primary-soft: #efeff2;
     --danger: #ef4444;
     --danger-soft: #fee2e2;
+    --success: #16a34a;
+    --success-soft: #dcfce7;
+    --warning: #d97706;
+    --warning-soft: #fef3c7;
+    --info: #2563eb;
+    --info-soft: #dbeafe;
     --accent: #7c3aed;
     --accent-soft: #f1ebff;
     --radius-sm: 10px;
@@ -725,6 +731,101 @@ aside > nav > ul > li > a:hover {
     color: var(--accent);
 }
 
+#toasts {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 1200;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+    width: min(420px, calc(100vw - 48px));
+    pointer-events: none;
+}
+
+.toast {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px 14px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--info);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    box-shadow: var(--shadow-md);
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: auto;
+}
+
+.toast--closing {
+    opacity: 0;
+    transform: translateX(24px);
+}
+
+.toast--success {
+    border-color: var(--success);
+    background: var(--surface);
+}
+
+.toast--warning {
+    border-color: var(--warning);
+    background: var(--surface);
+}
+
+.toast--error {
+    border-color: var(--danger);
+    background: var(--surface);
+}
+
+.toast--info {
+    border-color: var(--info);
+    background: var(--surface);
+}
+
+.toast h3,
+.toast p {
+    margin: 0;
+    min-width: 0;
+}
+
+.toast h3 {
+    color: var(--text);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.toast p {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.toast button {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 9999px;
+    background: var(--primary-soft);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.toast button:hover {
+    background: var(--text);
+    color: var(--surface);
+}
+
 @media (max-width: 1100px) {
     body {
         flex-direction: column;
@@ -791,5 +892,15 @@ aside > nav > ul > li > a:hover {
 
     .appointments-filters-popup__dates-container {
         grid-template-columns: 1fr;
+    }
+
+    #toasts {
+        right: 12px;
+        bottom: 12px;
+        width: calc(100vw - 24px);
+    }
+
+    .toast {
+        padding: 14px;
     }
 }
