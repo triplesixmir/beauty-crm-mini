@@ -826,6 +826,91 @@ aside > nav > ul > li > a:hover {
     color: var(--surface);
 }
 
+.confirm-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1300;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    padding: 24px;
+    background: rgba(17, 17, 17, 0.42);
+    backdrop-filter: blur(8px);
+}
+
+.confirm-modal::before {
+    content: "";
+    position: absolute;
+    width: min(440px, calc(100vw - 48px));
+    height: auto;
+    min-height: 220px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    box-shadow: var(--shadow-md);
+}
+
+.confirm-modal__heading,
+.confirm-modal__text,
+.confirm-modal__buttons {
+    position: relative;
+    z-index: 1;
+    width: min(392px, calc(100vw - 96px));
+}
+
+.confirm-modal__heading {
+    margin: 0;
+    color: var(--text);
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.confirm-modal__text {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.confirm-modal__buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.confirm-modal__button {
+    min-height: 42px;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    cursor: pointer;
+    font-weight: 800;
+}
+
+#confirm-modal__button-yes {
+    background: var(--danger);
+    color: white;
+}
+
+#confirm-modal__button-no {
+    background: var(--primary-soft);
+    color: var(--text);
+}
+
+#confirm-modal__button-yes:hover {
+    box-shadow: 0 10px 24px rgba(239, 68, 68, 0.22);
+}
+
+#confirm-modal__button-no:hover {
+    background: var(--border);
+}
+
 @media (max-width: 1100px) {
     body {
         flex-direction: column;
@@ -902,5 +987,23 @@ aside > nav > ul > li > a:hover {
 
     .toast {
         padding: 14px;
+    }
+
+    .confirm-modal {
+        padding: 18px;
+    }
+
+    .confirm-modal::before {
+        width: calc(100vw - 36px);
+    }
+
+    .confirm-modal__heading,
+    .confirm-modal__text,
+    .confirm-modal__buttons {
+        width: calc(100vw - 72px);
+    }
+
+    .confirm-modal__buttons {
+        grid-template-columns: 1fr;
     }
 }

@@ -204,7 +204,7 @@ function handleCloseAppointmentModalBackdrop(event) {
 }
 
 function handleCloseAppointmentModalEscape(event) {
-  if (event.key === 'Escape') {
+  if (event.key === 'Escape' && !dom.appointmentModal.classList.contains('hidden')) {
     hideAppointmentModal();
   }
 }
