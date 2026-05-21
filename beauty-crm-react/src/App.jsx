@@ -8,7 +8,7 @@ import {AppointmentForm} from "./components/AppointmentForm.jsx";
 function App() {
 
   const {clients, editingClient, filteredClients, handleAddClient, handleDeleteClient, handleEditClient, handleUpdateClient, setSearchTerm} = useClients();
-  const {appointments, handleDeleteAppointment, handleAddAppointment} = useAppointments();
+  const {editingAppointment, appointments, handleDeleteAppointment, handleAddAppointment, handleEditAppointment, handleUpdateAppointment} = useAppointments();
 
   return (
 
@@ -44,7 +44,9 @@ function App() {
 
       <AppointmentForm
         onAddAppointment={handleAddAppointment}
+        onEditing={editingAppointment}
         clientsArray={clients}
+        onUpdateAppointment={handleUpdateAppointment}
       />
 
       <div>
@@ -59,6 +61,7 @@ function App() {
               return (
                 <AppointmentCard
                   onDelete={() => handleDeleteAppointment(appointment.id)}
+                  onEdit={() => handleEditAppointment(appointment)}
                   key={appointment.id}
                   clientName={clientName}
                   {...appointment}

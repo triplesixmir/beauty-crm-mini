@@ -1,4 +1,4 @@
-export function AppointmentCard({ clientName, date, time, price, service, id, onDelete }) {
+export function AppointmentCard({ clientName, date, time, price, service, id, onDelete, onEdit }) {
 
   return (
     <div>
@@ -10,6 +10,7 @@ export function AppointmentCard({ clientName, date, time, price, service, id, on
       <p>Цена: {price}</p>
 
       <button type={"button"} onClick={onDelete}>Удалить</button>
+      <button type={"button"} onClick={onEdit}>Редактировать</button>
     </div>
   )
 }

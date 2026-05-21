@@ -1,18 +1,51 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
-export function AppointmentForm({onAddAppointment, clientsArray}) {
+export function AppointmentForm({
+                                  onAddAppointment,
+                                  clientsArray,
+                                  onEditing,
+                                  onUpdateAppointment
+                                }) {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [price, setPrice] = useState('');
   const [service, setService] = useState('manicure');
   const [clientId, setClientId] = useState(clientsArray[0]?.id || '');
 
+  useEffect(() => {
+    if (onEditing) {
+      setDate(onEditing.date);
+      setTime(onEditing.time);
+      setPrice(onEditing.price);
+      setService(onEditing.service);
+      setClientId(onEditing.clientId);
+    }
+  }, [onEditing])
 
   function handleSubmit(event) {
     event.preventDefault();
 
-    const appointmentData = {date, time, price, service, clientId: Number(clientId)};
-    onAddAppointment(appointmentData);
+    if (onEditing) {
+      const updatedAppointment = {
+        id: onEditing.id,
+        date,
+        time,
+        price,
+        service,
+        clientId: Number(clientId)
+      };
+      onUpdateAppointment(updatedAppointment);
+    } else {
+      const appointmentData = {
+        date,
+        time,
+        price,
+        service,
+        clientId: Number(clientId)
+      };
+      onAddAppointment(appointmentData);
+    }
+
 
     setDate('');
     setTime('');
@@ -29,6 +62,7 @@ export function AppointmentForm({onAddAppointment, clientsArray}) {
       <select
         name="client-select"
         id=""
+        value={clientId}
         onChange={(event) => setClientId(Number(event.target.value))}
       >
         {clientsArray.map(client => (
@@ -44,6 +78,7 @@ export function AppointmentForm({onAddAppointment, clientsArray}) {
       <select
         name="service-select"
         id=""
+        value={service}
         onChange={(event) => setService(event.target.value)}
       >
         <option

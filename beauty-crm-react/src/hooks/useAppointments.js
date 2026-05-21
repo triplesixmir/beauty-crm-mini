@@ -6,6 +6,8 @@ export function useAppointments() {
     return stored ? JSON.parse(stored) : [];
   });
 
+  const [editingAppointment, setEditingAppointment] = useState(null);
+
   useEffect(() => {
     localStorage.setItem('appointments', JSON.stringify(appointments));
   }, [appointments]);
@@ -19,6 +21,16 @@ export function useAppointments() {
     setAppointments(filteredAppointments);
   }
 
-  return {appointments, handleAddAppointment, handleDeleteAppointment};
+  function handleEditAppointment(appointment) {
+    setEditingAppointment(appointment);
+  }
+
+  function handleUpdateAppointment(updatedAppointment) {
+
+    setAppointments(appointments.map(appointment => appointment.id === updatedAppointment.id ? updatedAppointment : appointment));
+    setEditingAppointment(null)
+  }
+
+  return { appointments, handleAddAppointment, handleDeleteAppointment, handleEditAppointment, handleUpdateAppointment, editingAppointment };
 
 }
