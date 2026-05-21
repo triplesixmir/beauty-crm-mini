@@ -1,39 +1,14 @@
 import {ClientCard} from "./components/ClientCard.jsx";
-import {useState, useEffect} from "react";
 import {ClientForm} from "./components/ClientForm.jsx";
+import {useClients} from "./hooks/useClients.js";
+import {useAppointments} from "./hooks/useAppointments.js";
+import {AppointmentCard} from "./components/AppointmentCard.jsx";
+import {AppointmentForm} from "./components/AppointmentForm.jsx";
 
 function App() {
-  const [clients, setClients] = useState(() => {
-    const stored = localStorage.getItem('clients');
-    return stored ? JSON.parse(stored) : [];
-  })
 
-  const [editingClient, setEditingClient] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-
-  useEffect(() => {
-    localStorage.setItem('clients', JSON.stringify(clients));
-  }, [clients])
-
-  function handleAddClient(clientData) {
-    setClients([...clients, {id: Date.now(), ...clientData}])
-  }
-
-  function handleDeleteClient(id) {
-    const filteredClients = clients.filter(client => client.id !== id);
-    setClients(filteredClients);
-  }
-
-  function handleEditClient(client) {
-    setEditingClient(client);
-  }
-
-  function handleUpdateClient(updatedClient) {
-    setClients(clients.map(client => client.id === updatedClient.id ? updatedClient : client));
-    setEditingClient(null);
-  }
-
-  const filteredClients = clients.filter(client => client.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  const {clients, editingClient, filteredClients, handleAddClient, handleDeleteClient, handleEditClient, handleUpdateClient, setSearchTerm} = useClients();
+  const {appointments, handleDeleteAppointment, handleAddAppointment} = useAppointments();
 
   return (
 
@@ -66,6 +41,34 @@ function App() {
         }
 
       </div>
+
+      <AppointmentForm
+        onAddAppointment={handleAddAppointment}
+        clientsArray={clients}
+      />
+
+      <div>
+
+        {
+          appointments.length === 0
+            ? <p>Записей нет</p>
+            : appointments.map(appointment => {
+              const client = clients.find(client => client.id === appointment.clientId)
+              const clientName = client ? client.name : 'Клиент удалён'
+
+              return (
+                <AppointmentCard
+                  onDelete={() => handleDeleteAppointment(appointment.id)}
+                  key={appointment.id}
+                  clientName={clientName}
+                  {...appointment}
+                />
+              )
+            })
+        }
+
+      </div>
+
     </>
   )
 }
