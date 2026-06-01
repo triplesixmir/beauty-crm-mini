@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import {useState, useEffect} from "react";
 
 export function useClients() {
   const [clients, setClients] = useState(() => {
@@ -16,19 +16,36 @@ export function useClients() {
   function handleAddClient(clientData) {
     setClients([...clients, {id: Date.now(), ...clientData}])
   }
+
   function handleDeleteClient(id) {
     const filteredClients = clients.filter(client => client.id !== id);
     setClients(filteredClients);
   }
+
   function handleEditClient(client) {
     setEditingClient(client);
   }
+
   function handleUpdateClient(updatedClient) {
     setClients(clients.map(client => client.id === updatedClient.id ? updatedClient : client));
     setEditingClient(null);
   }
 
+  function handleCancelEditClient() {
+    setEditingClient(null);
+  }
+
   const filteredClients = clients.filter(client => client.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
-  return {clients, editingClient, filteredClients, handleAddClient, handleDeleteClient, handleEditClient, handleUpdateClient, setSearchTerm};
+  return {
+    clients,
+    editingClient,
+    filteredClients,
+    handleAddClient,
+    handleDeleteClient,
+    handleEditClient,
+    handleUpdateClient,
+    handleCancelEditClient,
+    setSearchTerm
+  };
 }

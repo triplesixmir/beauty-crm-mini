@@ -1,3 +1,5 @@
+// noinspection D
+
 import {useEffect, useState} from "react";
 
 export function AppointmentForm({
@@ -9,8 +11,11 @@ export function AppointmentForm({
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [price, setPrice] = useState('');
-  const [service, setService] = useState('manicure');
-  const [clientId, setClientId] = useState(clientsArray[0]?.id || '');
+  const [service, setService] = useState('choose-service');
+  const [clientId, setClientId] = useState('choose-client');
+  const [errors, setErrors] = useState({});
+
+  const today = new Date().toDateString();
 
   useEffect(() => {
     if (onEditing) {
@@ -18,12 +23,43 @@ export function AppointmentForm({
       setTime(onEditing.time);
       setPrice(onEditing.price);
       setService(onEditing.service);
-      setClientId(onEditing.clientId);
+      setClientId(onEditing.clientId || 'choose-client');
     }
   }, [onEditing])
 
   function handleSubmit(event) {
     event.preventDefault();
+
+    const newErrors = {};
+
+    if (!date) {
+      newErrors.date = 'Укажите дату';
+    } else if (date < today) {
+      newErrors.date = `Дата не может быть раньше, чем ${today}`
+    }
+
+    if (!time) {
+      newErrors.time = 'Укажите время';
+    }
+
+    if (!price) {
+      newErrors.price = 'Укажите стоимость';
+    } else if (Number(price) <= 0) {
+      newErrors.price = 'Стоимость должна быть положительной';
+    }
+
+    if (!service || service === 'choose-service') {
+      newErrors.service = 'Выберите услугу';
+    }
+
+    if (!clientId) {
+      newErrors.client = 'Выберите клиента';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
     if (onEditing) {
       const updatedAppointment = {
@@ -46,12 +82,11 @@ export function AppointmentForm({
       onAddAppointment(appointmentData);
     }
 
-
     setDate('');
     setTime('');
     setPrice('');
-    setService('manicure');
-    setClientId(clientsArray[0]?.id || '');
+    setService('choose-service');
+    setClientId('choose-client');
   }
 
   return (
@@ -65,6 +100,11 @@ export function AppointmentForm({
         value={clientId}
         onChange={(event) => setClientId(Number(event.target.value))}
       >
+        <option
+          value="choose-client"
+          key="choose-client"
+        >Выберите клиента
+        </option>
         {clientsArray.map(client => (
           <option
             value={client.id}
@@ -74,6 +114,7 @@ export function AppointmentForm({
           </option>
         ))}
       </select>
+      {errors.client && <p className="error">{errors.client}</p>}
 
       <select
         name="service-select"
@@ -81,6 +122,11 @@ export function AppointmentForm({
         value={service}
         onChange={(event) => setService(event.target.value)}
       >
+        <option
+          value="choose-service"
+          className="service-option"
+        >Выберите услугу
+        </option>
         <option
           value="manicure"
           className="service-option"
@@ -107,6 +153,7 @@ export function AppointmentForm({
         >Депиляция
         </option>
       </select>
+      {errors.service && <p className="error">{errors.service}</p>}
 
       <input
         type="date"
@@ -115,6 +162,7 @@ export function AppointmentForm({
         value={date}
         onChange={(event) => setDate(event.target.value)}
       />
+      {errors.date && <p className="error">{errors.date}</p>}
 
       <input
         type="time"
@@ -123,6 +171,7 @@ export function AppointmentForm({
         value={time}
         onChange={(event) => setTime(event.target.value)}
       />
+      {errors.time && <p className="error">{errors.time}</p>}
 
       <input
         type="number"
@@ -131,6 +180,7 @@ export function AppointmentForm({
         value={price}
         onChange={(event) => setPrice(event.target.value)}
       />
+      {errors.price && <p className="error">{errors.price}</p>}
 
       <button type="submit">Добавить</button>
     </form>

@@ -7,23 +7,44 @@ import {AppointmentForm} from "./components/AppointmentForm.jsx";
 
 function App() {
 
-  const {clients, editingClient, filteredClients, handleAddClient, handleDeleteClient, handleEditClient, handleUpdateClient, setSearchTerm} = useClients();
-  const {editingAppointment, appointments, handleDeleteAppointment, handleAddAppointment, handleEditAppointment, handleUpdateAppointment} = useAppointments();
+  const {
+    clients,
+    editingClient,
+    filteredClients,
+    handleAddClient,
+    handleDeleteClient,
+    handleEditClient,
+    handleUpdateClient,
+    handleCancelEditClient,
+    setSearchTerm,
+  } = useClients();
+  const {
+    editingAppointment,
+    appointments,
+    handleDeleteAppointment,
+    handleAddAppointment,
+    handleEditAppointment,
+    handleUpdateAppointment
+  } = useAppointments();
 
   return (
 
     <>
-      <input
-        type="text"
-        name="search-field"
-        id=""
-        placeholder={'Введите имя клиента'}
-        onChange={(event) => setSearchTerm(event.target.value)}
-      />
+      <label>
+        Поиск по клиентам
+        <input
+          type="text"
+          name="search-field"
+          id=""
+          placeholder={'Поиск...'}
+          onChange={(event) => setSearchTerm(event.target.value)}
+        />
+      </label>
       <ClientForm
         onAddClient={handleAddClient}
         onEditing={editingClient}
         onUpdateClient={handleUpdateClient}
+        onCancelEdit={handleCancelEditClient}
       />
       <div>
 
