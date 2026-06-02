@@ -24,6 +24,7 @@ function App() {
     handleDeleteAppointment,
     handleAddAppointment,
     handleEditAppointment,
+    handleCancelEditAppointment,
     handleUpdateAppointment
   } = useAppointments();
 
@@ -68,6 +69,7 @@ function App() {
         onEditing={editingAppointment}
         clientsArray={clients}
         onUpdateAppointment={handleUpdateAppointment}
+        onCancelEdit={handleCancelEditAppointment}
       />
 
       <div>

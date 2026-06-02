@@ -4,18 +4,24 @@ export function ClientForm({
                              onAddClient,
                              onEditing,
                              onUpdateClient,
-                             onCancelEdit
+                             onCancelEdit,
                            }) {
-  const [name, setName] = useState('');
-  const [tel, setTel] = useState('');
-  const [telegram, setTelegram] = useState('');
+
   const [errors, setErrors] = useState({});
+
+  const [formData, setFormData] = useState({
+    name: '',
+    tel: '',
+    telegram: '',
+  })
 
   useEffect(() => {
     if (onEditing) {
-      setName(onEditing.name);
-      setTel(onEditing.tel);
-      setTelegram(onEditing.telegram);
+      setFormData({
+        name: onEditing.name,
+        tel: onEditing.tel,
+        telegram: onEditing.telegram,
+      });
     }
   }, [onEditing])
 
@@ -24,11 +30,11 @@ export function ClientForm({
 
     const newErrors = {};
 
-    if (!name.trim()) {
+    if (!formData.name.trim()) {
       newErrors.name = 'Имя не может быть пустым';
     }
 
-    if (!tel.trim()) {
+    if (!formData.tel.trim()) {
       newErrors.tel = 'Телефон не может быть пустым';
     }
 
@@ -38,25 +44,39 @@ export function ClientForm({
     }
 
     if (onEditing) {
-      const updatedClient = {id: onEditing.id, name, tel, telegram};
-      onUpdateClient(updatedClient);
+      onUpdateClient({
+        id: onEditing.id,
+        ...formData,
+      });
     } else {
-      const clientData = {name, tel, telegram};
-      onAddClient(clientData);
+      onAddClient(formData);
     }
 
     setErrors({});
-    setName('');
-    setTel('');
-    setTelegram('');
+    setFormData({
+      name: '',
+      tel: '',
+      telegram: '',
+    })
   }
 
   function handleEditCancel() {
     setErrors({});
-    setName('');
-    setTel('');
-    setTelegram('');
+    setFormData({
+      name: '',
+      tel: '',
+      telegram: '',
+    })
     onCancelEdit();
+  }
+
+  function handleChange(event) {
+    const {name, value} = event.target;
+
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   }
 
   return (
@@ -69,30 +89,27 @@ export function ClientForm({
         <input
           type="text"
           name="name"
-          id=""
           placeholder="Имя клиента"
-          value={name}
-          onChange={(event) => setName(event.target.value)}
+          value={formData.name}
+          onChange={handleChange}
         />
         {errors.name && <p className="error">{errors.name}</p>}
 
         <input
           type="text"
           name="tel"
-          id=""
           placeholder="Телефон"
-          value={tel}
-          onChange={(event) => setTel(event.target.value)}
+          value={formData.tel}
+          onChange={handleChange}
         />
         {errors.tel && <p className="error">{errors.tel}</p>}
 
         <input
           type="text"
           name="telegram"
-          id=""
           placeholder="Telegram"
-          value={telegram}
-          onChange={(event) => setTelegram(event.target.value)}
+          value={formData.telegram}
+          onChange={handleChange}
         />
 
         <button type="submit">

@@ -6,24 +6,31 @@ export function AppointmentForm({
                                   onAddAppointment,
                                   clientsArray,
                                   onEditing,
-                                  onUpdateAppointment
+                                  onUpdateAppointment,
+                                  onCancelEdit,
                                 }) {
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
-  const [price, setPrice] = useState('');
-  const [service, setService] = useState('choose-service');
-  const [clientId, setClientId] = useState('choose-client');
+
+  const [formData, setFormData] = useState({
+    date: '',
+    time: '',
+    price: '',
+    service: 'choose-service',
+    clientId: 'choose-client',
+  })
+
   const [errors, setErrors] = useState({});
 
-  const today = new Date().toDateString();
+  const today = new Date().toISOString().slice(0, 10);
 
   useEffect(() => {
     if (onEditing) {
-      setDate(onEditing.date);
-      setTime(onEditing.time);
-      setPrice(onEditing.price);
-      setService(onEditing.service);
-      setClientId(onEditing.clientId || 'choose-client');
+      setFormData({
+        date: onEditing.date,
+        time: onEditing.time,
+        price: onEditing.price,
+        service: onEditing.service,
+        clientId: onEditing.clientId ? String(onEditing.clientId) : 'choose-client',
+      })
     }
   }, [onEditing])
 
@@ -32,27 +39,27 @@ export function AppointmentForm({
 
     const newErrors = {};
 
-    if (!date) {
+    if (!formData.date) {
       newErrors.date = 'Укажите дату';
-    } else if (date < today) {
+    } else if (formData.date < today) {
       newErrors.date = `Дата не может быть раньше, чем ${today}`
     }
 
-    if (!time) {
+    if (!formData.time) {
       newErrors.time = 'Укажите время';
     }
 
-    if (!price) {
+    if (!formData.price) {
       newErrors.price = 'Укажите стоимость';
-    } else if (Number(price) <= 0) {
+    } else if (Number(formData.price) <= 0) {
       newErrors.price = 'Стоимость должна быть положительной';
     }
 
-    if (!service || service === 'choose-service') {
+    if (!formData.service || formData.service === 'choose-service') {
       newErrors.service = 'Выберите услугу';
     }
 
-    if (!clientId) {
+    if (formData.clientId === 'choose-client') {
       newErrors.client = 'Выберите клиента';
     }
 
@@ -63,126 +70,157 @@ export function AppointmentForm({
 
     if (onEditing) {
       const updatedAppointment = {
+        ...formData,
         id: onEditing.id,
-        date,
-        time,
-        price,
-        service,
-        clientId: Number(clientId)
+        clientId: Number(formData.clientId)
       };
       onUpdateAppointment(updatedAppointment);
     } else {
       const appointmentData = {
-        date,
-        time,
-        price,
-        service,
-        clientId: Number(clientId)
+        ...formData,
+        clientId: Number(formData.clientId)
       };
       onAddAppointment(appointmentData);
     }
 
-    setDate('');
-    setTime('');
-    setPrice('');
-    setService('choose-service');
-    setClientId('choose-client');
+    setFormData({
+      date: '',
+      time: '',
+      price: '',
+      service: 'choose-service',
+      clientId: 'choose-client'
+    });
+    setErrors({});
+  }
+  
+  function handleEditCancel() {
+    setFormData({
+      date: '',
+      time: '',
+      price: '',
+      service: 'choose-service',
+      clientId: 'choose-client'
+    });
+    setErrors({});
+    onCancelEdit();
+  }
+
+  function handleChange(event) {
+    const {name, value} = event.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   }
 
   return (
-    <form
-      className="inputs-container"
-      onSubmit={handleSubmit}
-    >
-      <select
-        name="client-select"
-        id=""
-        value={clientId}
-        onChange={(event) => setClientId(Number(event.target.value))}
+    <>
+      <h2>{onEditing ? 'Редактирование записи' : 'Добавление записи'}</h2>
+
+      <form
+        className="inputs-container"
+        onSubmit={handleSubmit}
       >
-        <option
-          value="choose-client"
-          key="choose-client"
-        >Выберите клиента
-        </option>
-        {clientsArray.map(client => (
+        <select
+          name="clientId"
+          id=""
+          value={formData.clientId}
+          onChange={handleChange}
+        >
           <option
-            value={client.id}
-            key={client.id}
-          >
-            {client.name}
+            value="choose-client"
+            key="choose-client"
+          >Выберите клиента
           </option>
-        ))}
-      </select>
-      {errors.client && <p className="error">{errors.client}</p>}
+          {clientsArray.map(client => (
+            <option
+              value={client.id}
+              key={client.id}
+            >
+              {client.name}
+            </option>
+          ))}
+        </select>
+        {errors.client && <p className="error">{errors.client}</p>}
 
-      <select
-        name="service-select"
-        id=""
-        value={service}
-        onChange={(event) => setService(event.target.value)}
-      >
-        <option
-          value="choose-service"
-          className="service-option"
-        >Выберите услугу
-        </option>
-        <option
-          value="manicure"
-          className="service-option"
-        >Маникюр
-        </option>
-        <option
-          value="pedicure"
-          className="service-option"
-        >Педикюр
-        </option>
-        <option
-          value="laying"
-          className="service-option"
-        >Укладка
-        </option>
-        <option
-          value="haircut"
-          className="service-option"
-        >Стрижка
-        </option>
-        <option
-          value="depilation"
-          className="service-option"
-        >Депиляция
-        </option>
-      </select>
-      {errors.service && <p className="error">{errors.service}</p>}
+        <select
+          name="service"
+          id=""
+          value={formData.service}
+          onChange={handleChange}
+        >
+          <option
+            value="choose-service"
+            className="service-option"
+          >Выберите услугу
+          </option>
+          <option
+            value="manicure"
+            className="service-option"
+          >Маникюр
+          </option>
+          <option
+            value="pedicure"
+            className="service-option"
+          >Педикюр
+          </option>
+          <option
+            value="laying"
+            className="service-option"
+          >Укладка
+          </option>
+          <option
+            value="haircut"
+            className="service-option"
+          >Стрижка
+          </option>
+          <option
+            value="depilation"
+            className="service-option"
+          >Депиляция
+          </option>
+        </select>
+        {errors.service && <p className="error">{errors.service}</p>}
 
-      <input
-        type="date"
-        name="date"
-        id=""
-        value={date}
-        onChange={(event) => setDate(event.target.value)}
-      />
-      {errors.date && <p className="error">{errors.date}</p>}
+        <input
+          type="date"
+          name="date"
+          id=""
+          value={formData.date}
+          onChange={handleChange}
+        />
+        {errors.date && <p className="error">{errors.date}</p>}
 
-      <input
-        type="time"
-        name="time"
-        id=""
-        value={time}
-        onChange={(event) => setTime(event.target.value)}
-      />
-      {errors.time && <p className="error">{errors.time}</p>}
+        <input
+          type="time"
+          name="time"
+          id=""
+          value={formData.time}
+          onChange={handleChange}
+        />
+        {errors.time && <p className="error">{errors.time}</p>}
 
-      <input
-        type="number"
-        name="price"
-        id=""
-        value={price}
-        onChange={(event) => setPrice(event.target.value)}
-      />
-      {errors.price && <p className="error">{errors.price}</p>}
+        <input
+          type="number"
+          name="price"
+          id=""
+          value={formData.price}
+          onChange={handleChange}
+        />
+        {errors.price && <p className="error">{errors.price}</p>}
 
-      <button type="submit">Добавить</button>
-    </form>
+        <button type="submit">
+          {onEditing ? 'Сохранить' : 'Добавить'}
+        </button>
+        {onEditing && (
+          <button
+            type="button"
+            onClick={handleEditCancel}
+          >
+            Отменить
+          </button>
+        )}
+      </form>
+    </>
   )
 }

@@ -25,12 +25,16 @@ export function useAppointments() {
     setEditingAppointment(appointment);
   }
 
+  function handleCancelEditAppointment() {
+    setEditingAppointment(null);
+  }
+
   function handleUpdateAppointment(updatedAppointment) {
 
     setAppointments(appointments.map(appointment => appointment.id === updatedAppointment.id ? updatedAppointment : appointment));
     setEditingAppointment(null)
   }
 
-  return { appointments, handleAddAppointment, handleDeleteAppointment, handleEditAppointment, handleUpdateAppointment, editingAppointment };
+  return { appointments, handleAddAppointment, handleDeleteAppointment, handleEditAppointment, handleUpdateAppointment, handleCancelEditAppointment, editingAppointment };
 
 }
