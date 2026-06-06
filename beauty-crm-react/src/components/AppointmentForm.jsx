@@ -23,6 +23,7 @@ function getInitialFormData(onEditing) {
 }
 
 export function AppointmentForm({
+                                  today,
                                   onAddAppointment,
                                   clientsArray,
                                   onEditing,
@@ -33,8 +34,6 @@ export function AppointmentForm({
   const [formData, setFormData] = useState(() => getInitialFormData(onEditing))
 
   const [errors, setErrors] = useState({});
-
-  const today = new Date().toISOString().slice(0, 10);
 
   function handleSubmit(event) {
     event.preventDefault();
