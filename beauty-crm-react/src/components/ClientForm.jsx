@@ -1,4 +1,20 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
+
+function getInitialFormData(onEditing) {
+  if (onEditing) {
+    return {
+      name: onEditing.name,
+      tel: onEditing.tel,
+      telegram: onEditing.telegram,
+    }
+  }
+
+  return {
+    name: '',
+    tel: '',
+    telegram: '',
+  }
+}
 
 export function ClientForm({
                              onAddClient,
@@ -9,21 +25,7 @@ export function ClientForm({
 
   const [errors, setErrors] = useState({});
 
-  const [formData, setFormData] = useState({
-    name: '',
-    tel: '',
-    telegram: '',
-  })
-
-  useEffect(() => {
-    if (onEditing) {
-      setFormData({
-        name: onEditing.name,
-        tel: onEditing.tel,
-        telegram: onEditing.telegram,
-      });
-    }
-  }, [onEditing])
+  const [formData, setFormData] = useState(() => getInitialFormData(onEditing))
 
   function handleSubmit(event) {
     event.preventDefault();

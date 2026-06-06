@@ -1,6 +1,26 @@
 // noinspection D
 
-import {useEffect, useState} from "react";
+import {useState} from "react";
+
+function getInitialFormData(onEditing) {
+  if (onEditing) {
+    return {
+      date: onEditing.date,
+      time: onEditing.time,
+      price: onEditing.price,
+      service: onEditing.service,
+      clientId: onEditing.clientId ? String(onEditing.clientId) : 'choose-client',
+    }
+  }
+
+  return {
+    date: '',
+    time: '',
+    price: '',
+    service: 'choose-service',
+    clientId: 'choose-client',
+  }
+}
 
 export function AppointmentForm({
                                   onAddAppointment,
@@ -10,29 +30,11 @@ export function AppointmentForm({
                                   onCancelEdit,
                                 }) {
 
-  const [formData, setFormData] = useState({
-    date: '',
-    time: '',
-    price: '',
-    service: 'choose-service',
-    clientId: 'choose-client',
-  })
+  const [formData, setFormData] = useState(() => getInitialFormData(onEditing))
 
   const [errors, setErrors] = useState({});
 
   const today = new Date().toISOString().slice(0, 10);
-
-  useEffect(() => {
-    if (onEditing) {
-      setFormData({
-        date: onEditing.date,
-        time: onEditing.time,
-        price: onEditing.price,
-        service: onEditing.service,
-        clientId: onEditing.clientId ? String(onEditing.clientId) : 'choose-client',
-      })
-    }
-  }, [onEditing])
 
   function handleSubmit(event) {
     event.preventDefault();
