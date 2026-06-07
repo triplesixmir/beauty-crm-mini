@@ -1,5 +1,4 @@
 import {ClientCard} from "../components/ClientCard.jsx";
-import {ClientForm} from "../components/ClientForm.jsx";
 
 export function ClientsSection({
                                  editingClient,
@@ -10,10 +9,18 @@ export function ClientsSection({
                                  handleUpdateClient,
                                  handleCancelEditClient,
                                  setSearchTerm,
+                                 openClientEditModal,
+                                 openClientAddModal,
                                }) {
 
   return (
     <>
+
+      <button
+        className="clients-section__add-button"
+        onClick={openClientAddModal}
+      >Добавить клиента
+      </button>
 
       <label>
         Поиск по клиентам
@@ -25,13 +32,7 @@ export function ClientsSection({
           onChange={(event) => setSearchTerm(event.target.value)}
         />
       </label>
-      <ClientForm
-        key={editingClient?.id ?? 'new-client'}
-        onAddClient={handleAddClient}
-        onEditing={editingClient}
-        onUpdateClient={handleUpdateClient}
-        onCancelEdit={handleCancelEditClient}
-      />
+
       <div>
 
         {
@@ -40,7 +41,7 @@ export function ClientsSection({
             : filteredClients.map(client => (
               <ClientCard
                 onDelete={() => handleDeleteClient(client.id)}
-                onEdit={() => handleEditClient(client)}
+                onEdit={() => openClientEditModal(client)}
                 key={client.id}
                 {...client}
               />

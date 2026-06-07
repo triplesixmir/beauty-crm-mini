@@ -31,7 +31,7 @@ export function useClients() {
     setEditingClient(null);
   }
 
-  function handleCancelEditClient() {
+  function handleResetEditingClient() {
     setEditingClient(null);
   }
 
@@ -45,7 +45,7 @@ export function useClients() {
     handleDeleteClient,
     handleEditClient,
     handleUpdateClient,
-    handleCancelEditClient,
+    handleResetEditingClient,
     setSearchTerm
   };
 }

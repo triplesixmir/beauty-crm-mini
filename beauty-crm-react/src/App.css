@@ -157,6 +157,18 @@ button[type="button"]:hover {
   box-shadow: none;
 }
 
+.modal-close-button {
+  width: 44px;
+  padding: 10px;
+  display: inline-grid;
+  place-items: center;
+}
+
+.modal-close-button img {
+  width: 20px;
+  height: 20px;
+}
+
 .error {
   color: var(--danger);
   font-size: 0.86rem;

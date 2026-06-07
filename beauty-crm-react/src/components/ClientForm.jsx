@@ -26,6 +26,8 @@ export function ClientForm({
                              onEditing,
                              onUpdateClient,
                              onCancelEdit,
+                             onSuccess,
+                             onCancel,
                            }) {
 
   const [errors, setErrors] = useState({});
@@ -64,21 +66,14 @@ export function ClientForm({
     }
 
     setErrors({});
-    setFormData({
-      name: '',
-      tel: '',
-      telegram: '',
-    })
+    setFormData(() => getInitialFormData(onEditing))
+    onSuccess?.();
   }
 
-  function handleEditCancel() {
+  function handleCancel() {
     setErrors({});
-    setFormData({
-      name: '',
-      tel: '',
-      telegram: '',
-    })
-    onCancelEdit();
+    setFormData(() => getInitialFormData(onEditing))
+    onCancel?.();
   }
 
   function handleChange(event) {
@@ -98,51 +93,45 @@ export function ClientForm({
   }
 
   return (
-    <>
-      <h2>{onEditing ? 'Редактирование клиента' : 'Добавление клиента'}</h2>
-      <form
-        className="inputs-container"
-        onSubmit={handleSubmit}
-      >
-        <input
-          type="text"
-          name="name"
-          placeholder="Имя клиента"
-          value={formData.name}
-          onChange={handleChange}
-        />
-        {errors.name && <p className="error">{errors.name}</p>}
+    <form
+      className="inputs-container"
+      onSubmit={handleSubmit}
+    >
+      <input
+        type="text"
+        name="name"
+        placeholder="Имя клиента"
+        value={formData.name}
+        onChange={handleChange}
+      />
+      {errors.name && <p className="error">{errors.name}</p>}
 
-        <input
-          type="text"
-          name="tel"
-          placeholder="Телефон"
-          value={formatPhoneInput(formData.tel)}
-          onChange={handlePhoneChange}
-        />
-        {errors.tel && <p className="error">{errors.tel}</p>}
+      <input
+        type="text"
+        name="tel"
+        placeholder="Телефон"
+        value={formatPhoneInput(formData.tel)}
+        onChange={handlePhoneChange}
+      />
+      {errors.tel && <p className="error">{errors.tel}</p>}
 
-        <input
-          type="text"
-          name="telegram"
-          placeholder="Telegram"
-          value={formData.telegram}
-          onChange={handleChange}
-        />
+      <input
+        type="text"
+        name="telegram"
+        placeholder="Telegram"
+        value={formData.telegram}
+        onChange={handleChange}
+      />
 
-        <button type="submit">
-          {onEditing ? 'Сохранить' : 'Добавить'}
-        </button>
-        {onEditing && (
-          <button
-            type="button"
-            onClick={handleEditCancel}
-          >Отменить
-          </button>
-        )
-        }
+      <button type="submit">
+        {onEditing ? 'Сохранить' : 'Добавить'}
+      </button>
+      <button
+        type="button"
+        onClick={handleCancel}
+      >Отменить
+      </button>
 
-      </form>
-    </>
+    </form>
   )
 }

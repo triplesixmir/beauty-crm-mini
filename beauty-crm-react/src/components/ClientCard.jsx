@@ -10,8 +10,16 @@ export function ClientCard({name, tel, telegram, onDelete, onEdit}) {
       <p>Имя: {name}</p>
       <p>Телефон: <a href={telLink}>{formatStoredPhone(tel)}</a></p>
       <p>Telegram: <a href={telegramLink}>@{telegram}</a></p>
-      <button type={"button"} onClick={onDelete}>Удалить</button>
-      <button type={"button"} onClick={onEdit}>Редактировать</button>
+      <button
+        type={"button"}
+        onClick={onDelete}
+      >Удалить
+      </button>
+      <button
+        type={"button"}
+        onClick={onEdit}
+      >Редактировать
+      </button>
     </div>
   )
 }
