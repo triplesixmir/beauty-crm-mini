@@ -2,7 +2,7 @@ import {AppointmentForm} from "../components/AppointmentForm.jsx";
 import {AppointmentCard} from "../components/AppointmentCard.jsx";
 
 export function AppointmentsSection({
-                                      today,
+                                      now,
                                       clients,
                                       editingAppointment,
                                       appointments,
@@ -23,7 +23,7 @@ export function AppointmentsSection({
         clientsArray={clients}
         onUpdateAppointment={handleUpdateAppointment}
         onCancelEdit={handleCancelEditAppointment}
-        today={today}
+        now={now}
       />
 
       <div>

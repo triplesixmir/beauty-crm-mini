@@ -1,6 +1,7 @@
 // noinspection D
 
 import {useState} from "react";
+import {SERVICES} from "../constants/services.js";
 
 function getInitialFormData(onEditing) {
   if (onEditing) {
@@ -93,7 +94,7 @@ export function AppointmentForm({
     });
     setErrors({});
   }
-  
+
   function handleEditCancel() {
     setFormData({
       date: '',
@@ -155,31 +156,12 @@ export function AppointmentForm({
             className="service-option"
           >Выберите услугу
           </option>
-          <option
-            value="manicure"
-            className="service-option"
-          >Маникюр
-          </option>
-          <option
-            value="pedicure"
-            className="service-option"
-          >Педикюр
-          </option>
-          <option
-            value="laying"
-            className="service-option"
-          >Укладка
-          </option>
-          <option
-            value="haircut"
-            className="service-option"
-          >Стрижка
-          </option>
-          <option
-            value="depilation"
-            className="service-option"
-          >Депиляция
-          </option>
+          {SERVICES.map((service) => (
+            <option
+              value={service.value}
+              key={service.value}
+            >{service.label}</option>
+          ))}
         </select>
         {errors.service && <p className="error">{errors.service}</p>}
 
@@ -205,6 +187,7 @@ export function AppointmentForm({
           type="number"
           name="price"
           id=""
+          placeholder="Цена услуги"
           value={formData.price}
           onChange={handleChange}
         />

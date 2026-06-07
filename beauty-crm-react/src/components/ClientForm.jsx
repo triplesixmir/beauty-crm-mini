@@ -1,10 +1,15 @@
 import {useState} from "react";
+import {
+  formatPhoneInput,
+  getLocalPhoneDigits,
+  toStoredPhone
+} from "../utils/phone.js";
 
 function getInitialFormData(onEditing) {
   if (onEditing) {
     return {
       name: onEditing.name,
-      tel: onEditing.tel,
+      tel: getLocalPhoneDigits(onEditing.tel),
       telegram: onEditing.telegram,
     }
   }
@@ -49,9 +54,13 @@ export function ClientForm({
       onUpdateClient({
         id: onEditing.id,
         ...formData,
+        tel: toStoredPhone(formData.tel),
       });
     } else {
-      onAddClient(formData);
+      onAddClient({
+        ...formData,
+        tel: toStoredPhone(formData.tel),
+      });
     }
 
     setErrors({});
@@ -81,6 +90,13 @@ export function ClientForm({
     });
   }
 
+  function handlePhoneChange(event) {
+    setFormData({
+      ...formData,
+      tel: getLocalPhoneDigits(event.target.value),
+    });
+  }
+
   return (
     <>
       <h2>{onEditing ? 'Редактирование клиента' : 'Добавление клиента'}</h2>
@@ -101,8 +117,8 @@ export function ClientForm({
           type="text"
           name="tel"
           placeholder="Телефон"
-          value={formData.tel}
-          onChange={handleChange}
+          value={formatPhoneInput(formData.tel)}
+          onChange={handlePhoneChange}
         />
         {errors.tel && <p className="error">{errors.tel}</p>}
 

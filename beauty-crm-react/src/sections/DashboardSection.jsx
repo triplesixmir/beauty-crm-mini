@@ -5,19 +5,25 @@ import totalAppointmentsIcon
   from "../assets/dashboard/icons/total-appointments.svg";
 import totalClientsIcon from "../assets/dashboard/icons/total-clients.svg";
 import totalMoneyIcon from "../assets/dashboard/icons/total-money.svg";
+import {formatAppointmentDateTime, formatMoney} from "../utils/formatters.js";
 
 export function DashboardSection({
                                    clients,
                                    appointments,
-                                   today,
+                                   now,
                                  }) {
 
-  const nearestAppointment = appointments.filter((appointment) => appointment.date >= today)
-    .sort((a, b) => {
-      const firstDateTime = `${a.date}T${a.time}`;
-      const secondDateTime = `${b.date}T${b.time}`;
+  const nearestAppointment = appointments
+    .filter((appointment) => {
+      const appointmentDate = new Date(`${appointment.date}T${appointment.time}`);
 
-      return firstDateTime.localeCompare(secondDateTime);
+      return appointmentDate >= now;
+    })
+    .sort((a, b) => {
+      const firstDate = new Date(`${a.date}T${a.time}`);
+      const secondDate = new Date(`${b.date}T${b.time}`);
+
+      return firstDate - secondDate;
     })[0];
   const totalClients = clients.length;
   const totalAppointments = appointments.length;
@@ -32,7 +38,7 @@ export function DashboardSection({
         icon={nearestAppointmentIcon}
         heading="Ближайшая запись"
         value={nearestAppointment
-          ? `${nearestAppointment.date} ${nearestAppointment.time}`
+          ? formatAppointmentDateTime(nearestAppointment.date, nearestAppointment.time)
           : 'Нет подходящей записи'}
       />
 
@@ -51,7 +57,7 @@ export function DashboardSection({
       <DashboardCard
         icon={totalMoneyIcon}
         heading="Общая сумма"
-        value={totalMoney}
+        value={formatMoney(totalMoney)}
       />
 
     </>

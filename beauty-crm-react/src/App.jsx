@@ -8,7 +8,7 @@ function App() {
 
   const clientsState = useClients();
   const appointmentsState = useAppointments();
-  const today = new Date().toISOString().slice(0, 10);
+  const now = new Date();
 
   return (
 
@@ -17,7 +17,7 @@ function App() {
       <DashboardSection
         {...clientsState}
         {...appointmentsState}
-        today={today}
+        now={now}
       />
 
       <ClientsSection
@@ -27,7 +27,7 @@ function App() {
       <AppointmentsSection
         {...appointmentsState}
         clients={clientsState.clients}
-        today={today}
+        now={now}
       />
 
     </>
