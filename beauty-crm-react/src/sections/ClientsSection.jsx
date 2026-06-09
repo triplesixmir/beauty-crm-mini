@@ -1,13 +1,8 @@
 import {ClientCard} from "../components/ClientCard.jsx";
 
 export function ClientsSection({
-                                 editingClient,
                                  filteredClients,
-                                 handleAddClient,
                                  handleDeleteClient,
-                                 handleEditClient,
-                                 handleUpdateClient,
-                                 handleCancelEditClient,
                                  setSearchTerm,
                                  openClientEditModal,
                                  openClientAddModal,

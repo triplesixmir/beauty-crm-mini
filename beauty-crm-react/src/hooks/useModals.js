@@ -21,6 +21,12 @@ export function useModals() {
     setIsAppointmentModalOpen(false);
   }
 
+  function handleEscapeKey(event) {
+    if (event.key === 'Escape') {
+      closeClientModal();
+      closeAppointmentModal();
+    }
+  }
 
   return {
     isClientModalOpen,
@@ -29,5 +35,6 @@ export function useModals() {
     closeClientModal,
     openAppointmentModal,
     closeAppointmentModal,
+    handleEscapeKey,
   }
 }

@@ -6,6 +6,7 @@ import {DashboardSection} from "./sections/DashboardSection.jsx";
 import {Modal} from "./components/modals/Modal.jsx";
 import {ClientForm} from "./components/ClientForm.jsx";
 import {useModals} from "./hooks/useModals.js";
+import {AppointmentForm} from "./components/AppointmentForm.jsx";
 
 function App() {
 
@@ -29,6 +30,21 @@ function App() {
     modalsState.openClientModal();
   }
 
+  function closeAppointmentModal() {
+    modalsState.closeAppointmentModal();
+    appointmentsState.handleResetEditingAppointment();
+  }
+
+  function openAppointmentEditModal(appointment) {
+    appointmentsState.handleEditAppointment(appointment);
+    modalsState.openAppointmentModal();
+  }
+
+  function openAppointmentAddModal() {
+    appointmentsState.handleResetEditingAppointment();
+    modalsState.openAppointmentModal();
+  }
+
   return (
 
     <>
@@ -47,8 +63,9 @@ function App() {
 
       <AppointmentsSection
         {...appointmentsState}
+        openAppointmentEditModal={openAppointmentEditModal}
+        openAppointmentAddModal={openAppointmentAddModal}
         clients={clientsState.clients}
-        now={now}
       />
 
       {modalsState.isClientModalOpen &&
@@ -65,6 +82,26 @@ function App() {
             onSuccess={closeClientModal}
           />
         </Modal>)}
+
+      {modalsState.isAppointmentModalOpen &&
+        (
+          <Modal
+            title={appointmentsState.editingAppointment ? 'Редактировать запись' : 'Добавить запись'}
+            onClose={closeAppointmentModal}
+          >
+
+            <AppointmentForm
+              key={appointmentsState.editingAppointment?.id ?? 'new-appointment'}
+              onAddAppointment={appointmentsState.handleAddAppointment}
+              onEditing={appointmentsState.editingAppointment}
+              clientsArray={clientsState.clients}
+              onUpdateAppointment={appointmentsState.handleUpdateAppointment}
+              onCancel={closeAppointmentModal}
+              onSuccess={closeAppointmentModal}
+              now={now}
+            />
+
+          </Modal>)}
 
     </>
   )

@@ -1,30 +1,21 @@
-import {AppointmentForm} from "../components/AppointmentForm.jsx";
 import {AppointmentCard} from "../components/AppointmentCard.jsx";
 
 export function AppointmentsSection({
-                                      now,
                                       clients,
-                                      editingAppointment,
                                       appointments,
                                       handleDeleteAppointment,
-                                      handleAddAppointment,
-                                      handleEditAppointment,
-                                      handleCancelEditAppointment,
-                                      handleUpdateAppointment,
+                                      openAppointmentAddModal,
+                                      openAppointmentEditModal,
                                     }) {
 
   return (
     <>
 
-      <AppointmentForm
-        key={editingAppointment?.id ?? 'new-appointment'}
-        onAddAppointment={handleAddAppointment}
-        onEditing={editingAppointment}
-        clientsArray={clients}
-        onUpdateAppointment={handleUpdateAppointment}
-        onCancelEdit={handleCancelEditAppointment}
-        now={now}
-      />
+      <button
+        className="clients-section__add-button"
+        onClick={openAppointmentAddModal}
+      >Добавить запись
+      </button>
 
       <div>
 
@@ -38,7 +29,7 @@ export function AppointmentsSection({
               return (
                 <AppointmentCard
                   onDelete={() => handleDeleteAppointment(appointment.id)}
-                  onEdit={() => handleEditAppointment(appointment)}
+                  onEdit={() => openAppointmentEditModal(appointment)}
                   key={appointment.id}
                   clientName={clientName}
                   {...appointment}

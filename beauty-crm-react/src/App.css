@@ -157,18 +157,6 @@ button[type="button"]:hover {
   box-shadow: none;
 }
 
-.modal-close-button {
-  width: 44px;
-  padding: 10px;
-  display: inline-grid;
-  place-items: center;
-}
-
-.modal-close-button img {
-  width: 20px;
-  height: 20px;
-}
-
 .error {
   color: var(--danger);
   font-size: 0.86rem;
@@ -179,14 +167,14 @@ button[type="button"]:hover {
   margin-top: -6px;
 }
 
-#root > div:not(.dashboard-card) {
+#root > div:not(.dashboard-card):not(.modal__backdrop) {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
 
-#root > div:not(.dashboard-card) > p {
+#root > div:not(.dashboard-card):not(.modal__backdrop) > p {
   grid-column: 1 / -1;
   padding: 18px 20px;
   border: 1px dashed var(--border-strong);
@@ -196,7 +184,7 @@ button[type="button"]:hover {
   font-weight: 650;
 }
 
-#root > div:not(.dashboard-card) > div {
+#root > div:not(.dashboard-card):not(.modal__backdrop) > div {
   display: grid;
   gap: 10px;
   padding: 18px;
@@ -206,25 +194,91 @@ button[type="button"]:hover {
   box-shadow: var(--shadow-soft);
 }
 
-#root > div:not(.dashboard-card) > div p {
+#root > div:not(.dashboard-card):not(.modal__backdrop) > div p {
   color: var(--text);
   font-weight: 560;
 }
 
-#root > div:not(.dashboard-card) > div p:first-child {
+#root > div:not(.dashboard-card):not(.modal__backdrop) > div p:first-child {
   color: var(--heading);
   font-size: 1.05rem;
   font-weight: 780;
 }
 
-#root > div:not(.dashboard-card) > div button {
+#root > div:not(.dashboard-card):not(.modal__backdrop) > div button {
   justify-self: start;
   min-height: 38px;
   padding: 8px 12px;
 }
 
-#root > div:not(.dashboard-card) > div button + button {
+#root > div:not(.dashboard-card):not(.modal__backdrop) > div button + button {
   margin-top: -4px;
+}
+
+.modal__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(23, 27, 24, 0.48);
+  backdrop-filter: blur(8px);
+}
+
+.modal__container {
+  position: relative;
+  width: min(640px, 100%);
+  max-height: min(760px, calc(100svh - 48px));
+  overflow: auto;
+  display: grid;
+  gap: 18px;
+  padding: 26px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 26px 80px rgba(24, 21, 18, 0.28);
+}
+
+.modal__container h2 {
+  padding-right: 52px;
+  font-size: 1.3rem;
+}
+
+.modal__container .inputs-container {
+  grid-column: auto;
+  grid-template-columns: 1fr;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.modal__container .inputs-container button {
+  justify-self: stretch;
+}
+
+.modal__close-button {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 40px;
+  min-height: 40px;
+  padding: 9px;
+  display: inline-grid;
+  place-items: center;
+  border-color: var(--border);
+  background: var(--surface-muted);
+}
+
+.modal__close-button:hover {
+  background: var(--primary-soft);
+}
+
+.modal__close-button img {
+  width: 18px;
+  height: 18px;
+  opacity: 0.72;
 }
 
 @media (max-width: 980px) {
@@ -253,7 +307,16 @@ button[type="button"]:hover {
   }
 
   .inputs-container,
-  #root > div:not(.dashboard-card) {
+  #root > div:not(.dashboard-card):not(.modal__backdrop) {
     grid-template-columns: 1fr;
+  }
+
+  .modal__backdrop {
+    padding: 14px;
+  }
+
+  .modal__container {
+    max-height: calc(100svh - 28px);
+    padding: 20px;
   }
 }

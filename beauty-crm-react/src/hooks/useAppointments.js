@@ -25,7 +25,7 @@ export function useAppointments() {
     setEditingAppointment(appointment);
   }
 
-  function handleCancelEditAppointment() {
+  function handleResetEditingAppointment() {
     setEditingAppointment(null);
   }
 
@@ -35,6 +35,6 @@ export function useAppointments() {
     setEditingAppointment(null)
   }
 
-  return { appointments, handleAddAppointment, handleDeleteAppointment, handleEditAppointment, handleUpdateAppointment, handleCancelEditAppointment, editingAppointment };
+  return { appointments, handleAddAppointment, handleDeleteAppointment, handleEditAppointment, handleUpdateAppointment, handleResetEditingAppointment, editingAppointment };
 
 }

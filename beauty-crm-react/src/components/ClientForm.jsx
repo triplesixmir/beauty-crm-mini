@@ -25,7 +25,6 @@ export function ClientForm({
                              onAddClient,
                              onEditing,
                              onUpdateClient,
-                             onCancelEdit,
                              onSuccess,
                              onCancel,
                            }) {
