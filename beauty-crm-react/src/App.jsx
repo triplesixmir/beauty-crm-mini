@@ -57,8 +57,10 @@ function App() {
 
       <ClientsSection
         {...clientsState}
+        appointments={appointmentsState.appointments}
         openClientEditModal={openClientEditModal}
         openClientAddModal={openClientAddModal}
+        now={now}
       />
 
       <AppointmentsSection

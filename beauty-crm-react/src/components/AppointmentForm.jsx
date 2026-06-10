@@ -2,6 +2,7 @@
 
 import {useState} from "react";
 import {SERVICES} from "../constants/services.js";
+import {formatDate} from "../utils/formatters.js";
 
 function getInitialFormData(onEditing) {
   if (onEditing) {
@@ -30,25 +31,29 @@ export function AppointmentForm({
                                   onUpdateAppointment,
                                   onCancel,
                                   onSuccess,
+                                  now,
                                 }) {
 
   const [formData, setFormData] = useState(() => getInitialFormData(onEditing))
   const [errors, setErrors] = useState({});
-  const today = new Date().toISOString().slice(0, 10);
 
   function handleSubmit(event) {
     event.preventDefault();
 
     const newErrors = {};
 
+    // TODO: поправить дату, время. Сделать ошибки, которые касаются ТОЛЬКО даты и только времени, а не всего сразу
+
     if (!formData.date) {
       newErrors.date = 'Укажите дату';
-    } else if (formData.date < today) {
-      newErrors.date = `Дата не может быть раньше, чем ${today}`
+    } else if (new Date(formData.date) < now) {
+      newErrors.date = `Нельзя добавить запись на время раньше, чем ${formatDate(now)}`
     }
 
     if (!formData.time) {
       newErrors.time = 'Укажите время';
+    } else if (new Date(formData.time) < now) {
+      newErrors.time = `Нельзя записать человека на время раньше, чем ${formatDate(now)}`
     }
 
     if (!formData.price) {

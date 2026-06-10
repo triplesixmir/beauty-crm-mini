@@ -35,7 +35,7 @@ export function useClients() {
     setEditingClient(null);
   }
 
-  const filteredClients = clients.filter(client => client.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredClients = clients.filter(client => String(client.name).toLowerCase().includes(searchTerm.toLowerCase()));
 
   return {
     clients,

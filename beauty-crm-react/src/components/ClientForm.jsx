@@ -8,14 +8,16 @@ import {
 function getInitialFormData(onEditing) {
   if (onEditing) {
     return {
-      name: onEditing.name,
+      firstname: onEditing.firstname,
+      surname: onEditing.surname,
       tel: getLocalPhoneDigits(onEditing.tel),
       telegram: onEditing.telegram,
     }
   }
 
   return {
-    name: '',
+    firstname: '',
+    surname: '',
     tel: '',
     telegram: '',
   }
@@ -38,8 +40,12 @@ export function ClientForm({
 
     const newErrors = {};
 
-    if (!formData.name.trim()) {
-      newErrors.name = 'Имя не может быть пустым';
+    if (!formData.firstname.trim()) {
+      newErrors.firstname = 'Имя не может быть пустым';
+    }
+
+    if (!formData.surname.trim()) {
+      newErrors.surname = 'Фамилия не может быть пустой';
     }
 
     if (!formData.tel.trim()) {
@@ -96,14 +102,24 @@ export function ClientForm({
       className="inputs-container"
       onSubmit={handleSubmit}
     >
+
       <input
         type="text"
-        name="name"
+        name="firstname"
         placeholder="Имя клиента"
-        value={formData.name}
+        value={formData.firstname}
         onChange={handleChange}
       />
-      {errors.name && <p className="error">{errors.name}</p>}
+      {errors.firstname && <p className="error">{errors.firstname}</p>}
+
+      <input
+        type="text"
+        name="surname"
+        placeholder="Фамилия клиента"
+        value={formData.surname}
+        onChange={handleChange}
+        />
+      {errors.surname && <p className="error">{errors.surname}</p>}
 
       <input
         type="text"

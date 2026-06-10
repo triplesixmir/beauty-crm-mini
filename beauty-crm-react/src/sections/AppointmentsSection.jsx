@@ -12,12 +12,12 @@ export function AppointmentsSection({
     <>
 
       <button
-        className="clients-section__add-button"
+        className="section__add-btn"
         onClick={openAppointmentAddModal}
       >Добавить запись
       </button>
 
-      <div>
+      <div className="cards-grid">
 
         {
           appointments.length === 0
