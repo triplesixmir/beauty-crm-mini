@@ -24,7 +24,7 @@ export function AppointmentsSection({
             ? <p>Записей нет</p>
             : appointments.map(appointment => {
               const client = clients.find(client => client.id === appointment.clientId)
-              const clientName = client ? client.name : 'Клиент удалён'
+              const clientName = client ? `${client.firstname} ${client.surname}` : 'Клиента не существует'
 
               return (
                 <AppointmentCard

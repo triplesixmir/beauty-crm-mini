@@ -2,7 +2,7 @@
 
 import {useState} from "react";
 import {SERVICES} from "../constants/services.js";
-import {formatDate} from "../utils/formatters.js";
+import {formatDate, formatTime} from "../utils/formatters.js";
 
 function getInitialFormData(onEditing) {
   if (onEditing) {
@@ -31,7 +31,6 @@ export function AppointmentForm({
                                   onUpdateAppointment,
                                   onCancel,
                                   onSuccess,
-                                  now,
                                 }) {
 
   const [formData, setFormData] = useState(() => getInitialFormData(onEditing))
@@ -40,20 +39,21 @@ export function AppointmentForm({
   function handleSubmit(event) {
     event.preventDefault();
 
+    const currentNow = new Date();
+    const nowDate = `${currentNow.getFullYear()}-${String(currentNow.getMonth() + 1).padStart(2, '0')}-${String(currentNow.getDate()).padStart(2, '0')}`;
+    const nowTime = `${String(currentNow.getHours()).padStart(2, '0')}:${String(currentNow.getMinutes()).padStart(2, '0')}`
     const newErrors = {};
-
-    // TODO: поправить дату, время. Сделать ошибки, которые касаются ТОЛЬКО даты и только времени, а не всего сразу
 
     if (!formData.date) {
       newErrors.date = 'Укажите дату';
-    } else if (new Date(formData.date) < now) {
-      newErrors.date = `Нельзя добавить запись на время раньше, чем ${formatDate(now)}`
+    } else if (formData.date < nowDate) {
+      newErrors.date = `Нельзя создать запись на дату раньше, чем ${formatDate(currentNow)}`
     }
 
     if (!formData.time) {
       newErrors.time = 'Укажите время';
-    } else if (new Date(formData.time) < now) {
-      newErrors.time = `Нельзя записать человека на время раньше, чем ${formatDate(now)}`
+    } else if (formData.date === nowDate && formData.time < nowTime) {
+      newErrors.time = `Нельзя создать запись на время раньше, чем ${formatTime(currentNow)}`
     }
 
     if (!formData.price) {
@@ -130,7 +130,7 @@ export function AppointmentForm({
             value={client.id}
             key={client.id}
           >
-            {client.name}
+            {`${client.firstname} ${client.surname}`}
           </option>
         ))}
       </select>

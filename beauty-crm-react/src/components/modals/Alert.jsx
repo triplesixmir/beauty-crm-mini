@@ -1,21 +1,24 @@
 import closeIcon from "../../assets/general-icons/close-icon.svg";
 import {useEffect} from "react";
 
-export function Modal({
+export function Alert({
                         title,
                         description,
                         secondDescription,
+                        submitButtonText,
+                        cancelButtonText,
                         onClose,
-                        children,
+                        onSubmit,
                       }) {
 
   const handleBackdropClick = (event) => {
     if (event.target === event.currentTarget) {
       onClose();
     }
-  };
+  }
 
   useEffect(() => {
+
     function handleKeyDown(event) {
       if (event.key === "Escape") {
         onClose();
@@ -32,12 +35,12 @@ export function Modal({
 
   return (
     <div
-      className="modal__backdrop"
+      className="alert__backdrop"
       onClick={handleBackdropClick}
     >
-      <div className="modal__container">
+      <div className="alert__container">
         <button
-          className="modal__close-button"
+          className="alert__close-button"
           type="button"
           onClick={onClose}
           aria-label="Закрыть"
@@ -53,7 +56,19 @@ export function Modal({
         {description && <p>{description}</p>}
         {secondDescription && <p>{secondDescription}</p>}
 
-        {children}
+        <div className="alert__buttons">
+          <button
+            type="button"
+            onClick={onSubmit}
+          >{submitButtonText}
+          </button>
+          {cancelButtonText && <button
+            type="button"
+            onClick={onClose}
+          >{cancelButtonText}
+          </button>}
+        </div>
+
       </div>
     </div>
   )

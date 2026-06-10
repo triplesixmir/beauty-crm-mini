@@ -47,13 +47,28 @@ export function formatAppointmentDateTime(date, time) {
   }).format(dateTime);
 }
 
-export function formatDate(date) {
+export function formatDateTime(dateTime) {
   return new Intl.DateTimeFormat('ru-RU', {
     day: 'numeric',
     month: 'long',
     hour: '2-digit',
     minute: '2-digit',
+  }).format(dateTime);
+}
+
+export function formatDate(date) {
+  return new Intl.DateTimeFormat('ru-RU', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
   }).format(date);
+}
+
+export function formatTime(time) {
+  return new Intl.DateTimeFormat('ru-RU', {
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(time);
 }
 
 export function formatTimeUntilAppointment(diffMs) {

@@ -20,11 +20,11 @@ export function ClientCard({
 
   return (
     <div className="card">
-      <p>Имя: {`${firstname} ${surname}`}</p>
+      <p>{`${firstname} ${surname}`}</p>
       <p>Телефон: <a href={telLink}>{formatStoredPhone(tel)}</a></p>
       <p>Telegram: <a href={telegramLink}>@{telegram}</a></p>
-      <p>Всего посещений за {currentYear}: {formatAppointmentsCount(stats.appointmentsThisYearCount)}</p>
-      <p>Всего потрачено за {currentYear}: {stats.totalSpentThisYear}</p>
+      <p>Посещений за {currentYear}: {formatAppointmentsCount(stats.appointmentsThisYearCount)}</p>
+      <p>Потрачено за {currentYear}: {stats.totalSpentThisYear}</p>
       {stats.timeToAppointmentMs &&
         <p>До ближайшего посещения: {formatTimeUntilAppointment(stats.timeToAppointmentMs)}</p>}
       <div className="card__actions">
