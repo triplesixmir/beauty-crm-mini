@@ -8,6 +8,8 @@ export function ClientsSection({
                                  setSearchTerm,
                                  openClientEditModal,
                                  openClientAddModal,
+                                 openAlert,
+                                 closeAlert,
                                  now,
                                }) {
 
@@ -58,6 +60,21 @@ export function ClientsSection({
     }
   }
 
+  function handleDeleteClick(client) {
+    openAlert({
+      title: `Удаление клиента ${client.firstname} ${client.surname}`,
+      description: "Вы уверены, что хотите удалить клиента?",
+      secondDescription: "Это действие необратимо и все данные о клиенте будут удалены.",
+      submitButtonText: "Да, удалить",
+      cancelButtonText: "Нет, не удалять",
+      onSubmit: () => {
+        handleDeleteClient(client.id);
+        closeAlert();
+      },
+      onClose: closeAlert,
+    })
+  }
+
   return (
     <>
 
@@ -86,12 +103,12 @@ export function ClientsSection({
             : filteredClients.map(client => (
 
               <ClientCard
-                onDelete={() => handleDeleteClient(client.id)}
                 onEdit={() => openClientEditModal(client)}
                 key={client.id}
                 {...client}
                 stats={getClientStats(client)}
                 currentYear={currentYear}
+                handleDeleteClick={() => handleDeleteClick(client)}
               />
             ))
         }

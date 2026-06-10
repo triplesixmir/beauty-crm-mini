@@ -8,8 +8,8 @@ export function AppointmentCard({
                                   price,
                                   service,
                                   id,
-                                  onDelete,
-                                  onEdit
+                                  onEdit,
+                                  handleDeleteClick,
                                 }) {
 
   return (
@@ -23,7 +23,7 @@ export function AppointmentCard({
       <div className="card__actions">
         <button
           type={"button"}
-          onClick={onDelete}
+          onClick={handleDeleteClick}
         >Удалить
         </button>
         <button

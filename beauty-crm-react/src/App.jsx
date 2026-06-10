@@ -7,12 +7,15 @@ import {Modal} from "./components/modals/Modal.jsx";
 import {ClientForm} from "./components/ClientForm.jsx";
 import {useModals} from "./hooks/useModals.js";
 import {AppointmentForm} from "./components/AppointmentForm.jsx";
+import {useAlerts} from "./hooks/useAlerts.js";
+import {Alert} from "./components/modals/Alert.jsx";
 
 function App() {
 
   const clientsState = useClients();
   const appointmentsState = useAppointments();
   const modalsState = useModals();
+  const alertsState = useAlerts();
   const now = new Date();
 
   function closeClientModal() {
@@ -60,6 +63,8 @@ function App() {
         appointments={appointmentsState.appointments}
         openClientEditModal={openClientEditModal}
         openClientAddModal={openClientAddModal}
+        openAlert={alertsState.openAlert}
+        closeAlert={alertsState.closeAlert}
         now={now}
       />
 
@@ -68,6 +73,8 @@ function App() {
         openAppointmentEditModal={openAppointmentEditModal}
         openAppointmentAddModal={openAppointmentAddModal}
         clients={clientsState.clients}
+        openAlert={alertsState.openAlert}
+        closeAlert={alertsState.closeAlert}
       />
 
       {modalsState.isClientModalOpen &&
@@ -104,6 +111,12 @@ function App() {
             />
 
           </Modal>)}
+
+      {alertsState.alertConfig &&
+        <Alert
+          {...alertsState.alertConfig}
+        />
+      }
 
     </>
   )

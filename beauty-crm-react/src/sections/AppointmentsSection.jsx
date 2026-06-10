@@ -1,4 +1,7 @@
 import {AppointmentCard} from "../components/AppointmentCard.jsx";
+import {
+  formatAppointmentDateTime,
+} from "../utils/formatters.js";
 
 export function AppointmentsSection({
                                       clients,
@@ -6,7 +9,24 @@ export function AppointmentsSection({
                                       handleDeleteAppointment,
                                       openAppointmentAddModal,
                                       openAppointmentEditModal,
+                                      openAlert,
+                                      closeAlert,
                                     }) {
+
+  function handleDeleteClick(appointment) {
+    openAlert({
+      title: `Удаление записи ${formatAppointmentDateTime(appointment.date, appointment.time)}`,
+      description: "Вы уверены, что хотите удалить запись?",
+      secondDescription: "Это действие необратимо и все данные о записи будут удалены.",
+      submitButtonText: "Да, удалить",
+      cancelButtonText: "Нет, не удалять",
+      onSubmit: () => {
+        handleDeleteAppointment(appointment.id);
+        closeAlert();
+      },
+      onClose: closeAlert,
+    })
+  }
 
   return (
     <>
@@ -28,7 +48,7 @@ export function AppointmentsSection({
 
               return (
                 <AppointmentCard
-                  onDelete={() => handleDeleteAppointment(appointment.id)}
+                  handleDeleteClick={() => handleDeleteClick(appointment)}
                   onEdit={() => openAppointmentEditModal(appointment)}
                   key={appointment.id}
                   clientName={clientName}

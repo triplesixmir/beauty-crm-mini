@@ -295,6 +295,91 @@ button[type="button"]:hover {
   opacity: 0.72;
 }
 
+/* === ALERT === */
+
+.alert__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(23, 27, 24, 0.52);
+  backdrop-filter: blur(8px);
+}
+
+.alert__container {
+  position: relative;
+  width: min(480px, 100%);
+  display: grid;
+  gap: 12px;
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 26px 80px rgba(24, 21, 18, 0.28);
+}
+
+.alert__container h2 {
+  padding-right: 52px;
+  font-size: 1.15rem;
+}
+
+.alert__container p {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.alert__container p + p {
+  color: var(--danger);
+  font-size: 0.88rem;
+  font-weight: 650;
+}
+
+.alert__close-button {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 40px;
+  min-height: 40px;
+  padding: 9px;
+  display: inline-grid;
+  place-items: center;
+  border-color: var(--border);
+  background: var(--surface-muted);
+}
+
+.alert__close-button:hover {
+  background: var(--primary-soft);
+}
+
+.alert__close-button img {
+  width: 18px;
+  height: 18px;
+  opacity: 0.72;
+}
+
+.alert__buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.alert__buttons button {
+  flex: 1;
+}
+
+.alert__buttons button:first-child {
+  background: var(--danger);
+  border-color: transparent;
+  color: #ffffff;
+}
+
+.alert__buttons button:first-child:hover {
+  background: #9e3e3e;
+  box-shadow: 0 10px 20px rgba(184, 74, 74, 0.2);
+}
+
 /* === RESPONSIVE === */
 
 @media (max-width: 980px) {

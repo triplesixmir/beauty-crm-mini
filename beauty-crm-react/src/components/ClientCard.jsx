@@ -9,10 +9,10 @@ export function ClientCard({
                              surname,
                              tel,
                              telegram,
-                             onDelete,
                              onEdit,
                              stats,
                              currentYear,
+                             handleDeleteClick,
                            }) {
 
   const telegramLink = `https://t.me/${telegram}`;
@@ -30,7 +30,7 @@ export function ClientCard({
       <div className="card__actions">
         <button
           type={"button"}
-          onClick={onDelete}
+          onClick={handleDeleteClick}
         >Удалить
         </button>
         <button

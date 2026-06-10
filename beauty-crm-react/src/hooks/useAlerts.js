@@ -3,16 +3,16 @@ import {useState} from "react";
 
 export function useAlerts() {
 
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [alertConfig, setAlertConfig] = useState(null);
 
-  function openAlert() {
-    setIsAlertOpen(true);
+  function openAlert(config) {
+    setAlertConfig(prev => ({...prev, isOpen: true, ...config}));
   }
 
   function closeAlert() {
-    setIsAlertOpen(false);
+    setAlertConfig(null);
   }
 
-  return {isAlertOpen, openAlert, closeAlert,};
+  return {alertConfig, openAlert, closeAlert,};
 
 }
