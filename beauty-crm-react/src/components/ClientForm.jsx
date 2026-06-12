@@ -29,6 +29,7 @@ export function ClientForm({
                              onUpdateClient,
                              onSuccess,
                              onCancel,
+                             showToast,
                            }) {
 
   const [errors, setErrors] = useState({});
@@ -63,11 +64,13 @@ export function ClientForm({
         ...formData,
         tel: toStoredPhone(formData.tel),
       });
+      showToast("success", "Клиент успешно обновлен", 3000);
     } else {
       onAddClient({
         ...formData,
         tel: toStoredPhone(formData.tel),
       });
+      showToast("success", "Клиент успешно добавлен", 3000);
     }
 
     setErrors({});
@@ -118,7 +121,7 @@ export function ClientForm({
         placeholder="Фамилия клиента"
         value={formData.surname}
         onChange={handleChange}
-        />
+      />
       {errors.surname && <p className="error">{errors.surname}</p>}
 
       <input

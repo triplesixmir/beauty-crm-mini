@@ -10,6 +10,7 @@ export function ClientsSection({
                                  openClientAddModal,
                                  openAlert,
                                  closeAlert,
+                                 showToast,
                                  now,
                                }) {
 
@@ -37,7 +38,8 @@ export function ClientsSection({
 
     const clientAppointmentsCount = clientAppointments.length;
     const clientEndedAppointmentsThisYearCount = clientAppointmentsThisYear.filter((appointment) => new Date(`${appointment.date}T${appointment.time}`) < now).length;
-    const clientTotalSpentThisYear = formatMoney(clientAppointmentsThisYear.reduce((total, appointment) => total + Number(appointment.price), 0));
+    const clientEndedAppointmentsThisYear = clientAppointmentsThisYear.filter((appointment) => new Date(`${appointment.date}T${appointment.time}`) < now);
+    const clientTotalSpentThisYear = formatMoney(clientEndedAppointmentsThisYear.reduce((total, appointment) => total + Number(appointment.price), 0));
 
     const clientNearestAppointment = clientFutureAppointmentsInThirtyDays.sort((a, b) => {
       const firstDate = new Date(`${a.date}T${a.time}`);
@@ -70,6 +72,7 @@ export function ClientsSection({
       onSubmit: () => {
         handleDeleteClient(client.id);
         closeAlert();
+        showToast("info", "Клиент успешно удален", 3000);
       },
       onClose: closeAlert,
     })

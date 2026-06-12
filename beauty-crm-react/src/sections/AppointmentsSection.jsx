@@ -11,6 +11,7 @@ export function AppointmentsSection({
                                       openAppointmentEditModal,
                                       openAlert,
                                       closeAlert,
+                                      showToast,
                                     }) {
 
   function handleDeleteClick(appointment) {
@@ -23,6 +24,7 @@ export function AppointmentsSection({
       onSubmit: () => {
         handleDeleteAppointment(appointment.id);
         closeAlert();
+        showToast("info", "Запись успешно удалена", 3000)
       },
       onClose: closeAlert,
     })

@@ -31,6 +31,7 @@ export function AppointmentForm({
                                   onUpdateAppointment,
                                   onCancel,
                                   onSuccess,
+                                  showToast,
                                 }) {
 
   const [formData, setFormData] = useState(() => getInitialFormData(onEditing))
@@ -82,12 +83,14 @@ export function AppointmentForm({
         clientId: Number(formData.clientId)
       };
       onUpdateAppointment(updatedAppointment);
+      showToast("success", "Запись успешно обновлена", 3000)
     } else {
       const appointmentData = {
         ...formData,
         clientId: Number(formData.clientId)
       };
       onAddAppointment(appointmentData);
+      showToast("success", "Запись успешно создана", 3000)
     }
 
     setFormData(() => getInitialFormData(onEditing));

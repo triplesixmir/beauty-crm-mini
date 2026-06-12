@@ -25,9 +25,17 @@ export function DashboardSection({
 
       return firstDate - secondDate;
     })[0];
+
+  const endedAppointments = appointments.filter((appointment) => {
+
+    const appointmentDate = new Date(`${appointment.date}T${appointment.time}`);
+    return appointmentDate < now;
+
+  })
+
   const totalClients = clients.length;
   const totalAppointments = appointments.length;
-  const totalMoney = appointments.reduce((sum, appointment) => {
+  const totalMoney = endedAppointments.reduce((sum, appointment) => {
     return sum + Number(appointment.price);
   }, 0)
 
@@ -56,7 +64,7 @@ export function DashboardSection({
 
       <DashboardCard
         icon={totalMoneyIcon}
-        heading="Общая сумма"
+        heading="Общая прибыль"
         value={formatMoney(totalMoney)}
       />
 

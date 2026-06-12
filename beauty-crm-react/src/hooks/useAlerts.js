@@ -1,12 +1,11 @@
 import {useState} from "react";
 
-
 export function useAlerts() {
 
   const [alertConfig, setAlertConfig] = useState(null);
 
   function openAlert(config) {
-    setAlertConfig(prev => ({...prev, isOpen: true, ...config}));
+    setAlertConfig(config);
   }
 
   function closeAlert() {

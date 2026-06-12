@@ -9,6 +9,8 @@ import {useModals} from "./hooks/useModals.js";
 import {AppointmentForm} from "./components/AppointmentForm.jsx";
 import {useAlerts} from "./hooks/useAlerts.js";
 import {Alert} from "./components/modals/Alert.jsx";
+import {useToasts} from "./hooks/useToasts.js";
+import {ToastContainer} from "./components/toasts/ToastContainer.jsx";
 
 function App() {
 
@@ -16,6 +18,7 @@ function App() {
   const appointmentsState = useAppointments();
   const modalsState = useModals();
   const alertsState = useAlerts();
+  const toastsState = useToasts();
   const now = new Date();
 
   function closeClientModal() {
@@ -65,6 +68,7 @@ function App() {
         openClientAddModal={openClientAddModal}
         openAlert={alertsState.openAlert}
         closeAlert={alertsState.closeAlert}
+        showToast={toastsState.showToast}
         now={now}
       />
 
@@ -75,6 +79,7 @@ function App() {
         clients={clientsState.clients}
         openAlert={alertsState.openAlert}
         closeAlert={alertsState.closeAlert}
+        showToast={toastsState.showToast}
       />
 
       {modalsState.isClientModalOpen &&
@@ -89,6 +94,7 @@ function App() {
             onUpdateClient={clientsState.handleUpdateClient}
             onCancel={closeClientModal}
             onSuccess={closeClientModal}
+            showToast={toastsState.showToast}
           />
         </Modal>)}
 
@@ -107,6 +113,7 @@ function App() {
               onUpdateAppointment={appointmentsState.handleUpdateAppointment}
               onCancel={closeAppointmentModal}
               onSuccess={closeAppointmentModal}
+              showToast={toastsState.showToast}
               now={now}
             />
 
@@ -118,9 +125,15 @@ function App() {
         />
       }
 
+      {toastsState.toasts.length > 0 &&
+        <ToastContainer
+          toastsArray={toastsState.toasts}
+          removeToast={toastsState.removeToast}
+        />
+      }
+
     </>
   )
 }
 
 export default App
-
