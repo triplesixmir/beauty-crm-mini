@@ -113,12 +113,10 @@ select:focus {
 
 select {
   appearance: none;
-  background-image:
-    linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
-    linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
-  background-position:
-    calc(100% - 18px) 50%,
-    calc(100% - 12px) 50%;
+  background-image: linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+  linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 50%,
+  calc(100% - 12px) 50%;
   background-size: 6px 6px, 6px 6px;
   background-repeat: no-repeat;
   padding-right: 34px;
@@ -382,12 +380,43 @@ button[type="button"]:hover {
 
 /* === TOASTS === */
 
-.toast {
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(calc(100% + 24px));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(calc(100% + 24px));
+  }
+}
+
+
+
+.toast-container {
   position: fixed;
   bottom: 24px;
   right: 24px;
   z-index: 100;
   width: min(360px, calc(100vw - 32px));
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 10px;
+}
+
+.toast {
+  position: relative;
   display: grid;
   gap: 4px;
   padding: 14px 44px 14px 16px;
@@ -396,6 +425,11 @@ button[type="button"]:hover {
   border-radius: var(--radius);
   background: var(--surface);
   box-shadow: var(--shadow);
+  animation: toast-in 180ms ease-out;
+}
+
+.toast--leaving-true {
+  animation: toast-out 250ms ease-in forwards;
 }
 
 .toast h4 {
@@ -431,10 +465,25 @@ button[type="button"]:hover {
   opacity: 0.56;
 }
 
-.toast-success { border-left-color: var(--primary); }
-.toast-error   { border-left-color: var(--danger); }
-.toast-warning { border-left-color: var(--warning); }
-.toast-info    { border-left-color: #4a88b8; }
+.toast-success {
+  border-left-color: var(--primary);
+}
+
+.toast-error {
+  border-left-color: var(--danger);
+}
+
+.toast-warning {
+  border-left-color: var(--warning);
+}
+
+.toast-info {
+  border-left-color: #4a88b8;
+}
+
+.toast--leaving-true {
+  animation: toast-out 220ms ease-in forwards;
+}
 
 /* === RESPONSIVE === */
 
