@@ -4,13 +4,18 @@ import {useClients} from "./hooks/useClients.js";
 import {useAppointments} from "./hooks/useAppointments.js";
 import {DashboardSection} from "./sections/DashboardSection.jsx";
 import {Modal} from "./components/modals/Modal.jsx";
-import {ClientForm} from "./components/ClientForm.jsx";
+import {ClientForm} from "./components/clientscomps/ClientForm.jsx";
 import {useModals} from "./hooks/useModals.js";
-import {AppointmentForm} from "./components/AppointmentForm.jsx";
+import {
+  AppointmentForm
+} from "./components/appointmentscomps/AppointmentForm.jsx";
 import {useAlerts} from "./hooks/useAlerts.js";
 import {Alert} from "./components/modals/Alert.jsx";
 import {useToasts} from "./hooks/useToasts.js";
 import {ToastContainer} from "./components/toasts/ToastContainer.jsx";
+import {useSidebars} from "./hooks/useSidebars.js";
+import {Sidebar} from "./components/sidebars/Sidebar.jsx";
+import {ClientDetails} from "./components/clientscomps/ClientDetails.jsx";
 
 function App() {
 
@@ -19,6 +24,7 @@ function App() {
   const modalsState = useModals();
   const alertsState = useAlerts();
   const toastsState = useToasts();
+  const sidebarsState = useSidebars();
   const now = new Date();
 
   function closeClientModal() {
@@ -51,6 +57,14 @@ function App() {
     modalsState.openAppointmentModal();
   }
 
+  const activeSidebarTab = sidebarsState.sidebarTabs.find(tab => tab.key === sidebarsState.activeSidebarTabKey);
+
+  let activeClient;
+
+  if (activeSidebarTab?.type === 'client') {
+    activeClient = clientsState.clients.find(client => client.id === activeSidebarTab.id);
+  }
+
   return (
 
     <>
@@ -63,6 +77,7 @@ function App() {
 
       <ClientsSection
         {...clientsState}
+        openSidebarTab={sidebarsState.openSidebarTab}
         appointments={appointmentsState.appointments}
         openClientEditModal={openClientEditModal}
         openClientAddModal={openClientAddModal}
@@ -130,6 +145,22 @@ function App() {
           toastsArray={toastsState.toasts}
           removeToast={toastsState.removeToast}
         />
+      }
+
+      {sidebarsState.sidebarTabs.length > 0 &&
+        <Sidebar
+          closeSidebarTab={sidebarsState.closeSidebarTab}
+          closeSidebarCompletely={sidebarsState.closeSidebarCompletely}
+          openSidebarTab={sidebarsState.openSidebarTab}
+          activeTab={sidebarsState.activeSidebarTabKey}
+          setActiveSidebarTab={sidebarsState.setActiveSidebarTab}
+          sidebarTabs={sidebarsState.sidebarTabs}
+        >
+          <ClientDetails
+            client={activeClient}
+            appointments={appointmentsState.appointments}
+          />
+        </Sidebar>
       }
 
     </>

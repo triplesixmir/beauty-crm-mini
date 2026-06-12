@@ -26,7 +26,6 @@ export function Toast({ id, type, message, duration, removeToast }) {
 
     return () => {
       clearTimeout(timerToRemove);
-      setIsLeaving(false);
     };
   }, [id, isLeaving, removeToast]);
 

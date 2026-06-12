@@ -1,4 +1,4 @@
-import {AppointmentCard} from "../components/AppointmentCard.jsx";
+import {AppointmentCard} from "../components/appointmentscomps/AppointmentCard.jsx";
 import {
   formatAppointmentDateTime,
 } from "../utils/formatters.js";

@@ -3,7 +3,7 @@ import {
   formatPhoneInput,
   getLocalPhoneDigits,
   toStoredPhone
-} from "../utils/phone.js";
+} from "../../utils/phone.js";
 
 function getInitialFormData(onEditing) {
   if (onEditing) {
@@ -12,6 +12,8 @@ function getInitialFormData(onEditing) {
       surname: onEditing.surname,
       tel: getLocalPhoneDigits(onEditing.tel),
       telegram: onEditing.telegram,
+      email: onEditing.email,
+      notes: onEditing.notes,
     }
   }
 
@@ -20,6 +22,8 @@ function getInitialFormData(onEditing) {
     surname: '',
     tel: '',
     telegram: '',
+    email: '',
+    notes: '',
   }
 }
 
@@ -138,6 +142,22 @@ export function ClientForm({
         name="telegram"
         placeholder="Telegram"
         value={formData.telegram}
+        onChange={handleChange}
+      />
+
+      <input
+        type="email"
+        name="email"
+        placeholder="Email"
+        value={formData.email}
+        onChange={handleChange}
+      />
+
+      <input
+        type="text"
+        name="notes"
+        placeholder="Заметки по клиенту"
+        value={formData.notes}
         onChange={handleChange}
       />
 

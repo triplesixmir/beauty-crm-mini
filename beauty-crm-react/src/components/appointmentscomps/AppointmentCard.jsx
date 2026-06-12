@@ -1,5 +1,8 @@
-import {formatAppointmentDateTime, formatMoney} from "../utils/formatters.js";
-import {SERVICES_LABELS} from "../constants/services.js";
+import {
+  formatAppointmentDateTime,
+  formatMoney
+} from "../../utils/formatters.js";
+import {SERVICES_LABELS} from "../../constants/services.js";
 
 export function AppointmentCard({
                                   clientName,
@@ -7,6 +10,7 @@ export function AppointmentCard({
                                   time,
                                   price,
                                   service,
+                                  didntCome,
                                   id,
                                   onEdit,
                                   handleDeleteClick,
@@ -19,6 +23,7 @@ export function AppointmentCard({
       <p>Услуга: {SERVICES_LABELS[service] || service}</p>
       <p>Дата и время: {formatAppointmentDateTime(date, time)}</p>
       <p>Стоимость: {formatMoney(price)}</p>
+      <p>Клиент пришел? {new Date(`${date}T${time}`) < new Date() ? Boolean(didntCome) ? 'Нет' : 'Да' : '—'}</p>
 
       <div className="card__actions">
         <button

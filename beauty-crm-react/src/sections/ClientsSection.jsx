@@ -1,10 +1,11 @@
-import {ClientCard} from "../components/ClientCard.jsx";
+import {ClientCard} from "../components/clientscomps/ClientCard.jsx";
 import {formatMoney} from "../utils/formatters.js";
 
 export function ClientsSection({
                                  filteredClients,
                                  appointments,
                                  handleDeleteClient,
+                                 openSidebarTab,
                                  setSearchTerm,
                                  openClientEditModal,
                                  openClientAddModal,
@@ -62,6 +63,15 @@ export function ClientsSection({
     }
   }
 
+  function openClientDetailsSidebar(client) {
+    openSidebarTab({
+      type: "client",
+      id: client.id,
+      title: `${client.firstname} ${client.surname}`,
+      key: `client:${client.id}`,
+    });
+  }
+
   function handleDeleteClick(client) {
     openAlert({
       title: `Удаление клиента ${client.firstname} ${client.surname}`,
@@ -112,6 +122,7 @@ export function ClientsSection({
                 stats={getClientStats(client)}
                 currentYear={currentYear}
                 handleDeleteClick={() => handleDeleteClick(client)}
+                onOpenDetails={() => openClientDetailsSidebar(client)}
               />
             ))
         }

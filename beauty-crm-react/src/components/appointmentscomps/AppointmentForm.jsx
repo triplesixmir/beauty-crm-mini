@@ -1,8 +1,8 @@
 // noinspection D
 
 import {useState} from "react";
-import {SERVICES} from "../constants/services.js";
-import {formatDate, formatTime} from "../utils/formatters.js";
+import {SERVICES} from "../../constants/services.js";
+import {formatDate, formatTime} from "../../utils/formatters.js";
 
 function getInitialFormData(onEditing) {
   if (onEditing) {
@@ -12,6 +12,7 @@ function getInitialFormData(onEditing) {
       price: onEditing.price,
       service: onEditing.service,
       clientId: onEditing.clientId ? String(onEditing.clientId) : 'choose-client',
+      didntCome: Boolean(onEditing.didntCome),
     }
   }
 
@@ -21,6 +22,7 @@ function getInitialFormData(onEditing) {
     price: '',
     service: 'choose-service',
     clientId: 'choose-client',
+    didntCome: false,
   }
 }
 
@@ -105,10 +107,10 @@ export function AppointmentForm({
   }
 
   function handleChange(event) {
-    const {name, value} = event.target;
+    const {name, value, type, checked} = event.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     });
   }
 
@@ -186,6 +188,17 @@ export function AppointmentForm({
         onChange={handleChange}
       />
       {errors.price && <p className="error">{errors.price}</p>}
+
+      <label>
+        Клиент не пришел(ла)?
+        <input
+          type="checkbox"
+          name="didntCome"
+          id=""
+          checked={formData.didntCome}
+          onChange={handleChange}
+        />
+      </label>
 
       <button type="submit">
         {onEditing ? 'Сохранить' : 'Добавить'}

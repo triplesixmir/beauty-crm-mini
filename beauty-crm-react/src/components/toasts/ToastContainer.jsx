@@ -1,4 +1,4 @@
-  import {Toast} from "./Toast.jsx";
+import {Toast} from "./Toast.jsx";
 
 export function ToastContainer({
                                  toastsArray,
