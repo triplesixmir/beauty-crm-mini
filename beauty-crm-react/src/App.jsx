@@ -157,8 +157,11 @@ function App() {
           sidebarTabs={sidebarsState.sidebarTabs}
         >
           <ClientDetails
+            key={activeSidebarTab?.key ?? 'no-client'}
             client={activeClient}
             appointments={appointmentsState.appointments}
+            onUpdateProfilePic={clientsState.handleUpdateClientProfilePic}
+            handleUpdateClient={clientsState.handleUpdateClient}
           />
         </Sidebar>
       }

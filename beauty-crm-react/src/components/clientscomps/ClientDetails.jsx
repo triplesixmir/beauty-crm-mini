@@ -1,17 +1,33 @@
+// noinspection D
+
 import {SERVICES, SERVICES_LABELS} from "../../constants/services.js";
 import {formatDate, formatMoney, formatTime} from "../../utils/formatters.js";
+import {useState} from "react";
 
 export function ClientDetails({
                                 client,
                                 appointments,
+                                handleUpdateClient,
                               }) {
 
   // Это должно быть на самом верху
   if (!client) return null;
 
+  const now = new Date();
+
+  const AVATAR_COLOR_STYLES = [
+    'avatar--sage',
+    'avatar--rose',
+    'avatar--sky',
+    'avatar--lavender',
+    'avatar--sand',
+  ];
+  const avatarColorStyle = AVATAR_COLOR_STYLES[client.id % AVATAR_COLOR_STYLES.length];
+  const clientInitials = `${client.firstname?.[0] ?? ''}${client.surname?.[0] ?? ''}`.toUpperCase();
+
   const clientAppointments = appointments.filter(appointment => appointment.clientId === client.id);
 
-  const sortedClientAppointments = clientAppointments.sort((a, b) => {
+  const sortedClientAppointments = [...clientAppointments].sort((a, b) => {
     const firstDate = new Date(`${a.date}T${a.time}`);
     const secondDate = new Date(`${b.date}T${b.time}`);
 
@@ -27,48 +43,68 @@ export function ClientDetails({
     count: clientAppointments.filter(appointment => appointment.service === service.value).length,
   }));
 
+  const [isEditingNotes, setIsEditingNotes] = useState(false);
+  const [draftNotes, setDraftNotes] = useState(client.notes ?? '');
+
+  function handleChangeNotesMode() {
+    setIsEditingNotes(!isEditingNotes);
+  }
+
+  function handleEditNotes(event) {
+    setDraftNotes(event.target.value);
+  }
+
+  function handleSubmitChangingNotes() {
+    setIsEditingNotes(false);
+    handleUpdateClient({...client, notes: draftNotes});
+  }
+
+  // noinspection D
   return (
     <>
 
-      <img
-        src={null}
-        alt=""
-      />
+      {/*== АВАТАР КЛИЕНТА ==*/}
+      <div className={`client-details__avatar ${avatarColorStyle}`}>
+        <span className="client-details__avatar-initials">{clientInitials}</span>
+      </div>
 
+      {/*== ОСНОВНАЯ ИНФОРМАЦИЯ О КЛИЕНТЕ ==*/}
       <h2 className="client-details__name">{`${client.firstname} ${client.surname}`}</h2>
-      <p>Telegram: @{client.telegram}</p>
-      <p>Телефон: +{client.tel}</p>
-      <p>Почта: {client.email}</p>
+      <p>Telegram: @{client.telegram ? client.telegram : 'Не указан'}</p>
+      <p>Телефон: +{client.tel ? client.tel : 'Не указан'}</p>
+      <p>Почта: {client.email ? client.email : 'Не указана'}</p>
 
+      {/*== ТАБЛИЦА ЗАПИСЕЙ КЛИЕНТА ==*/}
       <h2>Записи клиента</h2>
       {sortedClientAppointments.length > 0
         ? <table>
-        <thead>
-          <tr>
-            <th scope="col">ID записи</th>
-            <th scope="col">Дата</th>
-            <th scope="col">Время</th>
-            <th scope="col">Услуга</th>
-            <th scope="col">Стоимость</th>
-            <th scope="col">Не пришел(ла)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sortedClientAppointments.map(appointment => (
-            <tr key={appointment.id}>
-              <td>{appointment.id}</td>
-              <td>{formatDate(getAppointmentDateTime(appointment.date, appointment.time))}</td>
-              <td>{formatTime(getAppointmentDateTime(appointment.date, appointment.time))}</td>
-              <td>{SERVICES_LABELS[appointment.service]}</td>
-              <td>{formatMoney(appointment.price)}</td>
-              <td>{appointment.didntCome ? '■' : '□'}</td>
+          <thead>
+            <tr>
+              <th scope="col">ID записи</th>
+              <th scope="col">Дата</th>
+              <th scope="col">Время</th>
+              <th scope="col">Услуга</th>
+              <th scope="col">Стоимость</th>
+              <th scope="col">Не пришел(ла)</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {sortedClientAppointments.map(appointment => (
+              <tr key={appointment.id}>
+                <th scope="row">{appointment.id}</th>
+                <td>{formatDate(getAppointmentDateTime(appointment.date, appointment.time))}</td>
+                <td>{formatTime(getAppointmentDateTime(appointment.date, appointment.time))}</td>
+                <td>{SERVICES_LABELS[appointment.service]}</td>
+                <td>{formatMoney(appointment.price)}</td>
+                <td>{getAppointmentDateTime(appointment.date, appointment.time) < now ? appointment.didntCome ? '■' : '□' : 'Запись не завершена'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
         : <p>Записей пока нет</p>
       }
 
+      {/*== СТАТИСТИКА КЛИЕНТА ==*/}
       <h2>Статистика</h2>
       {/*TODO: На будущее: здесь сделать процентами, а то сейчас, если у человека 100 записей на укладку, то будет 100 этих прямоугольников, это многовато*/}
       {serviceStats.map((service) => (
@@ -77,7 +113,22 @@ export function ClientDetails({
 
       {/*TODO: Сделать редактирование через editingClientDetailsField или типа того*/}
       <h2>Заметки</h2>
-      <p>{client.notes}</p>
+      {isEditingNotes
+        ? <textarea
+          value={draftNotes}
+          onChange={handleEditNotes}
+        />
+        : <p>{client.notes || 'Заметок пока нет. Добавьте первую!'}</p>
+      }
+      {isEditingNotes
+        ? <button
+          type="button"
+          onClick={handleSubmitChangingNotes}
+        >Сохранить</button>
+        : <button
+          type="button"
+          onClick={handleChangeNotesMode}
+        >Редактировать</button>}
 
     </>
   )

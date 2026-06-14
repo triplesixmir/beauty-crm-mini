@@ -638,6 +638,43 @@ body:has(.sidebar) {
 
 /* === CLIENT DETAILS (контент в сайдбаре) === */
 
+.client-details__avatar {
+  width: 84px;
+  height: 84px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(23, 27, 24, 0.08);
+  border-radius: 50%;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42), var(--shadow-soft);
+}
+
+.client-details__avatar-initials {
+  color: var(--heading);
+  font-size: 1.55rem;
+  font-weight: 780;
+  line-height: 1;
+}
+
+.avatar--sage {
+  background: #dcebe7;
+}
+
+.avatar--rose {
+  background: #f3d8d8;
+}
+
+.avatar--sky {
+  background: #dce9f4;
+}
+
+.avatar--lavender {
+  background: #e6def2;
+}
+
+.avatar--sand {
+  background: #efe3cc;
+}
+
 .client-details__name {
   margin-bottom: 2px;
 }
