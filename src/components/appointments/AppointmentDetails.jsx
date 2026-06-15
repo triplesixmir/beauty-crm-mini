@@ -13,34 +13,35 @@ export function AppointmentDetails({
                                      handleUpdateAppointment,
                                    }) {
 
+  // Стейты должны быть выше, чем early return
+  const [isEditingNotes, setIsEditingNotes] = useState(false);
+  const [draftNotes, setDraftNotes] = useState(appointment?.notes ?? '');
+
+  // Early return, если нет записи
   if (!appointment) return null;
 
   const now = new Date();
 
+  // Получение клиента
   const client = (clientsArray.find(client => client.id === appointment.clientId) ? clientsArray.find(client => client.id === appointment.clientId) : null)
-  const clientInitials = client && `${client?.firstname?.[0]}${client?.surname?.[0]}`;
 
+  // Работа с временем записи
   const timeToAppointmentMs = new Date(`${appointment.date}T${appointment.time}`).getTime() - now.getTime();
   const isAppointmentEnded = timeToAppointmentMs < 0;
 
   // Работа с заметками по записи
-  const [isEditingNotes, setIsEditingNotes] = useState(false);
-  const [draftNotes, setDraftNotes] = useState(appointment.notes ?? '');
-
   function handleChangeNotesMode() {
     setIsEditingNotes(!isEditingNotes);
   }
-
   function handleEditNotes(event) {
     setDraftNotes(event.target.value);
   }
-
   function handleSubmitChangingNotes() {
     setIsEditingNotes(false);
     handleUpdateAppointment({...appointment, notes: draftNotes});
   }
 
-  // Цвета аватаров в клиентских карточках
+  // Аватар клиентской карточки
   const AVATAR_COLOR_STYLES = [
     'avatar--sage',
     'avatar--rose',
@@ -49,6 +50,7 @@ export function AppointmentDetails({
     'avatar--sand',
   ];
   const avatarColorStyle = client? AVATAR_COLOR_STYLES[client.id % AVATAR_COLOR_STYLES.length] : null;
+  const clientInitials = client && `${client?.firstname?.[0]}${client?.surname?.[0]}`;
 
   return (
     <>

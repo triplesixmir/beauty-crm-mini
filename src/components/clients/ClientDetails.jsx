@@ -11,11 +11,16 @@ export function ClientDetails({
                                 handleUpdateClient,
                               }) {
 
-  // Это должно быть на самом верху
+  // Стейты должны быть выше, чем early return
+  const [isEditingNotes, setIsEditingNotes] = useState(false);
+  const [draftNotes, setDraftNotes] = useState(client?.notes ?? '');
+
+  // Early return, если нет клиента
   if (!client) return null;
 
   const now = new Date();
 
+  // Аватар клиента
   const AVATAR_COLOR_STYLES = [
     'avatar--sage',
     'avatar--rose',
@@ -26,41 +31,36 @@ export function ClientDetails({
   const avatarColorStyle = AVATAR_COLOR_STYLES[client.id % AVATAR_COLOR_STYLES.length];
   const clientInitials = `${client.firstname?.[0] ?? ''}${client.surname?.[0] ?? ''}`.toUpperCase();
 
+  // Работа с записями клиента
   const clientAppointments = appointments.filter(appointment => appointment.clientId === client.id);
-
   const sortedClientAppointments = [...clientAppointments].sort((a, b) => {
     const firstDate = new Date(`${a.date}T${a.time}`);
     const secondDate = new Date(`${b.date}T${b.time}`);
 
     return firstDate - secondDate;
   })
-
   function getAppointmentDateTime(date, time) {
     return new Date(`${date}T${time}`);
   }
 
+  // Статистика популярности услуг у клиента
   const serviceStats = SERVICES.map(service => ({
     ...service,
     count: clientAppointments.filter(appointment => appointment.service === service.value).length,
   }));
 
-  const [isEditingNotes, setIsEditingNotes] = useState(false);
-  const [draftNotes, setDraftNotes] = useState(client.notes ?? '');
-
+  // Работа с заметками
   function handleChangeNotesMode() {
     setIsEditingNotes(!isEditingNotes);
   }
-
   function handleEditNotes(event) {
     setDraftNotes(event.target.value);
   }
-
   function handleSubmitChangingNotes() {
     setIsEditingNotes(false);
     handleUpdateClient({...client, notes: draftNotes});
   }
 
-  // noinspection D
   return (
     <>
 

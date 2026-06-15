@@ -1,10 +1,7 @@
 import {Routes, Route} from "react-router"
 
-import {ClientsSection} from "./sections/ClientsSection.jsx";
-import {AppointmentsSection} from "./sections/AppointmentsSection.jsx";
 import {useClients} from "./hooks/useClients.js";
 import {useAppointments} from "./hooks/useAppointments.js";
-import {DashboardSection} from "./sections/DashboardSection.jsx";
 import {Modal} from "./components/modals/Modal.jsx";
 import {ClientForm} from "./components/clients/ClientForm.jsx";
 import {useModals} from "./hooks/useModals.js";

@@ -49,17 +49,17 @@ export function SideNavbar() {
 
 
   return (
-    <>
+    <nav className="side-navbar" aria-label="Основная навигация">
       {NAVBAR_ITEMS.map((item) => (
         <NavLink
           key={item.name}
           to={item.path}
           className="side-navbar__item"
         >
-          <item.Icon />
+          <item.Icon aria-hidden="true" />
           {item.name}
         </NavLink>
       ))}
-    </>
+    </nav>
   )
 }

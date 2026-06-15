@@ -1,5 +1,3 @@
-import {Modal} from "../components/modals/Modal.jsx";
-import {ClientForm} from "../components/clients/ClientForm.jsx";
 import {DashboardSection} from "../sections/DashboardSection.jsx";
 import {ClientsSection} from "../sections/ClientsSection.jsx";
 import {AppointmentsSection} from "../sections/AppointmentsSection.jsx";
