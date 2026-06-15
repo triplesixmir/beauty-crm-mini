@@ -5,7 +5,6 @@ export function Sidebar({
                           children,
                           closeSidebarTab,
                           closeSidebarCompletely,
-                          openSidebarTab,
                           activeTab,
                           setActiveSidebarTab,
                           sidebarTabs,

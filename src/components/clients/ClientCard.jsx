@@ -22,15 +22,24 @@ export function ClientCard({
   const emailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}`;
 
   return (
-    <div className="card">
-      <p>{`${firstname} ${surname}`}</p>
-      <p>Телефон: <a href={telLink}>{formatStoredPhone(tel)}</a></p>
-      <p>Telegram: <a href={telegramLink}>@{telegram}</a></p>
-      <p>Email: <a href={emailLink}>{email}</a></p>
-      <p>Посещений за {currentYear}: {formatAppointmentsCount(stats.appointmentsThisYearCount)}</p>
-      <p>Потрачено за {currentYear}: {stats.totalSpentThisYear}</p>
-      {stats.timeToAppointmentMs &&
-        <p>До ближайшего посещения: {formatTimeUntilAppointment(stats.timeToAppointmentMs)}</p>}
+    <div className="card card--client">
+      <div className="card__header">
+        <div>
+          <p className="card__eyebrow">Клиент</p>
+          <h3>{`${firstname} ${surname}`}</h3>
+        </div>
+      </div>
+
+      <div className="card__details">
+        <p><span>Телефон</span> <a href={telLink}>{formatStoredPhone(tel)}</a></p>
+        <p><span>Telegram</span> <a href={telegramLink}>@{telegram}</a></p>
+        <p><span>Email</span> <a href={emailLink}>{email}</a></p>
+        <p><span>Посещений за {currentYear}</span> {formatAppointmentsCount(stats.appointmentsThisYearCount)}</p>
+        <p><span>Потрачено за {currentYear}</span> {stats.totalSpentThisYear}</p>
+        {stats.timeToAppointmentMs &&
+          <p><span>До ближайшего посещения</span> {formatTimeUntilAppointment(stats.timeToAppointmentMs)}</p>}
+      </div>
+
       <div className="card__actions">
         <button
           type={"button"}
@@ -40,7 +49,7 @@ export function ClientCard({
         <button
           type={"button"}
           onClick={onEdit}
-        >Редактировать
+        >Изменить
         </button>
         <button
           type={"button"}

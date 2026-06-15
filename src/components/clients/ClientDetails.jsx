@@ -65,15 +65,29 @@ export function ClientDetails({
     <>
 
       {/*== АВАТАР КЛИЕНТА ==*/}
-      <div className={`client-details__avatar ${avatarColorStyle}`}>
-        <span className="client-details__avatar-initials">{clientInitials}</span>
+      <div className="client-details__profile">
+        <div className={`client-details__avatar ${avatarColorStyle}`}>
+          <span className="client-details__avatar-initials">{clientInitials}</span>
+        </div>
+
+        <h2 className="client-details__name">{`${client.firstname} ${client.surname}`}</h2>
       </div>
 
       {/*== ОСНОВНАЯ ИНФОРМАЦИЯ О КЛИЕНТЕ ==*/}
-      <h2 className="client-details__name">{`${client.firstname} ${client.surname}`}</h2>
-      <p>Telegram: @{client.telegram ? client.telegram : 'Не указан'}</p>
-      <p>Телефон: {client.tel ? formatStoredPhone(client.tel) : 'Не указан'}</p>
-      <p>Почта: {client.email ? client.email : 'Не указана'}</p>
+      <div className="client-details__info-list">
+        <p>
+          <span>Telegram</span>
+          <span>@{client.telegram ? client.telegram : 'Не указан'}</span>
+        </p>
+        <p>
+          <span>Телефон</span>
+          <span>{client.tel ? formatStoredPhone(client.tel) : 'Не указан'}</span>
+        </p>
+        <p>
+          <span>Почта</span>
+          <span>{client.email ? client.email : 'Не указана'}</span>
+        </p>
+      </div>
 
       {/*== ТАБЛИЦА ЗАПИСЕЙ КЛИЕНТА ==*/}
       <h2>Записи клиента</h2>

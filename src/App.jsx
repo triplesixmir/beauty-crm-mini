@@ -76,7 +76,7 @@ function App() {
 
   return (
 
-    <>
+    <main className="app-shell">
 
       <DashboardSection
         {...clientsState}
@@ -161,7 +161,6 @@ function App() {
         <Sidebar
           closeSidebarTab={sidebarsState.closeSidebarTab}
           closeSidebarCompletely={sidebarsState.closeSidebarCompletely}
-          openSidebarTab={sidebarsState.openSidebarTab}
           activeTab={sidebarsState.activeSidebarTabKey}
           setActiveSidebarTab={sidebarsState.setActiveSidebarTab}
           sidebarTabs={sidebarsState.sidebarTabs}
@@ -187,7 +186,7 @@ function App() {
         </Sidebar>
       }
 
-    </>
+    </main>
   )
 }
 

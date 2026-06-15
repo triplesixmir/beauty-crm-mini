@@ -18,13 +18,20 @@ export function AppointmentCard({
                                 }) {
 
   return (
-    <div className="card">
-      <p>ID записи: {id}</p>
-      <p>Клиент: {clientName}</p>
-      <p>Услуга: {SERVICES_LABELS[service] || service}</p>
-      <p>Дата и время: {formatAppointmentDateTime(date, time)}</p>
-      <p>Стоимость: {formatMoney(price)}</p>
-      <p>Клиент пришел? {new Date(`${date}T${time}`) < new Date() ? Boolean(didntCome) ? 'Нет' : 'Да' : '—'}</p>
+    <div className="card card--appointment">
+      <div className="card__header">
+        <div>
+          <p className="card__eyebrow">Запись #{id}</p>
+          <h3>{clientName}</h3>
+        </div>
+      </div>
+
+      <div className="card__details">
+        <p><span>Услуга</span> {SERVICES_LABELS[service] || service}</p>
+        <p><span>Дата и время</span> {formatAppointmentDateTime(date, time)}</p>
+        <p><span>Стоимость</span> {formatMoney(price)}</p>
+        <p><span>Клиент пришел?</span> {new Date(`${date}T${time}`) < new Date() ? didntCome ? 'Нет' : 'Да' : '—'}</p>
+      </div>
 
       <div className="card__actions">
         <button
@@ -35,7 +42,7 @@ export function AppointmentCard({
         <button
           type={"button"}
           onClick={onEdit}
-        >Редактировать
+        >Изменить
         </button>
         <button
           type={"button"}
