@@ -1,13 +1,10 @@
-export function DashboardCard({icon, heading, value}) {
+export function DashboardCard({heading, value, children}) {
   return (
     <div className="dashboard-card">
 
       <div className="dashboard-card__icon">
 
-        <img
-          src={icon}
-          alt={heading}
-        />
+        {children}
 
       </div>
 

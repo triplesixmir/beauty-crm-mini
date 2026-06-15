@@ -1,8 +1,8 @@
 import {ComponentPreview, Previews} from '@react-buddy/ide-toolbox'
 import {PaletteTree} from './palette'
 import App from "../App.jsx";
-import {ClientCard} from "../components/clientscomps/ClientCard.jsx";
-import {ClientForm} from "../components/clientscomps/ClientForm.jsx";
+import {ClientCard} from "../components/clients/ClientCard.jsx";
+import {ClientForm} from "../components/clients/ClientForm.jsx";
 import {Sidebar} from "../components/sidebars/Sidebar.jsx";
 
 const ComponentPreviews = () => {

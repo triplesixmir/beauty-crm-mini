@@ -14,6 +14,7 @@ export function AppointmentCard({
                                   id,
                                   onEdit,
                                   handleDeleteClick,
+                                  onOpenDetails,
                                 }) {
 
   return (
@@ -36,6 +37,14 @@ export function AppointmentCard({
           onClick={onEdit}
         >Редактировать
         </button>
+        <button
+          type={"button"}
+          onClick={onOpenDetails}
+        >Подробнее
+        </button>
+
+        {/*TODO: сделать кнопочку, отмечающую, завершилась ли запись или нет*/}
+
       </div>
     </div>
   )

@@ -1,5 +1,5 @@
-import chevronRight from "../../assets/general-icons/chevron-right.svg"
-import closeIcon from "../../assets/general-icons/close-icon.svg"
+import {ChevronRight as ChevronRightIcon} from "lucide-react";
+import {X as XIcon} from "lucide-react"
 
 export function Sidebar({
                           children,
@@ -29,12 +29,9 @@ export function Sidebar({
               <button
                 onClick={() => closeSidebarTab(tab.key)}
                 className="sidebar__tab__close-btn"
+                aria-label="Закрыть вкладку"
               >
-                <img
-                  src={closeIcon}
-                  alt=""
-                  aria-hidden="true"
-                />
+                <XIcon />
               </button>
             </div>
           ))}
@@ -43,11 +40,9 @@ export function Sidebar({
         <button
           className="sidebar__collapse-btn"
           onClick={closeSidebarCompletely}
+          aria-label="Свернуть панель"
         >
-          <img
-            src={chevronRight}
-            alt="Свернуть панель"
-          />
+          <ChevronRightIcon />
         </button>
       </div>
 

@@ -1,10 +1,10 @@
 import {DashboardCard} from "../components/dashboard/DashboardCard.jsx";
-import nearestAppointmentIcon
-  from "../assets/dashboard/icons/nearest-appointment.svg";
-import totalAppointmentsIcon
-  from "../assets/dashboard/icons/total-appointments.svg";
-import totalClientsIcon from "../assets/dashboard/icons/total-clients.svg";
-import totalMoneyIcon from "../assets/dashboard/icons/total-money.svg";
+
+import {Timer as TimerIcon} from "lucide-react";
+import {CalendarDays as CalendarDaysIcon} from "lucide-react";
+import {UsersRound as UsersRoundIcon} from "lucide-react";
+import {Wallet as WalletIcon} from "lucide-react";
+
 import {formatAppointmentDateTime, formatMoney} from "../utils/formatters.js";
 
 export function DashboardSection({
@@ -43,30 +43,34 @@ export function DashboardSection({
     <>
 
       <DashboardCard
-        icon={nearestAppointmentIcon}
         heading="Ближайшая запись"
         value={nearestAppointment
           ? formatAppointmentDateTime(nearestAppointment.date, nearestAppointment.time)
           : 'Нет подходящей записи'}
-      />
+      >
+        <TimerIcon />
+      </DashboardCard>
 
       <DashboardCard
-        icon={totalAppointmentsIcon}
         heading="Всего записей"
         value={totalAppointments}
-      />
+      >
+        <CalendarDaysIcon />
+      </DashboardCard>
 
       <DashboardCard
-        icon={totalClientsIcon}
         heading="Всего клиентов"
         value={totalClients}
-      />
+      >
+        <UsersRoundIcon />
+      </DashboardCard>
 
       <DashboardCard
-        icon={totalMoneyIcon}
         heading="Общая прибыль"
         value={formatMoney(totalMoney)}
-      />
+      >
+        <WalletIcon />
+      </DashboardCard>
 
     </>
   )

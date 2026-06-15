@@ -1,4 +1,4 @@
-import {ClientCard} from "../components/clientscomps/ClientCard.jsx";
+import {ClientCard} from "../components/clients/ClientCard.jsx";
 import {formatMoney} from "../utils/formatters.js";
 
 export function ClientsSection({

@@ -1,4 +1,4 @@
-import {AppointmentCard} from "../components/appointmentscomps/AppointmentCard.jsx";
+import {AppointmentCard} from "../components/appointments/AppointmentCard.jsx";
 import {
   formatAppointmentDateTime,
 } from "../utils/formatters.js";
@@ -9,6 +9,7 @@ export function AppointmentsSection({
                                       handleDeleteAppointment,
                                       openAppointmentAddModal,
                                       openAppointmentEditModal,
+                                      openSidebarTab,
                                       openAlert,
                                       closeAlert,
                                       showToast,
@@ -28,6 +29,15 @@ export function AppointmentsSection({
       },
       onClose: closeAlert,
     })
+  }
+
+  function openAppointmentDetailsSidebar(appointment) {
+    openSidebarTab({
+      type: 'appointment',
+      id: appointment.id,
+      title: `${formatAppointmentDateTime(appointment.date, appointment.time)}`,
+      key: `appointment:${appointment.id}`,
+    });
   }
 
   return (
@@ -53,6 +63,7 @@ export function AppointmentsSection({
                   handleDeleteClick={() => handleDeleteClick(appointment)}
                   onEdit={() => openAppointmentEditModal(appointment)}
                   key={appointment.id}
+                  onOpenDetails={() => openAppointmentDetailsSidebar(appointment)}
                   clientName={clientName}
                   {...appointment}
                 />

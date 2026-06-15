@@ -30,7 +30,6 @@ export function useAppointments() {
   }
 
   function handleUpdateAppointment(updatedAppointment) {
-
     setAppointments(appointments.map(appointment => appointment.id === updatedAppointment.id ? updatedAppointment : appointment));
     setEditingAppointment(null)
   }

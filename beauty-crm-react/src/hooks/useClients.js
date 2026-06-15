@@ -31,10 +31,6 @@ export function useClients() {
     setEditingClient(null);
   }
 
-  function handleUpdateClientProfilePic(clientId, profilePic) {
-    setClients(clients.map(client => client.id === clientId ? {...client, profilePic: profilePic} : client));
-  }
-
   function handleResetEditingClient() {
     setEditingClient(null);
   }
@@ -46,7 +42,6 @@ export function useClients() {
     editingClient,
     filteredClients,
     handleAddClient,
-    handleUpdateClientProfilePic,
     handleDeleteClient,
     handleEditClient,
     handleUpdateClient,

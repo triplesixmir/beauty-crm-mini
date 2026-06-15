@@ -82,6 +82,7 @@ export function AppointmentForm({
       const updatedAppointment = {
         ...formData,
         id: onEditing.id,
+        notes: onEditing.notes,
         clientId: Number(formData.clientId)
       };
       onUpdateAppointment(updatedAppointment);

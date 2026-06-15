@@ -3,6 +3,7 @@
 import {SERVICES, SERVICES_LABELS} from "../../constants/services.js";
 import {formatDate, formatMoney, formatTime} from "../../utils/formatters.js";
 import {useState} from "react";
+import {formatStoredPhone} from "../../utils/phone.js";
 
 export function ClientDetails({
                                 client,
@@ -71,7 +72,7 @@ export function ClientDetails({
       {/*== ОСНОВНАЯ ИНФОРМАЦИЯ О КЛИЕНТЕ ==*/}
       <h2 className="client-details__name">{`${client.firstname} ${client.surname}`}</h2>
       <p>Telegram: @{client.telegram ? client.telegram : 'Не указан'}</p>
-      <p>Телефон: +{client.tel ? client.tel : 'Не указан'}</p>
+      <p>Телефон: {client.tel ? formatStoredPhone(client.tel) : 'Не указан'}</p>
       <p>Почта: {client.email ? client.email : 'Не указана'}</p>
 
       {/*== ТАБЛИЦА ЗАПИСЕЙ КЛИЕНТА ==*/}
@@ -111,7 +112,7 @@ export function ClientDetails({
         <p key={service.value}>{service.label}: {"".padStart(service.count, "█")} {service.count}</p>
       ))}
 
-      {/*TODO: Сделать редактирование через editingClientDetailsField или типа того*/}
+      {/*== ЗАМЕТКИ КЛИЕНТА ==*/}
       <h2>Заметки</h2>
       {isEditingNotes
         ? <textarea
@@ -129,6 +130,8 @@ export function ClientDetails({
           type="button"
           onClick={handleChangeNotesMode}
         >Редактировать</button>}
+
+      {/*TODO: реализовать кнопки действий с клиентом (удалить, редактировать, позвонить, написать и так далее)*/}
 
     </>
   )

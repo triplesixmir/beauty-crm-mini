@@ -721,6 +721,67 @@ body:has(.sidebar) {
   border-bottom: none;
 }
 
+/* === APPOINTMENT DETAILS (контент в сайдбаре) === */
+
+.appointment-details__client-card {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-muted);
+}
+
+.appointment-details__client-avatar {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(23, 27, 24, 0.08);
+  border-radius: 50%;
+  color: var(--heading);
+  font-size: 0.98rem;
+  font-weight: 780;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.appointment-details__client-card h3 {
+  min-width: 0;
+  color: var(--heading);
+  font-size: 1rem;
+  font-weight: 740;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.sidebar__body textarea {
+  width: 100%;
+  min-height: 108px;
+  resize: vertical;
+  padding: 10px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: #ffffff;
+  color: var(--heading);
+  font: inherit;
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.sidebar__body textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(47, 111, 99, 0.16);
+}
+
+.sidebar__body > button {
+  align-self: flex-start;
+  min-height: 38px;
+  padding: 8px 12px;
+}
+
 /* === RESPONSIVE === */
 
 @media (max-width: 980px) {

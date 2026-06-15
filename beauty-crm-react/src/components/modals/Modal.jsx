@@ -1,4 +1,4 @@
-import closeIcon from "../../assets/general-icons/close-icon.svg";
+import {X as XIcon} from "lucide-react";
 import {useEffect} from "react";
 
 export function Modal({
@@ -42,11 +42,7 @@ export function Modal({
           onClick={onClose}
           aria-label="Закрыть"
         >
-          <img
-            src={closeIcon}
-            alt=""
-            aria-hidden="true"
-          />
+          <XIcon />
         </button>
 
         <h2>{title}</h2>

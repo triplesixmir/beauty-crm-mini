@@ -1,6 +1,5 @@
 import {useEffect, useState} from "react";
-import closeIcon from "../../assets/general-icons/close-icon.svg";
-
+import {X as XIcon} from "lucide-react";
 export function Toast({ id, type, message, duration, removeToast }) {
 
   const [isLeaving, setIsLeaving] = useState(false);
@@ -39,11 +38,7 @@ export function Toast({ id, type, message, duration, removeToast }) {
         aria-label="Закрыть"
         onClick={() => setIsLeaving(true)}
       >
-        <img
-          src={closeIcon}
-          alt=""
-          aria-hidden="true"
-        />
+        <XIcon />
       </button>
 
       <h4>{message}</h4>

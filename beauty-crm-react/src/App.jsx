@@ -4,18 +4,21 @@ import {useClients} from "./hooks/useClients.js";
 import {useAppointments} from "./hooks/useAppointments.js";
 import {DashboardSection} from "./sections/DashboardSection.jsx";
 import {Modal} from "./components/modals/Modal.jsx";
-import {ClientForm} from "./components/clientscomps/ClientForm.jsx";
+import {ClientForm} from "./components/clients/ClientForm.jsx";
 import {useModals} from "./hooks/useModals.js";
 import {
   AppointmentForm
-} from "./components/appointmentscomps/AppointmentForm.jsx";
+} from "./components/appointments/AppointmentForm.jsx";
 import {useAlerts} from "./hooks/useAlerts.js";
 import {Alert} from "./components/modals/Alert.jsx";
 import {useToasts} from "./hooks/useToasts.js";
 import {ToastContainer} from "./components/toasts/ToastContainer.jsx";
 import {useSidebars} from "./hooks/useSidebars.js";
 import {Sidebar} from "./components/sidebars/Sidebar.jsx";
-import {ClientDetails} from "./components/clientscomps/ClientDetails.jsx";
+import {ClientDetails} from "./components/clients/ClientDetails.jsx";
+import {
+  AppointmentDetails
+} from "./components/appointments/AppointmentDetails.jsx";
 
 function App() {
 
@@ -65,6 +68,12 @@ function App() {
     activeClient = clientsState.clients.find(client => client.id === activeSidebarTab.id);
   }
 
+  let activeAppointment;
+
+  if (activeSidebarTab?.type === 'appointment') {
+    activeAppointment = appointmentsState.appointments.find(appointment => appointment.id === activeSidebarTab.id);
+  }
+
   return (
 
     <>
@@ -89,6 +98,7 @@ function App() {
 
       <AppointmentsSection
         {...appointmentsState}
+        openSidebarTab={sidebarsState.openSidebarTab}
         openAppointmentEditModal={openAppointmentEditModal}
         openAppointmentAddModal={openAppointmentAddModal}
         clients={clientsState.clients}
@@ -156,13 +166,24 @@ function App() {
           setActiveSidebarTab={sidebarsState.setActiveSidebarTab}
           sidebarTabs={sidebarsState.sidebarTabs}
         >
-          <ClientDetails
-            key={activeSidebarTab?.key ?? 'no-client'}
-            client={activeClient}
-            appointments={appointmentsState.appointments}
-            onUpdateProfilePic={clientsState.handleUpdateClientProfilePic}
-            handleUpdateClient={clientsState.handleUpdateClient}
-          />
+          {activeSidebarTab?.type === 'client' && (
+            <ClientDetails
+              key={activeSidebarTab?.key ?? 'no-client'}
+              client={activeClient}
+              appointments={appointmentsState.appointments}
+              handleUpdateClient={clientsState.handleUpdateClient}
+            />
+          )}
+
+          {activeSidebarTab?.type === 'appointment' && (
+            <AppointmentDetails
+              key={activeSidebarTab?.key ?? 'no-appointment'}
+              appointment={activeAppointment}
+              clientsArray={clientsState.clients}
+              handleUpdateAppointment={appointmentsState.handleUpdateAppointment}
+            />
+          )}
+
         </Sidebar>
       }
 
