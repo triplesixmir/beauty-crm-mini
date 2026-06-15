@@ -37,6 +37,13 @@
   opacity: 0.78;
 }
 
+.dashboard-card__icon svg {
+  width: 24px;
+  height: 24px;
+  color: var(--primary);
+  stroke-width: 2;
+}
+
 .dashboard-card__content {
   min-width: 0;
   display: grid;
@@ -133,6 +140,14 @@ button {
   color: #ffffff;
   font-weight: 750;
   transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+
+button svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  stroke-width: 2;
+  pointer-events: none;
 }
 
 button:hover {
@@ -281,16 +296,23 @@ button[type="button"]:hover {
   place-items: center;
   border-color: var(--border);
   background: var(--surface-muted);
+  color: var(--text-muted);
 }
 
 .modal__close-button:hover {
   background: var(--primary-soft);
+  color: var(--primary);
 }
 
 .modal__close-button img {
   width: 18px;
   height: 18px;
   opacity: 0.72;
+}
+
+.modal__close-button svg {
+  width: 18px;
+  height: 18px;
 }
 
 /* === ALERT === */
@@ -345,16 +367,23 @@ button[type="button"]:hover {
   place-items: center;
   border-color: var(--border);
   background: var(--surface-muted);
+  color: var(--text-muted);
 }
 
 .alert__close-button:hover {
   background: var(--primary-soft);
+  color: var(--primary);
 }
 
 .alert__close-button img {
   width: 18px;
   height: 18px;
   opacity: 0.72;
+}
+
+.alert__close-button svg {
+  width: 18px;
+  height: 18px;
 }
 
 .alert__buttons {
@@ -452,17 +481,24 @@ button[type="button"]:hover {
   place-items: center;
   border-color: transparent;
   background: transparent;
+  color: var(--text-muted);
 }
 
 .toast__close-button:hover {
   background: var(--surface-muted);
   box-shadow: none;
+  color: var(--heading);
 }
 
 .toast__close-button img {
   width: 14px;
   height: 14px;
   opacity: 0.56;
+}
+
+.toast__close-button svg {
+  width: 14px;
+  height: 14px;
 }
 
 .toast-success {
@@ -512,6 +548,7 @@ body:has(.sidebar) {
   right: 0;
   bottom: 0;
   width: 360px;
+  height: 100vh;
   z-index: 40;
   display: flex;
   flex-direction: column;
@@ -589,18 +626,25 @@ body:has(.sidebar) {
   border: none;
   display: inline-grid;
   place-items: center;
+  color: var(--text-muted);
 }
 
 .sidebar__tab__close-btn:hover {
   background: rgba(0, 0, 0, 0.06);
   box-shadow: none;
   border-color: transparent;
+  color: var(--heading);
 }
 
 .sidebar__tab__close-btn img {
   width: 10px;
   height: 10px;
   opacity: 0.5;
+}
+
+.sidebar__tab__close-btn svg {
+  width: 12px;
+  height: 12px;
 }
 
 .sidebar__collapse-btn {
@@ -612,11 +656,13 @@ body:has(.sidebar) {
   border-color: var(--border);
   display: inline-grid;
   place-items: center;
+  color: var(--text-muted);
 }
 
 .sidebar__collapse-btn:hover {
   background: var(--surface);
   box-shadow: none;
+  color: var(--primary);
 }
 
 .sidebar__collapse-btn img {
@@ -625,7 +671,13 @@ body:has(.sidebar) {
   opacity: 0.6;
 }
 
+.sidebar__collapse-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
 .sidebar__body {
+  min-height: 0;
   flex: 1;
   overflow-y: auto;
   padding: 20px;
@@ -636,11 +688,23 @@ body:has(.sidebar) {
   scrollbar-color: var(--border) transparent;
 }
 
+.table-wrapper {
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-shrink: 0;
+}
+
+.table-wrapper table {
+  width: max-content;
+  min-width: 100%;
+}
+
 /* === CLIENT DETAILS (контент в сайдбаре) === */
 
 .client-details__avatar {
   width: 84px;
   height: 84px;
+  flex-shrink: 0;
   display: grid;
   place-items: center;
   border: 1px solid rgba(23, 27, 24, 0.08);
@@ -698,6 +762,7 @@ body:has(.sidebar) {
 
 .sidebar__body th,
 .sidebar__body td {
+  white-space: nowrap;
   padding: 6px 8px;
   text-align: left;
   border-bottom: 1px solid var(--border);

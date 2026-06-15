@@ -78,30 +78,32 @@ export function ClientDetails({
       {/*== ТАБЛИЦА ЗАПИСЕЙ КЛИЕНТА ==*/}
       <h2>Записи клиента</h2>
       {sortedClientAppointments.length > 0
-        ? <table>
-          <thead>
-            <tr>
-              <th scope="col">ID записи</th>
-              <th scope="col">Дата</th>
-              <th scope="col">Время</th>
-              <th scope="col">Услуга</th>
-              <th scope="col">Стоимость</th>
-              <th scope="col">Не пришел(ла)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sortedClientAppointments.map(appointment => (
-              <tr key={appointment.id}>
-                <th scope="row">{appointment.id}</th>
-                <td>{formatDate(getAppointmentDateTime(appointment.date, appointment.time))}</td>
-                <td>{formatTime(getAppointmentDateTime(appointment.date, appointment.time))}</td>
-                <td>{SERVICES_LABELS[appointment.service]}</td>
-                <td>{formatMoney(appointment.price)}</td>
-                <td>{getAppointmentDateTime(appointment.date, appointment.time) < now ? appointment.didntCome ? '■' : '□' : 'Запись не завершена'}</td>
+        ? <div className="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">ID записи</th>
+                <th scope="col">Дата</th>
+                <th scope="col">Время</th>
+                <th scope="col">Услуга</th>
+                <th scope="col">Стоимость</th>
+                <th scope="col">Не пришел(ла)</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {sortedClientAppointments.map(appointment => (
+                <tr key={appointment.id}>
+                  <th scope="row">{appointment.id}</th>
+                  <td>{formatDate(getAppointmentDateTime(appointment.date, appointment.time))}</td>
+                  <td>{formatTime(getAppointmentDateTime(appointment.date, appointment.time))}</td>
+                  <td>{SERVICES_LABELS[appointment.service]}</td>
+                  <td>{formatMoney(appointment.price)}</td>
+                  <td>{getAppointmentDateTime(appointment.date, appointment.time) < now ? appointment.didntCome ? '■' : '□' : 'Запись не завершена'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         : <p>Записей пока нет</p>
       }
 
