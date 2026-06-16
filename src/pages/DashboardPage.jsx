@@ -24,7 +24,7 @@ export function DashboardPage({
       />
 
       <ClientsSection
-        {...clientsState}
+        clientsState={clientsState}
         openSidebarTab={sidebarsState.openSidebarTab}
         appointments={appointmentsState.appointments}
         openClientEditModal={openClientEditModal}

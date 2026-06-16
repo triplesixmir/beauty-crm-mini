@@ -116,7 +116,16 @@ function App() {
         />
         <Route
           path="/clients"
-          element={<ClientsPage />}
+          element={<ClientsPage
+            clientsState={clientsState}
+            appointments={appointmentsState.appointments}
+            openSidebarTab={sidebarsState.openSidebarTab}
+            openClientEditModal={openClientEditModal}
+            openClientAddModal={openClientAddModal}
+            alertsState={alertsState}
+            toastsState={toastsState}
+            now={now}
+          />}
         />
         <Route
           path="/appointments"

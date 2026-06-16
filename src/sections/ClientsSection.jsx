@@ -3,8 +3,8 @@ import {formatMoney} from "../utils/formatters.js";
 import {useState} from "react";
 
 export function ClientsSection({
-                                 clients,
                                  appointments,
+                                 clientsState,
                                  handleDeleteClient,
                                  openSidebarTab,
                                  openClientEditModal,
@@ -22,6 +22,11 @@ export function ClientsSection({
       return appointment.clientId === client.id;
     })
 
+    const clientAppointmentsThisYear = clientAppointments.filter((appointment) => {
+      const appointmentDate = new Date(`${appointment.date}T${appointment.time}`);
+      return appointmentDate.getFullYear() === currentYear;
+    })
+
     const clientFutureAppointments = clientAppointments.filter((appointment) => {
       const appointmentDate = new Date(`${appointment.date}T${appointment.time}`);
       return appointmentDate > now;
@@ -33,10 +38,6 @@ export function ClientsSection({
     })
 
     const clientAppointmentsCount = clientAppointments.length;
-    const clientAppointmentsThisYear = clientAppointments.filter((appointment) => {
-      const appointmentDate = new Date(`${appointment.date}T${appointment.time}`);
-      return appointmentDate.getFullYear() === currentYear;
-    })
     const clientEndedAppointmentsThisYearCount = clientAppointmentsThisYear.filter((appointment) => new Date(`${appointment.date}T${appointment.time}`) < now).length;
     const clientEndedAppointmentsThisYear = clientAppointmentsThisYear.filter((appointment) => new Date(`${appointment.date}T${appointment.time}`) < now);
     const clientTotalSpentThisYear = formatMoney(clientEndedAppointmentsThisYear.reduce((total, appointment) => total + Number(appointment.price), 0));
@@ -87,8 +88,9 @@ export function ClientsSection({
     })
   }
 
+  // Реализация поиска по клиентам
   const [searchTerm, setSearchTerm] = useState('');
-  const filteredClients = clients.filter(client => String(`${client.firstname} ${client.surname}`).toLowerCase().includes(searchTerm.toLowerCase()));
+  const searchedClients = clientsState.clients.filter(client => String(`${client.firstname} ${client.surname}`).toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
     <section className="section section--clients">
@@ -119,9 +121,9 @@ export function ClientsSection({
       <div className="cards-grid">
 
         {
-          filteredClients.length === 0
+          searchedClients.length === 0
             ? <p>Клиентов нет</p>
-            : filteredClients.map(client => (
+            : searchedClients.map(client => (
 
               <ClientCard
                 onEdit={() => openClientEditModal(client)}
