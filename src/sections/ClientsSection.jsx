@@ -1,12 +1,12 @@
 import {ClientCard} from "../components/clients/ClientCard.jsx";
 import {formatMoney} from "../utils/formatters.js";
+import {useState} from "react";
 
 export function ClientsSection({
-                                 filteredClients,
+                                 clients,
                                  appointments,
                                  handleDeleteClient,
                                  openSidebarTab,
-                                 setSearchTerm,
                                  openClientEditModal,
                                  openClientAddModal,
                                  openAlert,
@@ -22,11 +22,6 @@ export function ClientsSection({
       return appointment.clientId === client.id;
     })
 
-    const clientAppointmentsThisYear = clientAppointments.filter((appointment) => {
-      const appointmentDate = new Date(`${appointment.date}T${appointment.time}`);
-      return appointmentDate.getFullYear() === currentYear;
-    })
-
     const clientFutureAppointments = clientAppointments.filter((appointment) => {
       const appointmentDate = new Date(`${appointment.date}T${appointment.time}`);
       return appointmentDate > now;
@@ -38,6 +33,10 @@ export function ClientsSection({
     })
 
     const clientAppointmentsCount = clientAppointments.length;
+    const clientAppointmentsThisYear = clientAppointments.filter((appointment) => {
+      const appointmentDate = new Date(`${appointment.date}T${appointment.time}`);
+      return appointmentDate.getFullYear() === currentYear;
+    })
     const clientEndedAppointmentsThisYearCount = clientAppointmentsThisYear.filter((appointment) => new Date(`${appointment.date}T${appointment.time}`) < now).length;
     const clientEndedAppointmentsThisYear = clientAppointmentsThisYear.filter((appointment) => new Date(`${appointment.date}T${appointment.time}`) < now);
     const clientTotalSpentThisYear = formatMoney(clientEndedAppointmentsThisYear.reduce((total, appointment) => total + Number(appointment.price), 0));
@@ -87,6 +86,9 @@ export function ClientsSection({
       onClose: closeAlert,
     })
   }
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const filteredClients = clients.filter(client => String(`${client.firstname} ${client.surname}`).toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
     <section className="section section--clients">

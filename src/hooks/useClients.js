@@ -7,7 +7,6 @@ export function useClients() {
   })
 
   const [editingClient, setEditingClient] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     localStorage.setItem('clients', JSON.stringify(clients));
@@ -35,17 +34,13 @@ export function useClients() {
     setEditingClient(null);
   }
 
-  const filteredClients = clients.filter(client => String(`${client.firstname} ${client.surname}`).toLowerCase().includes(searchTerm.toLowerCase()));
-
   return {
     clients,
     editingClient,
-    filteredClients,
     handleAddClient,
     handleDeleteClient,
     handleEditClient,
     handleUpdateClient,
     handleResetEditingClient,
-    setSearchTerm
   };
 }
