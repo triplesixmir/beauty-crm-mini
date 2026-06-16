@@ -89,16 +89,22 @@ export function ClientsSection({
   }
 
   return (
-    <>
+    <section className="section section--clients">
 
-      <button
-        className="section__add-btn"
-        onClick={openClientAddModal}
-      >Добавить клиента
-      </button>
+      <div className="section__header">
+        <div>
+          <p className="section__eyebrow">Клиентская база</p>
+          <h2>Клиенты</h2>
+        </div>
+
+        <button
+          className="section__add-btn"
+          onClick={openClientAddModal}
+        >Добавить клиента
+        </button>
+      </div>
 
       <label className="section__search">
-        Поиск по клиентам
         <input
           type="text"
           name="search-field"
@@ -129,6 +135,6 @@ export function ClientsSection({
 
       </div>
 
-    </>
+    </section>
   )
 }

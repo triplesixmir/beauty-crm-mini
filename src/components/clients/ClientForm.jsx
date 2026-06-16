@@ -106,7 +106,7 @@ export function ClientForm({
 
   return (
     <form
-      className="inputs-container"
+      className="inputs-container inputs-container--client"
       onSubmit={handleSubmit}
     >
 

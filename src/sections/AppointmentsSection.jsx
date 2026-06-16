@@ -41,13 +41,20 @@ export function AppointmentsSection({
   }
 
   return (
-    <>
+    <section className="section section--appointments">
 
-      <button
-        className="section__add-btn"
-        onClick={openAppointmentAddModal}
-      >Добавить запись
-      </button>
+      <div className="section__header">
+        <div>
+          <p className="section__eyebrow">Расписание</p>
+          <h2>Записи</h2>
+        </div>
+
+        <button
+          className="section__add-btn"
+          onClick={openAppointmentAddModal}
+        >Добавить запись
+        </button>
+      </div>
 
       <div className="cards-grid">
 
@@ -73,6 +80,6 @@ export function AppointmentsSection({
 
       </div>
 
-    </>
+    </section>
   )
 }

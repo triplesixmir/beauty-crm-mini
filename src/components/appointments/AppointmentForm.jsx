@@ -117,7 +117,7 @@ export function AppointmentForm({
 
   return (
     <form
-      className="inputs-container"
+      className="inputs-container inputs-container--appointment"
       onSubmit={handleSubmit}
     >
       <select
@@ -190,7 +190,7 @@ export function AppointmentForm({
       />
       {errors.price && <p className="error">{errors.price}</p>}
 
-      <label>
+      <label className="checkbox-field">
         Клиент не пришел(ла)?
         <input
           type="checkbox"

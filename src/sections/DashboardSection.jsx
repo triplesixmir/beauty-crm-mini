@@ -40,7 +40,10 @@ export function DashboardSection({
   }, 0)
 
   return (
-    <>
+    <section
+      className="dashboard-section"
+      aria-label="Сводка"
+    >
 
       <DashboardCard
         heading="Ближайшая запись"
@@ -72,6 +75,6 @@ export function DashboardSection({
         <WalletIcon />
       </DashboardCard>
 
-    </>
+    </section>
   )
 }
