@@ -1,7 +1,7 @@
-import {AppointmentCard} from "../components/appointments/AppointmentCard.jsx";
+import {AppointmentCard} from "../../../components/appointments/AppointmentCard.jsx";
 import {
   formatAppointmentDateTime,
-} from "../utils/formatters.js";
+} from "../../../utils/formatters.js";
 
 export function AppointmentsSection({
                                       clients,

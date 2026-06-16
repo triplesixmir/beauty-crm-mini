@@ -1,6 +1,6 @@
-import {DashboardSection} from "../sections/DashboardSection.jsx";
-import {ClientsSection} from "../sections/ClientsSection.jsx";
-import {AppointmentsSection} from "../sections/AppointmentsSection.jsx";
+import {DashboardSection} from "./sections/DashboardSection.jsx";
+import {ClientsSection} from "./sections/ClientsSection.jsx";
+import {AppointmentsSection} from "./sections/AppointmentsSection.jsx";
 
 export function DashboardPage({
                                 clientsState,

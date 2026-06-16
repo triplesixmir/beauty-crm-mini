@@ -13,19 +13,19 @@ import {Alert} from "./components/modals/Alert.jsx";
 import {useToasts} from "./hooks/useToasts.js";
 import {ToastContainer} from "./components/toasts/ToastContainer.jsx";
 import {useSidebars} from "./hooks/useSidebars.js";
-import {Sidebar} from "./components/sidebars/Sidebar.jsx";
+import {Sidebar} from "./components/layout/Sidebar.jsx";
 import {ClientDetails} from "./components/clients/ClientDetails.jsx";
 import {
   AppointmentDetails
 } from "./components/appointments/AppointmentDetails.jsx";
-import {DashboardPage} from "./pages/DashboardPage.jsx";
-import {ClientsPage} from "./pages/ClientsPage.jsx";
-import {AppointmentsPage} from "./pages/AppointmentsPage.jsx";
-import {FinancesPage} from "./pages/FinancesPage.jsx";
-import {EmployeesPage} from "./pages/EmployeesPage.jsx";
-import {StatisticsPage} from "./pages/StatisticsPage.jsx";
-import {SettingsPage} from "./pages/SettingsPage.jsx";
-import {SideNavbar} from "./components/navbars/SideNavbar.jsx";
+import {DashboardPage} from "./pages/dashboard/DashboardPage.jsx";
+import {ClientsPage} from "./pages/clients/ClientsPage.jsx";
+import {AppointmentsPage} from "./pages/appointments/AppointmentsPage.jsx";
+import {FinancesPage} from "./pages/finances/FinancesPage.jsx";
+import {EmployeesPage} from "./pages/employees/EmployeesPage.jsx";
+import {StatisticsPage} from "./pages/statistics/StatisticsPage.jsx";
+import {SettingsPage} from "./pages/settings/SettingsPage.jsx";
+import {SideNavbar} from "./components/layout/SideNavbar.jsx";
 
 function App() {
 

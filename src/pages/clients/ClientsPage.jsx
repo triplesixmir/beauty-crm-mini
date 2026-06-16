@@ -1,7 +1,7 @@
 import {useState} from "react";
-import {formatAppointmentDateTime, formatMoney} from "../utils/formatters.js";
+import {formatAppointmentDateTime, formatMoney} from "../../utils/formatters.js";
 import {Maximize2 as Maximize2Icon, Trash as TrashIcon, Pencil as PencilIcon} from "lucide-react";
-import {formatStoredPhone} from "../utils/phone.js";
+import {formatStoredPhone} from "../../utils/phone.js";
 
 export function ClientsPage({
                               clientsState,

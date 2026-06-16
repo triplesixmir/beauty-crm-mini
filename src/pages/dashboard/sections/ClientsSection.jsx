@@ -1,5 +1,5 @@
-import {ClientCard} from "../components/clients/ClientCard.jsx";
-import {formatMoney} from "../utils/formatters.js";
+import {ClientCard} from "../../../components/clients/ClientCard.jsx";
+import {formatMoney} from "../../../utils/formatters.js";
 import {useState} from "react";
 
 export function ClientsSection({

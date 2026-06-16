@@ -1,11 +1,11 @@
-import {DashboardCard} from "../components/dashboard/DashboardCard.jsx";
+import {DashboardCard} from "../../../components/dashboard/DashboardCard.jsx";
 
 import {Timer as TimerIcon} from "lucide-react";
 import {CalendarDays as CalendarDaysIcon} from "lucide-react";
 import {UsersRound as UsersRoundIcon} from "lucide-react";
 import {Wallet as WalletIcon} from "lucide-react";
 
-import {formatAppointmentDateTime, formatMoney} from "../utils/formatters.js";
+import {formatAppointmentDateTime, formatMoney} from "../../../utils/formatters.js";
 
 export function DashboardSection({
                                    clients,
