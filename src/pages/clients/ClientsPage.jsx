@@ -1,6 +1,13 @@
 import {useState} from "react";
-import {formatAppointmentDateTime, formatMoney} from "../../utils/formatters.js";
-import {Maximize2 as Maximize2Icon, Trash as TrashIcon, Pencil as PencilIcon} from "lucide-react";
+import {
+  formatAppointmentDateTime,
+  formatMoney
+} from "../../utils/formatters.js";
+import {
+  Maximize2 as Maximize2Icon,
+  Trash as TrashIcon,
+  Pencil as PencilIcon
+} from "lucide-react";
 import {formatStoredPhone} from "../../utils/phone.js";
 
 export function ClientsPage({
@@ -14,18 +21,42 @@ export function ClientsPage({
                               now
                             }) {
 
-  // Стейт клиентов под рендер
-  const [finalClients, setFinalClients] = useState([...clientsState.clients]);
-
   // Реализация поиска по клиентам
   const [searchTerm, setSearchTerm] = useState('');
   const searchedClients = clientsState.clients.filter(client => String(`${client.firstname} ${client.surname}`).toLowerCase().includes(searchTerm.toLowerCase()));
 
+  function handleDeleteClick(client) {
+    alertsState.openAlert({
+      title: `Удаление клиента ${client.firstname} ${client.surname}`,
+      description: "Вы уверены, что хотите удалить клиента?",
+      secondDescription: "Это действие необратимо и все данные о клиенте будут удалены.",
+      submitButtonText: "Да, удалить",
+      cancelButtonText: "Нет, не удалять",
+      onSubmit: () => {
+        clientsState.handleDeleteClient(client.id);
+        alertsState.closeAlert();
+        toastsState.showToast("info", "Клиент успешно удален", 3000);
+      },
+      onClose: alertsState.closeAlert,
+    })
+  }
+
+  function handleOpenClientDetails(client) {
+    openSidebarTab({
+      type: "client",
+      id: client.id,
+      title: `${client.firstname} ${client.surname}`,
+      key: `client:${client.id}`,
+    })
+  }
+
   // Получение информации по клиенту
+  // TODO: на будущее — сделать получение инфы по каждому клиенту заранее и поместить в отдельный объект
   function getClientStats(client) {
-    const clientTotalSpent = appointments.filter(appointment => appointment.clientId === client.id).reduce((acc, appointment) => acc + appointment.price, 0);
+    const clientTotalSpent = appointments.filter(appointment => appointment.clientId === client.id).reduce((acc, appointment) => acc + Number(appointment.price), 0);
     const clientAppointments = appointments.filter(appointment => appointment.clientId === client.id);
-    const clientNearestAppointment = clientAppointments.sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`))[0];
+    const clientFutureAppointments = clientAppointments.filter((appointment) => new Date(`${appointment.date}T${appointment.time}`) > now);
+    const clientNearestAppointment = [...clientFutureAppointments].sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`))[0];
 
     const clientAppointmentsThisYear = clientAppointments.filter((appointment) => {
       const appointmentDate = new Date(`${appointment.date}T${appointment.time}`);
@@ -34,7 +65,7 @@ export function ClientsPage({
     })
     const clientEndedAppointmentsThisYearCount = clientAppointmentsThisYear.filter((appointment) => new Date(`${appointment.date}T${appointment.time}`) < now).length;
     const clientEndedAppointmentsThisYear = clientAppointmentsThisYear.filter((appointment) => new Date(`${appointment.date}T${appointment.time}`) < now);
-    const clientTotalSpentThisYear = formatMoney(clientEndedAppointmentsThisYear.reduce((total, appointment) => total + Number(appointment.price), 0));
+    const clientTotalSpentThisYear = clientEndedAppointmentsThisYear.reduce((acc, appointment) => acc + Number(appointment.price), 0);
 
     return {
       clientTotalSpent: clientTotalSpent,
@@ -49,88 +80,105 @@ export function ClientsPage({
 
   // Работа с сортировкой клиентов
   const [currentSort, setCurrentSort] = useState('default');
+  let sortedClients = [...searchedClients];
+
   if (currentSort === 'default') {
-    const sortedClients = [...searchedClients]
+    sortedClients = [...searchedClients]
   } else if (currentSort === 'a-z') {
-    const sortedClients = [...searchedClients].sort((a, b) => `${a.firstname} ${a.surname}`.localeCompare(`${b.firstname} ${b.surname}`));
+    sortedClients = [...searchedClients].sort((a, b) => `${a.firstname} ${a.surname}`.localeCompare(`${b.firstname} ${b.surname}`));
   } else if (currentSort === 'z-a') {
-    const sortedClients = [...searchedClients].sort((a, b) => `${b.firstname} ${b.surname}`.localeCompare(`${a.firstname} ${a.surname}`));
+    sortedClients = [...searchedClients].sort((a, b) => `${b.firstname} ${b.surname}`.localeCompare(`${a.firstname} ${a.surname}`));
   } else if (currentSort === 'appointment-up') {
-    const sortedClients = [...searchedClients].sort((a, b) => `${getClientStats(a).clientNearestAppointment.date} ${getClientStats(a).clientNearestAppointment.time}`.localeCompare(`${getClientStats(b).clientNearestAppointment.date} ${getClientStats(b).clientNearestAppointment.time}`));
+    sortedClients = [...searchedClients].sort((a, b) => `${getClientStats(b).clientNearestAppointment?.date} ${getClientStats(b).clientNearestAppointment?.time}`.localeCompare(`${getClientStats(a).clientNearestAppointment?.date} ${getClientStats(a).clientNearestAppointment?.time}`));
   } else if (currentSort === 'appointment-down') {
-    const sortedClients = [...searchedClients].sort((a, b) => `${getClientStats(b).clientNearestAppointment.date} ${getClientStats(b).clientNearestAppointment.time}`.localeCompare(`${getClientStats(a).clientNearestAppointment.date} ${getClientStats(a).clientNearestAppointment.time}`));
+    sortedClients = [...searchedClients].sort((a, b) => `${getClientStats(a).clientNearestAppointment?.date} ${getClientStats(a).clientNearestAppointment?.time}`.localeCompare(`${getClientStats(b).clientNearestAppointment?.date} ${getClientStats(b).clientNearestAppointment?.time}`));
   } else if (currentSort === 'sum-up') {
-    const sortedClients = [...searchedClients].sort((a, b) => getClientStats(a).clientTotalSpent - getClientStats(b).clientTotalSpent);
+    sortedClients = [...searchedClients].sort((a, b) => getClientStats(a).clientTotalSpentThisYear - getClientStats(b).clientTotalSpentThisYear);
   } else if (currentSort === 'sum-down') {
-    const sortedClients = [...searchedClients].sort((a, b) => getClientStats(b).clientTotalSpent - getClientStats(a).clientTotalSpent);
+    sortedClients = [...searchedClients].sort((a, b) => getClientStats(b).clientTotalSpentThisYear - getClientStats(a).clientTotalSpentThisYear);
   }
 
   return (
-    <>
+    <main className="app-shell clients-page">
 
-      <h2>Клиенты</h2>
-      <button onClick={openClientAddModal}>Добавить клиента</button>
+      <section className="section clients-page__section">
 
-      <input
-        type="text"
-        name="search-field"
-        placeholder="Поиск"
-        onChange={(event) => setSearchTerm(event.target.value)}
-      />
+        <div className="section__header">
+          <div>
+            <p className="section__eyebrow">Клиентская база</p>
+            <h2>Клиенты</h2>
+          </div>
 
-      <select
-        name="sort"
-        id=""
-        onChange={(event) => setCurrentSort(event.target.value)}
-      >
-        <option value="default">По умолчанию</option>
-        <option value="a-z">А – Я</option>
-        <option value="z-a">Я – А</option>
-        <option value="appointment-up">По ближайшей записи ↑</option>
-        <option value="appointment-down">По ближайшей записи ↓</option>
-        <option value="sum-up">По потраченной сумме ↑</option>
-        <option value="sum-down">По потраченной сумме ↓</option>
-      </select>
+          <button className="section__add-btn" onClick={openClientAddModal}>Добавить клиента</button>
+        </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Имя и фамилия</th>
-            <th>Телефон</th>
-            <th>Telegram</th>
-            <th>Email</th>
-            <th>Визиты за год</th>
-            <th>Сумма за год</th>
-            <th>Ближайшая запись</th>
-            <th>Действия</th>
-          </tr>
-        </thead>
-        <tbody>
-          {finalClients.map(client => (
-            <tr key={client.id}>
-              <th>{`${client.firstname} ${client.surname}`}</th>
-              <td>{formatStoredPhone(client.tel)}</td>
-              <td>@{client.telegram}</td>
-              <td>{client.email}</td>
-              <td>{getClientStats(client).clientEndedAppointmentsThisYearCount}</td>
-              <td>{getClientStats(client).clientTotalSpentThisYear}</td>
-              <td>{getClientStats(client).clientNearestAppointment ? formatAppointmentDateTime(getClientStats(client).clientNearestAppointment.date, getClientStats(client).clientNearestAppointment.time) : '—'}</td>
-              <td>
-                <button>
-                  <PencilIcon onClick={() => openClientEditModal(client)} />
-                </button>
-                <button>
-                  <TrashIcon onClick={() => console.log("Нажата кнопка удаления клиента")} />
-                </button>
-                <button>
-                  <Maximize2Icon onClick={() => console.log("Нажата кнопка открытия вкладки")} />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        <div className="clients-page__controls">
+          <input
+            type="text"
+            name="search-field"
+            placeholder="Поиск"
+            onChange={(event) => setSearchTerm(event.target.value)}
+          />
 
-    </>
+          <select
+            name="sort"
+            id=""
+            onChange={(event) => setCurrentSort(event.target.value)}
+          >
+            <option value="default">По умолчанию</option>
+            <option value="a-z">А – Я</option>
+            <option value="z-a">Я – А</option>
+            <option value="appointment-down">Ближайшие записи сначала</option>
+            <option value="appointment-up">Позднейшие записи сначала</option>
+            <option value="sum-up">По потраченной сумме ↑</option>
+            <option value="sum-down">По потраченной сумме ↓</option>
+          </select>
+        </div>
+
+        {/*TODO: сделать тут по клику на заголовок смену сортировки как в Finder (скорее всего, через if-else или типа того)*/}
+        <div className="clients-page__table-wrapper">
+          <table className="clients-page__table">
+            <thead>
+              <tr>
+                <th>Имя и фамилия</th>
+                <th>Телефон</th>
+                <th>Telegram</th>
+                <th>Email</th>
+                <th>Визиты за год</th>
+                <th>Сумма за год</th>
+                <th>Ближайшая запись</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sortedClients.map(client => (
+                <tr key={client.id}>
+                  <th>{`${client.firstname} ${client.surname}`}</th>
+                  <td>{formatStoredPhone(client.tel)}</td>
+                  <td>@{client.telegram}</td>
+                  <td>{client.email}</td>
+                  <td>{getClientStats(client).clientEndedAppointmentsThisYearCount}</td>
+                  <td>{formatMoney(getClientStats(client).clientTotalSpentThisYear)}</td>
+                  <td>{getClientStats(client).clientNearestAppointment ? formatAppointmentDateTime(getClientStats(client).clientNearestAppointment.date, getClientStats(client).clientNearestAppointment.time) : '—'}</td>
+                  <td className="clients-page__actions">
+                    <button className="clients-page__action-button" onClick={() => openClientEditModal(client)}>
+                      <PencilIcon />
+                    </button>
+                    <button className="clients-page__action-button" onClick={() => handleDeleteClick(client)}>
+                      <TrashIcon />
+                    </button>
+                    <button className="clients-page__action-button" onClick={() => handleOpenClientDetails(client)}>
+                      <Maximize2Icon />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+      </section>
+
+    </main>
   )
 }
