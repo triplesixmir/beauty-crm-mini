@@ -5,7 +5,6 @@ import {useState} from "react";
 export function ClientsSection({
                                  appointments,
                                  clientsState,
-                                 handleDeleteClient,
                                  openSidebarTab,
                                  openClientEditModal,
                                  openClientAddModal,
@@ -80,7 +79,7 @@ export function ClientsSection({
       submitButtonText: "Да, удалить",
       cancelButtonText: "Нет, не удалять",
       onSubmit: () => {
-        handleDeleteClient(client.id);
+        clientsState.handleDeleteClient(client.id);
         closeAlert();
         showToast("info", "Клиент успешно удален", 3000);
       },
