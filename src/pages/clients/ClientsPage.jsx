@@ -1,3 +1,5 @@
+// noinspection D
+
 import {useState} from "react";
 import {
   formatAppointmentDateTime,
@@ -22,6 +24,7 @@ export function ClientsPage({
                             }) {
 
   // Реализация поиска по клиентам
+  // TODO: реализовать поиск по клиентам не только по имени, но и по другим параметрам через объект поиска
   const [searchTerm, setSearchTerm] = useState('');
   const searchedClients = clientsState.clients.filter(client => String(`${client.firstname} ${client.surname}`).toLowerCase().includes(searchTerm.toLowerCase()));
 
@@ -48,6 +51,65 @@ export function ClientsPage({
       title: `${client.firstname} ${client.surname}`,
       key: `client:${client.id}`,
     })
+  }
+
+  // Фильтры клиентов
+  let filteredClients = [...searchedClients];
+
+  const [didVisitCheckbox, setDidVisitCheckbox] = useState(false);
+
+  const spentValues = clientsState.clients.map((client) => Number(getClientStats(client).clientTotalSpentThisYear));
+
+  const minSpentLimit = spentValues.length > 0 ? Math.min(...spentValues) : 0;
+  const maxSpentLimit = spentValues.length > 0 ? Math.max(...spentValues) : 0;
+
+  const [minSpent, setMinSpent] = useState(minSpentLimit);
+  const [maxSpent, setMaxSpent] = useState(maxSpentLimit);
+
+
+
+  if (didVisitCheckbox) {
+    filteredClients = filteredClients.filter(client => getClientStats(client).clientEndedAppointmentsThisYearCount > 0);
+  }
+
+  if (minSpent >= 0 && maxSpent >= 0 && minSpent <= maxSpent) {
+    filteredClients = filteredClients.filter(client => getClientStats(client).clientTotalSpentThisYear >= Number(minSpent));
+    filteredClients = filteredClients.filter(client => getClientStats(client).clientTotalSpentThisYear <= Number(maxSpent));
+  }
+
+  function handleMinSpentChange(event) {
+    if (Number(event.target.value) < minSpentLimit) {
+      setMinSpent(minSpentLimit);
+      return;
+    }
+
+    if (Number(event.target.value) > maxSpent) {
+      setMinSpent(Number(maxSpent) - 1);
+      return;
+    }
+
+    setMinSpent(Number(event.target.value));
+  }
+
+  function handleMaxSpentChange(event) {
+    if (Number(event.target.value) > maxSpentLimit) {
+      setMaxSpent(maxSpentLimit);
+      return;
+    }
+
+    if (Number(event.target.value) < minSpent) {
+      setMaxSpent(Number(minSpent) + 1);
+      return;
+    }
+
+    setMaxSpent(Number(event.target.value));
+  }
+
+  function handleResetFilters() {
+    setDidVisitCheckbox(false);
+    setMinSpent(minSpentLimit);
+    setMaxSpent(maxSpentLimit);
+    setSearchTerm('');
   }
 
   // Получение информации по клиенту
@@ -80,22 +142,22 @@ export function ClientsPage({
 
   // Работа с сортировкой клиентов
   const [currentSort, setCurrentSort] = useState('default');
-  let sortedClients = [...searchedClients];
+  let sortedClients = [...filteredClients];
 
   if (currentSort === 'default') {
-    sortedClients = [...searchedClients]
+    sortedClients = [...filteredClients]
   } else if (currentSort === 'a-z') {
-    sortedClients = [...searchedClients].sort((a, b) => `${a.firstname} ${a.surname}`.localeCompare(`${b.firstname} ${b.surname}`));
+    sortedClients = [...filteredClients].sort((a, b) => `${a.firstname} ${a.surname}`.localeCompare(`${b.firstname} ${b.surname}`));
   } else if (currentSort === 'z-a') {
-    sortedClients = [...searchedClients].sort((a, b) => `${b.firstname} ${b.surname}`.localeCompare(`${a.firstname} ${a.surname}`));
+    sortedClients = [...filteredClients].sort((a, b) => `${b.firstname} ${b.surname}`.localeCompare(`${a.firstname} ${a.surname}`));
   } else if (currentSort === 'appointment-up') {
-    sortedClients = [...searchedClients].sort((a, b) => `${getClientStats(b).clientNearestAppointment?.date} ${getClientStats(b).clientNearestAppointment?.time}`.localeCompare(`${getClientStats(a).clientNearestAppointment?.date} ${getClientStats(a).clientNearestAppointment?.time}`));
+    sortedClients = [...filteredClients].sort((a, b) => `${getClientStats(b).clientNearestAppointment?.date} ${getClientStats(b).clientNearestAppointment?.time}`.localeCompare(`${getClientStats(a).clientNearestAppointment?.date} ${getClientStats(a).clientNearestAppointment?.time}`));
   } else if (currentSort === 'appointment-down') {
-    sortedClients = [...searchedClients].sort((a, b) => `${getClientStats(a).clientNearestAppointment?.date} ${getClientStats(a).clientNearestAppointment?.time}`.localeCompare(`${getClientStats(b).clientNearestAppointment?.date} ${getClientStats(b).clientNearestAppointment?.time}`));
+    sortedClients = [...filteredClients].sort((a, b) => `${getClientStats(a).clientNearestAppointment?.date} ${getClientStats(a).clientNearestAppointment?.time}`.localeCompare(`${getClientStats(b).clientNearestAppointment?.date} ${getClientStats(b).clientNearestAppointment?.time}`));
   } else if (currentSort === 'sum-up') {
-    sortedClients = [...searchedClients].sort((a, b) => getClientStats(a).clientTotalSpentThisYear - getClientStats(b).clientTotalSpentThisYear);
+    sortedClients = [...filteredClients].sort((a, b) => getClientStats(a).clientTotalSpentThisYear - getClientStats(b).clientTotalSpentThisYear);
   } else if (currentSort === 'sum-down') {
-    sortedClients = [...searchedClients].sort((a, b) => getClientStats(b).clientTotalSpentThisYear - getClientStats(a).clientTotalSpentThisYear);
+    sortedClients = [...filteredClients].sort((a, b) => getClientStats(b).clientTotalSpentThisYear - getClientStats(a).clientTotalSpentThisYear);
   }
 
   return (
@@ -109,7 +171,11 @@ export function ClientsPage({
             <h2>Клиенты</h2>
           </div>
 
-          <button className="section__add-btn" onClick={openClientAddModal}>Добавить клиента</button>
+          <button
+            className="section__add-btn"
+            onClick={openClientAddModal}
+          >Добавить клиента
+          </button>
         </div>
 
         <div className="clients-page__controls">
@@ -117,12 +183,14 @@ export function ClientsPage({
             type="text"
             name="search-field"
             placeholder="Поиск"
+            value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
           />
 
           <select
             name="sort"
             id=""
+            value={currentSort}
             onChange={(event) => setCurrentSort(event.target.value)}
           >
             <option value="default">По умолчанию</option>
@@ -135,6 +203,77 @@ export function ClientsPage({
           </select>
         </div>
 
+        <div className="clients-page__controls">
+          <label>
+            Только посещавшие за год
+            <input
+              type="checkbox"
+              name="did-visit"
+              id=""
+              checked={didVisitCheckbox}
+              onChange={() => setDidVisitCheckbox(!didVisitCheckbox)}
+            />
+          </label>
+
+          <div className="clients-page__controls__total-spent-filter">
+            <h4>Сумма за год</h4>
+            <p>Доступный диапазон: от {formatMoney(Number(minSpentLimit))} до {formatMoney(Number(maxSpentLimit))}</p>
+
+            <input
+              type="number"
+              name="total-spent-number-min"
+              placeholder="От"
+              id=""
+              min={minSpentLimit}
+              max={maxSpentLimit}
+              value={minSpent}
+              onChange={(event) => handleMinSpentChange(event)}
+            />
+
+            <input
+              type="number"
+              name="total-spent-number-max"
+              placeholder="До"
+              id=""
+              min={minSpentLimit}
+              max={maxSpentLimit}
+              value={maxSpent}
+              onChange={(event) => handleMaxSpentChange(event)}
+            />
+
+            <label>
+              От
+              <input
+                type="range"
+                name="total-spent-range-min"
+                id=""
+                min={minSpentLimit}
+                max={maxSpentLimit}
+                step={100}
+                value={minSpent}
+                onChange={(event) => handleMinSpentChange(event)}
+              />
+            </label>
+
+            <label>
+              До
+              <input
+                type="range"
+                name="total-spent-range-max"
+                id=""
+                min={minSpentLimit}
+                max={maxSpentLimit}
+                step={100}
+                value={maxSpent}
+                onChange={(event) => handleMaxSpentChange(event)}
+              />
+            </label>
+          </div>
+
+          <button type="button" onClick={handleResetFilters}>Сбросить фильтры</button>
+
+        </div>
+
         {/*TODO: сделать тут по клику на заголовок смену сортировки как в Finder (скорее всего, через if-else или типа того)*/}
         <div className="clients-page__table-wrapper">
           <table className="clients-page__table">
@@ -143,7 +282,6 @@ export function ClientsPage({
                 <th>Имя и фамилия</th>
                 <th>Телефон</th>
                 <th>Telegram</th>
-                <th>Email</th>
                 <th>Визиты за год</th>
                 <th>Сумма за год</th>
                 <th>Ближайшая запись</th>
@@ -154,20 +292,32 @@ export function ClientsPage({
               {sortedClients.map(client => (
                 <tr key={client.id}>
                   <th>{`${client.firstname} ${client.surname}`}</th>
-                  <td>{formatStoredPhone(client.tel)}</td>
-                  <td>@{client.telegram}</td>
-                  <td>{client.email}</td>
+                  <td>
+                    <a href={`tel:+${client.tel}`}>{formatStoredPhone(client.tel)}</a>
+                  </td>
+                  <td>
+                    <a href={`https://t.me/${client.telegram}`}>@{client.telegram}</a>
+                  </td>
                   <td>{getClientStats(client).clientEndedAppointmentsThisYearCount}</td>
                   <td>{formatMoney(getClientStats(client).clientTotalSpentThisYear)}</td>
                   <td>{getClientStats(client).clientNearestAppointment ? formatAppointmentDateTime(getClientStats(client).clientNearestAppointment.date, getClientStats(client).clientNearestAppointment.time) : '—'}</td>
                   <td className="clients-page__actions">
-                    <button className="clients-page__action-button" onClick={() => openClientEditModal(client)}>
+                    <button
+                      className="clients-page__action-button"
+                      onClick={() => openClientEditModal(client)}
+                    >
                       <PencilIcon />
                     </button>
-                    <button className="clients-page__action-button" onClick={() => handleDeleteClick(client)}>
+                    <button
+                      className="clients-page__action-button"
+                      onClick={() => handleDeleteClick(client)}
+                    >
                       <TrashIcon />
                     </button>
-                    <button className="clients-page__action-button" onClick={() => handleOpenClientDetails(client)}>
+                    <button
+                      className="clients-page__action-button"
+                      onClick={() => handleOpenClientDetails(client)}
+                    >
                       <Maximize2Icon />
                     </button>
                   </td>
