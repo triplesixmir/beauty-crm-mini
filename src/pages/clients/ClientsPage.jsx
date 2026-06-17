@@ -66,8 +66,6 @@ export function ClientsPage({
   const [minSpent, setMinSpent] = useState(minSpentLimit);
   const [maxSpent, setMaxSpent] = useState(maxSpentLimit);
 
-
-
   if (didVisitCheckbox) {
     filteredClients = filteredClients.filter(client => getClientStats(client).clientEndedAppointmentsThisYearCount > 0);
   }
@@ -178,8 +176,9 @@ export function ClientsPage({
           </button>
         </div>
 
-        <div className="clients-page__controls">
+        <div className="clients-page__controls data-page__toolbar">
           <input
+            className="data-page__search"
             type="text"
             name="search-field"
             placeholder="Поиск"
@@ -188,6 +187,7 @@ export function ClientsPage({
           />
 
           <select
+            className="data-page__sort"
             name="sort"
             id=""
             value={currentSort}
@@ -203,9 +203,9 @@ export function ClientsPage({
           </select>
         </div>
 
-        <div className="clients-page__controls">
-          <label>
-            Только посещавшие за год
+        <div className="clients-page__controls data-page__filters">
+          <label className="data-page__checkbox">
+            <span>Только посещавшие за год</span>
             <input
               type="checkbox"
               name="did-visit"
@@ -215,34 +215,44 @@ export function ClientsPage({
             />
           </label>
 
-          <div className="clients-page__controls__total-spent-filter">
-            <h4>Сумма за год</h4>
-            <p>Доступный диапазон: от {formatMoney(Number(minSpentLimit))} до {formatMoney(Number(maxSpentLimit))}</p>
+          <div className="clients-page__controls__total-spent-filter data-page__range-card">
+            <div className="data-page__range-header">
+              <h4>Сумма за год</h4>
+              <p>Доступный диапазон: от {formatMoney(Number(minSpentLimit))} до {formatMoney(Number(maxSpentLimit))}</p>
+            </div>
 
-            <input
-              type="number"
-              name="total-spent-number-min"
-              placeholder="От"
-              id=""
-              min={minSpentLimit}
-              max={maxSpentLimit}
-              value={minSpent}
-              onChange={(event) => handleMinSpentChange(event)}
-            />
+            <div className="data-page__number-pair">
+              <label className="data-page__field">
+                <span>От</span>
+                <input
+                  type="number"
+                  name="total-spent-number-min"
+                  placeholder="От"
+                  id=""
+                  min={minSpentLimit}
+                  max={maxSpentLimit}
+                  value={minSpent}
+                  onChange={(event) => handleMinSpentChange(event)}
+                />
+              </label>
 
-            <input
-              type="number"
-              name="total-spent-number-max"
-              placeholder="До"
-              id=""
-              min={minSpentLimit}
-              max={maxSpentLimit}
-              value={maxSpent}
-              onChange={(event) => handleMaxSpentChange(event)}
-            />
+              <label className="data-page__field">
+                <span>До</span>
+                <input
+                  type="number"
+                  name="total-spent-number-max"
+                  placeholder="До"
+                  id=""
+                  min={minSpentLimit}
+                  max={maxSpentLimit}
+                  value={maxSpent}
+                  onChange={(event) => handleMaxSpentChange(event)}
+                />
+              </label>
+            </div>
 
-            <label>
-              От
+            <label className="data-page__range">
+              <span>От</span>
               <input
                 type="range"
                 name="total-spent-range-min"
@@ -255,8 +265,8 @@ export function ClientsPage({
               />
             </label>
 
-            <label>
-              До
+            <label className="data-page__range">
+              <span>До</span>
               <input
                 type="range"
                 name="total-spent-range-max"
@@ -270,7 +280,7 @@ export function ClientsPage({
             </label>
           </div>
 
-          <button type="button" onClick={handleResetFilters}>Сбросить фильтры</button>
+          <button className="data-page__reset-button" type="button" onClick={handleResetFilters}>Сбросить фильтры</button>
 
         </div>
 
@@ -292,14 +302,12 @@ export function ClientsPage({
               {sortedClients.map(client => (
                 <tr key={client.id}>
                   <th>{`${client.firstname} ${client.surname}`}</th>
-                  <td>
-                    <a href={`tel:+${client.tel}`}>{formatStoredPhone(client.tel)}</a>
-                  </td>
+                  <td>{client.tel ? <a href={`tel:+${client.tel}`}>{formatStoredPhone(client.tel)}</a> : 'Телефон не указан'}</td>
                   <td>
                     <a href={`https://t.me/${client.telegram}`}>@{client.telegram}</a>
                   </td>
-                  <td>{getClientStats(client).clientEndedAppointmentsThisYearCount}</td>
-                  <td>{formatMoney(getClientStats(client).clientTotalSpentThisYear)}</td>
+                  <td><span className="data-page__badge">{getClientStats(client).clientEndedAppointmentsThisYearCount}</span></td>
+                  <td><span className="data-page__money">{formatMoney(getClientStats(client).clientTotalSpentThisYear)}</span></td>
                   <td>{getClientStats(client).clientNearestAppointment ? formatAppointmentDateTime(getClientStats(client).clientNearestAppointment.date, getClientStats(client).clientNearestAppointment.time) : '—'}</td>
                   <td className="clients-page__actions">
                     <button
@@ -325,6 +333,12 @@ export function ClientsPage({
               ))}
             </tbody>
           </table>
+        </div>
+
+        <div className="clients-page__statistics-under-table data-page__summary">
+          <p>Всего клиентов: {clientsState.clients.length}</p>
+          <p>Скрыто клиентов: {clientsState.clients.length - sortedClients.length}</p>
+          <p>Показано клиентов: {sortedClients.length}</p>
         </div>
 
       </section>

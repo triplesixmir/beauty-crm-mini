@@ -31,9 +31,9 @@ export function ClientCard({
       </div>
 
       <div className="card__details">
-        <p><span>Телефон</span> <a href={telLink}>{formatStoredPhone(tel)}</a></p>
-        <p><span>Telegram</span> <a href={telegramLink}>@{telegram}</a></p>
-        <p><span>Email</span> <a href={emailLink}>{email}</a></p>
+        <p><span>Телефон</span> {tel ? <a href={telLink}>{formatStoredPhone(tel)}</a> : 'Телефон не указан'}</p>
+        <p><span>Telegram</span> {telegram ? <a href={telegramLink}>@{telegram}</a> : 'Telegram не указан'}</p>
+        <p><span>Email</span> {email ? <a href={emailLink}>{email}</a> : 'Email не указан'}</p>
         <p><span>Посещений за {currentYear}</span> {formatAppointmentsCount(stats.appointmentsThisYearCount)}</p>
         <p><span>Потрачено за {currentYear}</span> {stats.totalSpentThisYear}</p>
         {stats.timeToAppointmentMs &&
