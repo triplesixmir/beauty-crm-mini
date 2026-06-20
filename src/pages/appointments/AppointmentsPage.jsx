@@ -1,8 +1,8 @@
-// noinspection D
+// noinspection D,DuplicatedCode
 
 import {useState} from "react";
 import {
-  formatAppointmentDateTime,
+  formatAppointmentDateTime, formatAppointmentYearDateTime,
   formatMoney
 } from "../../utils/formatters.js";
 import {formatStoredPhone} from "../../utils/phone.js";
@@ -44,8 +44,59 @@ export function AppointmentsPage({
 
   const [didVisitCheckbox, setDidVisitCheckbox] = useState(false);
   const [isAppointmentEndedCheckbox, setIsAppointmentEndedCheckbox] = useState(false);
+  const [isAppointmentNotEndedCheckbox, setIsAppointmentNotEndedCheckbox] = useState(false);
   filteredAppointments = filteredAppointments.filter(appointment => didVisitCheckbox ? !appointment.didntCome && new Date(`${appointment.date}T${appointment.time}`) < now : true);
   filteredAppointments = filteredAppointments.filter(appointment => isAppointmentEndedCheckbox ? new Date(`${appointment.date}T${appointment.time}`) < now : true);
+  filteredAppointments = filteredAppointments.filter(appointment => isAppointmentNotEndedCheckbox ? new Date(`${appointment.date}T${appointment.time}`) > now : true);
+
+  const [currentPeriod, setCurrentPeriod] = useState('all-time');
+
+  function getPeriodStartEnd(period) {
+    if (period === 'this-month') {
+      return {
+        start: new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0),
+        end: new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999),
+      }
+    } else if (period === 'this-week') {
+      const daysFromMonday = (now.getDay() + 6) % 7;
+
+      const currentMoment = new Date();
+      const monday = new Date(currentMoment.setDate(currentMoment.getDate() - daysFromMonday));
+      const end = new Date(monday);
+      const sunday = new Date(end.setDate(end.getDate() + 6));
+
+      return {
+        start: monday.setHours(0, 0, 0, 0),
+        end: sunday.setHours(23, 59, 59, 999),
+      }
+    } else if (period === 'this-year') {
+      return {
+        start: new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0),
+        end: new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999),
+      }
+    }
+  }
+
+  const period = getPeriodStartEnd(currentPeriod)
+
+  if (currentPeriod === 'this-month') {
+    filteredAppointments = [...filteredAppointments].filter(appointment =>
+      new Date(`${appointment.date}T${appointment.time}:00`) >= new Date(period.start) &&
+      new Date(`${appointment.date}T${appointment.time}:00`) <= new Date(period.end));
+
+  } else if (currentPeriod === 'this-week') {
+    filteredAppointments = [...filteredAppointments].filter(appointment =>
+      new Date(`${appointment.date}T${appointment.time}:00`) >= new Date(period.start) &&
+      new Date(`${appointment.date}T${appointment.time}:00`) <= new Date(period.end));
+
+  } else if (currentPeriod === 'this-year') {
+    filteredAppointments = [...filteredAppointments].filter(appointment =>
+      new Date(`${appointment.date}T${appointment.time}:00`) >= new Date(period.start) &&
+      new Date(`${appointment.date}T${appointment.time}:00`) <= new Date(period.end));
+
+  } else if (currentPeriod === 'all-time') {
+    filteredAppointments = [...filteredAppointments];
+  }
 
   // Сортировка записей
   const [currentSort, setCurrentSort] = useState('default');
@@ -109,6 +160,7 @@ export function AppointmentsPage({
       clientTelegram: client ? client.telegram : null,
 
       appointmentDateTime: new Date(`${appointment.date}T${appointment.time}`),
+      appointmentYear: new Date(`${appointment.date}T${appointment.time}`).getFullYear(),
       appointmentDidVisit: new Date(`${appointment.date}T${appointment.time}`) < now ? !appointment.didntCome ? 'Явился(ась)' : 'Не явился(ась)' : 'Сеанс не закончился'
     }
   }
@@ -181,6 +233,18 @@ export function AppointmentsPage({
             <option value="sum-up">По стоимости ↑</option>
             <option value="sum-down">По стоимости ↓</option>
           </select>
+
+          <select
+            name="choose-period"
+            id=""
+            value={currentPeriod}
+            onChange={(event) => setCurrentPeriod(event.target.value)}
+          >
+            <option value="all-time">За все время</option>
+            <option value="this-year">За этот год</option>
+            <option value="this-month">За этот месяц</option>
+            <option value="this-week">За эту неделю</option>
+          </select>
         </div>
 
         <div className="appointments-page__controls data-page__filters">
@@ -203,6 +267,17 @@ export function AppointmentsPage({
               id=""
               checked={isAppointmentEndedCheckbox}
               onChange={() => setIsAppointmentEndedCheckbox(!isAppointmentEndedCheckbox)}
+            />
+          </label>
+
+          <label className="data-page__checkbox">
+            <span>Только будущие</span>
+            <input
+              type="checkbox"
+              name="is-ended"
+              id=""
+              checked={isAppointmentNotEndedCheckbox}
+              onChange={() => setIsAppointmentNotEndedCheckbox(!isAppointmentNotEndedCheckbox)}
             />
           </label>
 
@@ -301,14 +376,19 @@ export function AppointmentsPage({
 
                   return (
                     <tr key={appointment.id}>
-                      <th>{formatAppointmentDateTime(appointment.date, appointment.time)}</th>
+                      <th>{appointmentStats.appointmentYear !== now.getFullYear() ? formatAppointmentYearDateTime(appointment.date, appointment.time) : formatAppointmentDateTime(appointment.date, appointment.time)}</th>
                       <td>{SERVICES_LABELS[appointment.service]}</td>
-                      <td><span className="data-page__money">{formatMoney(appointment.price)}</span></td>
+                      <td>
+                        <span className="data-page__money">{formatMoney(appointment.price)}</span>
+                      </td>
                       <td>{appointmentStats.clientName}</td>
                       <td>
-                        {appointmentStats.clientPhone ? <a href={`tel:+${appointmentStats.clientPhone}`}>{formatStoredPhone(appointmentStats.clientPhone)}</a> : 'Телефон не указан'}
+                        {appointmentStats.clientPhone ?
+                          <a href={`tel:+${appointmentStats.clientPhone}`}>{formatStoredPhone(appointmentStats.clientPhone)}</a> : 'Телефон не указан'}
                       </td>
-                      <td><span className="data-page__badge">{appointmentStats.appointmentDidVisit}</span></td>
+                      <td>
+                        <span className="data-page__badge">{appointmentStats.appointmentDidVisit}</span>
+                      </td>
                       <td className="appointments-page__actions">
                         <button
                           className="appointments-page__action-button"
@@ -335,7 +415,9 @@ export function AppointmentsPage({
               </tbody>
             </table>
           </div>
-          : <div className="appointments-page__no-results data-page__empty"><p>Нет результатов</p></div>
+          : <div className="appointments-page__no-results data-page__empty">
+            <p>Нет результатов</p>
+          </div>
         }
 
         <div className="appointments-page__statistics-under-table data-page__summary">

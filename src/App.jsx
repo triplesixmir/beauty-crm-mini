@@ -142,7 +142,11 @@ function App() {
         />
         <Route
           path="/finances"
-          element={<FinancesPage />}
+          element={<FinancesPage
+          appointmentsState={appointmentsState}
+          clientsState={clientsState}
+          now={now}
+          />}
         />
         <Route
           path="/employees"
@@ -195,6 +199,7 @@ function App() {
                 onSuccess={closeAppointmentModal}
                 showToast={toastsState.showToast}
                 now={now}
+                alertsState={alertsState}
               />
 
             </Modal>)}

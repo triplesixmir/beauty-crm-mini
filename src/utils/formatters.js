@@ -47,6 +47,18 @@ export function formatAppointmentDateTime(date, time) {
   }).format(dateTime);
 }
 
+export function formatAppointmentYearDateTime(date, time) {
+  const dateTime = new Date(`${date}T${time}`);
+
+  return new Intl.DateTimeFormat('ru-RU', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(dateTime);
+}
+
 export function formatDateTime(dateTime) {
   return new Intl.DateTimeFormat('ru-RU', {
     day: 'numeric',

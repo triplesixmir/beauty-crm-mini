@@ -2,7 +2,10 @@
 
 import {useState} from "react";
 import {SERVICES} from "../../constants/services.js";
-import {formatDate, formatTime} from "../../utils/formatters.js";
+import {
+  formatDate,
+  formatTime
+} from "../../utils/formatters.js";
 
 function getInitialFormData(onEditing) {
   if (onEditing) {
@@ -34,12 +37,13 @@ export function AppointmentForm({
                                   onCancel,
                                   onSuccess,
                                   showToast,
+                                  alertsState,
                                 }) {
 
   const [formData, setFormData] = useState(() => getInitialFormData(onEditing))
   const [errors, setErrors] = useState({});
 
-  function handleSubmit(event) {
+  function handleSubmitClick(event) {
     event.preventDefault();
 
     const currentNow = new Date();
@@ -49,13 +53,13 @@ export function AppointmentForm({
 
     if (!formData.date) {
       newErrors.date = 'Укажите дату';
-    } else if (formData.date < nowDate) {
+    } else if (formData.date < nowDate && Object.keys(newErrors).length > 0) {
       newErrors.date = `Нельзя создать запись на дату раньше, чем ${formatDate(currentNow)}`
     }
 
     if (!formData.time) {
       newErrors.time = 'Укажите время';
-    } else if (formData.date === nowDate && formData.time < nowTime) {
+    } else if (formData.date === nowDate && formData.time < nowTime && Object.keys(newErrors).length > 0) {
       newErrors.time = `Нельзя создать запись на время раньше, чем ${formatTime(currentNow)}`
     }
 
@@ -73,11 +77,63 @@ export function AppointmentForm({
       newErrors.client = 'Выберите клиента';
     }
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+    if (formData.date === nowDate && formData.time < nowTime && Object.keys(newErrors).length === 0) {
+      alertsState.openAlert({
+        title: `Добавление записи на прошедшее время`,
+        description: "Вы уверены, что хотите добавить запись на прошедшее время?",
+        secondDescription: 'Если это вынужденная мера, нажмите "Да, добавить".',
+        submitButtonText: "Да, добавить",
+        cancelButtonText: "Нет, не добавлять",
+        onSubmit: () => {
+          alertsState.closeAlert();
+          handleSaveAppointment();
+        },
+        onClose: () => {
+          alertsState.closeAlert();
+
+          setErrors(prev => ({
+            ...prev,
+            date: `Нельзя создать запись на время раньше, чем ${formatTime(currentNow)}`
+          }))
+
+        }
+      })
       return;
     }
 
+    if (formData.date < nowDate && Object.keys(newErrors).length === 0) {
+      alertsState.openAlert({
+        title: `Добавление записи задним числом`,
+        description: "Вы уверены, что хотите добавить запись на прошедшую дату?",
+        secondDescription: 'Если это вынужденная мера, нажмите "Да, добавить".',
+        submitButtonText: "Да, добавить",
+        cancelButtonText: "Нет, не добавлять",
+        onSubmit: () => {
+          alertsState.closeAlert();
+          handleSaveAppointment();
+        },
+        onClose: () => {
+          alertsState.closeAlert();
+
+          setErrors(prev => ({
+            ...prev,
+            date: `Нельзя создать запись на дату раньше, чем ${formatDate(currentNow)}`
+          }))
+
+        }
+      })
+      return;
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+    } else if (Object.keys(newErrors).length === 0) {
+      handleSaveAppointment();
+    }
+
+  }
+
+  function handleSaveAppointment() {
     if (onEditing) {
       const updatedAppointment = {
         ...formData,
@@ -118,7 +174,7 @@ export function AppointmentForm({
   return (
     <form
       className="inputs-container inputs-container--appointment"
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmitClick}
     >
       <select
         name="clientId"
