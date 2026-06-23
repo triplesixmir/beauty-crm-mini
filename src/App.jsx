@@ -1,3 +1,5 @@
+// noinspection D
+
 import {Routes, Route} from "react-router"
 
 import {useClients} from "./hooks/useClients.js";
@@ -26,6 +28,10 @@ import {EmployeesPage} from "./pages/employees/EmployeesPage.jsx";
 import {StatisticsPage} from "./pages/statistics/StatisticsPage.jsx";
 import {SettingsPage} from "./pages/settings/SettingsPage.jsx";
 import {SideNavbar} from "./components/layout/SideNavbar.jsx";
+import {useEmployees} from "./hooks/useEmployees.js";
+import {EmployeeForm} from "./components/employees/EmployeeForm.jsx";
+import {useReviews} from "./hooks/useReviews.js";
+import {ReviewForm} from "./components/reviews/ReviewForm.jsx";
 
 function App() {
 
@@ -36,6 +42,8 @@ function App() {
   const alertsState = useAlerts();
   const toastsState = useToasts();
   const sidebarsState = useSidebars();
+  const employeesState = useEmployees();
+  const reviewsState = useReviews();
 
   const now = new Date();
 
@@ -68,6 +76,36 @@ function App() {
   function openAppointmentAddModal() {
     appointmentsState.handleResetEditingAppointment();
     modalsState.openAppointmentModal();
+  }
+
+  function openEmployeeEditModal(employee) {
+    employeesState.handleEditEmployee(employee);
+    modalsState.openEmployeeModal();
+  }
+
+  function openEmployeeAddModal() {
+    employeesState.handleResetEditingEmployee();
+    modalsState.openEmployeeModal();
+  }
+
+  function closeEmployeeModal() {
+    modalsState.closeEmployeeModal();
+    employeesState.handleResetEditingEmployee();
+  }
+
+  function openReviewAddModal() {
+    reviewsState.resetEditingReview();
+    modalsState.openReviewModal();
+  }
+
+  function openReviewEditModal(review) {
+    reviewsState.chooseEditingReview(review);
+    modalsState.openReviewModal();
+  }
+
+  function closeReviewModal() {
+    modalsState.closeReviewModal();
+    reviewsState.resetEditingReview();
   }
 
   // Сайдбар и связанное с ним
@@ -132,6 +170,7 @@ function App() {
           element={<AppointmentsPage
             appointmentsState={appointmentsState}
             clientsState={clientsState}
+            employeesState={employeesState}
             openSidebarTab={sidebarsState.openSidebarTab}
             openAppointmentEditModal={openAppointmentEditModal}
             openAppointmentAddModal={openAppointmentAddModal}
@@ -150,7 +189,19 @@ function App() {
         />
         <Route
           path="/employees"
-          element={<EmployeesPage />}
+          element={<EmployeesPage
+            employeesState={employeesState}
+            clientsState={clientsState}
+            reviewsState={reviewsState}
+            alertsState={alertsState}
+            toastsState={toastsState}
+            openEmployeeAddModal={openEmployeeAddModal}
+            openEmployeeEditModal={openEmployeeEditModal}
+            openReviewEditModal={openReviewEditModal}
+            openReviewAddModal={openReviewAddModal}
+            appointments={appointmentsState.appointments}
+            now={now}
+          />}
         />
         <Route
           path="/statistics"
@@ -166,6 +217,7 @@ function App() {
 
       <main>
 
+        {/*== МОДАЛКИ ==*/}
         {modalsState.isClientModalOpen &&
           (<Modal
             title={clientsState.editingClient ? 'Редактировать клиента' : 'Добавить клиента'}
@@ -194,6 +246,7 @@ function App() {
                 onAddAppointment={appointmentsState.handleAddAppointment}
                 onEditing={appointmentsState.editingAppointment}
                 clientsArray={clientsState.clients}
+                employeesArray={employeesState.employees}
                 onUpdateAppointment={appointmentsState.handleUpdateAppointment}
                 onCancel={closeAppointmentModal}
                 onSuccess={closeAppointmentModal}
@@ -204,12 +257,60 @@ function App() {
 
             </Modal>)}
 
+        {modalsState.isEmployeeModalOpen &&
+          (
+            <Modal
+              title={employeesState.editingEmployee ? 'Редактировать сотрудника' : 'Добавить сотрудника'}
+              onClose={closeEmployeeModal}
+            >
+
+              <EmployeeForm
+                key={employeesState.editingEmployee?.id ?? 'new-employee'}
+                onAddEmployee={employeesState.handleAddEmployee}
+                onUpdateEmployee={employeesState.handleUpdateEmployee}
+                onEditing={employeesState.editingEmployee}
+                clientsArray={clientsState.clients}
+                appointmentsArray={appointmentsState.appointments}
+                onCancel={closeEmployeeModal}
+                onSuccess={closeEmployeeModal}
+                showToast={toastsState.showToast}
+                now={now}
+                alertsState={alertsState}
+              />
+
+            </Modal>)}
+
+        {modalsState.isReviewModalOpen &&
+          (
+            <Modal
+              title={reviewsState.editingReview ? 'Редактировать отзыв' : 'Добавить отзыв'}
+              onClose={closeReviewModal}
+            >
+
+              <ReviewForm
+                key={reviewsState.editingReview?.id ?? 'new-review'}
+                onAddReview={reviewsState.addReview}
+                onUpdateReview={reviewsState.updateReview}
+                onEditing={reviewsState.editingReview}
+                clients={clientsState.clients}
+                appointments={appointmentsState.appointments}
+                onCancel={closeReviewModal}
+                onSuccess={closeReviewModal}
+                showToast={toastsState.showToast}
+                now={now}
+                alertsState={alertsState}
+              />
+
+            </Modal>)}
+
+        {/*== АЛЕРТЫ ==*/}
         {alertsState.alertConfig &&
           <Alert
             {...alertsState.alertConfig}
           />
         }
 
+        {/*== ТОСТЫ ==*/}
         {toastsState.toasts.length > 0 &&
           <ToastContainer
             toastsArray={toastsState.toasts}
@@ -217,6 +318,7 @@ function App() {
           />
         }
 
+        {/*== САЙДБАРЫ ==*/}
         {sidebarsState.sidebarTabs.length > 0 &&
           <Sidebar
             closeSidebarTab={sidebarsState.closeSidebarTab}
@@ -239,6 +341,7 @@ function App() {
                 key={activeSidebarTab?.key ?? 'no-appointment'}
                 appointment={activeAppointment}
                 clientsArray={clientsState.clients}
+                employeesArray={employeesState.employees}
                 handleUpdateAppointment={appointmentsState.handleUpdateAppointment}
               />
             )}

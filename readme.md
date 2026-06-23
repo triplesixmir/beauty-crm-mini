@@ -1,78 +1,44 @@
 # Beauty CRM Mini
 
-A mini CRM for beauty professionals — manage clients and appointments in one place.
+Учебное CRM-приложение для салонов красоты. Проект реализован на React и позволяет вести клиентов и записи, просматривать сводку и финансовые показатели.
 
-This is a personal learning project. It started as a plain HTML/CSS page and has grown into a modular vanilla JS app. A React rewrite (`beauty-crm-react/`) is in progress as a study exercise.
+## Возможности
 
-## Features
+- CRUD для клиентов, записей и сотрудников, а также добавление отзывов, с сохранением данных в `localStorage`;
+- поиск, фильтрация и сортировка на страницах клиентов и записей;
+- дэшборд с ключевыми показателями и ближайшей записью;
+- финансовая сводка: полученная и прогнозируемая выручка, средний чек, потери, топ клиентов и статистика по услугам;
+- модальные формы, диалоги подтверждения, toast-уведомления и боковая панель деталей;
+- маршруты для дэшборда, клиентов, записей, финансов, сотрудников, статистики и настроек; страницы статистики и настроек пока служат заглушками.
 
-- **Client management** — add, edit, delete clients; search by name; sort by name or last visit date
-- **Appointment management** — create and edit appointments with service, date, time, and price; filter by service, date range, and price; search by client name
-- **Dashboard** — live stats: total clients, total appointments, total revenue, nearest upcoming appointment
-- **Pagination** — both lists load 4 items at a time with a "Show more" button
-- **Toast notifications** — non-blocking success/error/warning messages
-- **Custom confirm dialogs** — promise-based modal replacing native `confirm()`
-- **Persistent storage** — all data saved to `localStorage`
+## Стек
 
-## Tech stack
+- React 19;
+- Vite;
+- React Router;
+- Lucide React;
+- ESLint.
 
-**Vanilla version** (`/` root):
-- Plain HTML, CSS, vanilla JavaScript
-- ES modules (`type="module"`)
-- No build step, no framework, no package manager required
-- [Inputmask](https://github.com/RobinHerbots/Inputmask) (CDN) for phone number formatting
+## Быстрый запуск
 
-**React version** (`beauty-crm-react/`):
-- React 19 + Vite
-- Custom hooks: `useClients`, `useAppointments`
-- Work in progress — being built alongside learning React
-
-## Project structure
-
-beauty-crm-mini/
-├── index.html
-├── css/styles.css
-├── js/
-│ ├── app.js # entry point
-│ ├── init.js # bootstraps subsystems
-│ ├── states.js # shared mutable state
-│ ├── dom.js # centralized DOM references
-│ ├── clients.js # client CRUD + UI
-│ ├── appointments.js # appointment CRUD + filters + UI
-│ ├── dashboard.js # stats rendering
-│ ├── storage.js # localStorage wrappers
-│ ├── toasts.js # toast notification system
-│ ├── confirm.js # async confirm modal
-│ └── utils.js # shared helpers + service map
-└── beauty-crm-react/ # React rewrite (Vite)
-└── src/
-├── components/ # ClientForm, ClientCard, AppointmentForm, AppointmentCard
-└── hooks/ # useClients, useAppointments
-
-
-## Running locally
-
-**Vanilla version** — just open `index.html` in a browser, or serve it statically:
-
-bash
-npx serve .
-
-**React version:**
-
-cd beauty-crm-react
+```bash
 npm install
 npm run dev
+```
 
-## Data model
+## Команды
 
-// Client
-{ id, name, tel, telegram, lastVisit, totalSpent }
+| Команда | Назначение |
+| --- | --- |
+| `npm run dev` | Запускает Vite в режиме разработки. |
+| `npm run build` | Собирает production-версию в `dist/`. |
+| `npm run lint` | Проверяет JavaScript и JSX через ESLint. |
+| `npm run preview` | Локально показывает production-сборку. |
 
-// Appointment
-{ appointmentId, clientId, date, time, price, service }
+## Данные
 
-IDs are generated with Date.now(). Data persists in localStorage under the keys "clients" and "appointments".
+Клиенты, записи, сотрудники и отзывы хранятся в `localStorage` под ключами `clients`, `appointments`, `employees` и `reviews`. Каждая новая сущность получает идентификатор через `Date.now()`.
 
-## Status
-
-Active development. This is a learning project — the code evolves as new concepts are explored.
+- Клиент используется как минимум с полями `id`, `firstname`, `surname`, `tel`, `telegram`.
+- Запись связывается с клиентом через `clientId` и с сотрудником через `employeeId`; она использует поля `id`, `date`, `time`, `price`, `service`, `didntCome`.
+- Отзыв создаётся из выбранной записи и хранит `appointmentId`, `clientId` и `employeeId`; детальная схема остальных полей сотрудников и отзывов требует уточнения по формам.

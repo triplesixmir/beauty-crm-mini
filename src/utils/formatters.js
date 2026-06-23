@@ -28,6 +28,13 @@ const toVisitForms = {
   other: 'посещения'
 }
 
+const reviewsForms = {
+  one: 'отзыв',
+  few: 'отзыва',
+  many: 'отзывов',
+  other: 'отзывов'
+}
+
 export function formatMoney(value) {
   return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
@@ -37,7 +44,7 @@ export function formatMoney(value) {
 }
 
 export function formatAppointmentDateTime(date, time) {
-  const dateTime = new Date(`${date}T${time}`);
+  const dateTime = new Date(`${date}T${time}:00`);
 
   return new Intl.DateTimeFormat('ru-RU', {
     day: 'numeric',
@@ -99,4 +106,8 @@ export function formatTimeUntilAppointment(diffMs) {
 
 export function formatAppointmentsCount(count) {
   return `${count} ${toVisitForms[pluralRules.select(count)]}`;
+}
+
+export function formatReviewsCount(count) {
+  return `${count} ${reviewsForms[pluralRules.select(count)]}`;
 }

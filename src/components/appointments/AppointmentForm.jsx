@@ -15,6 +15,7 @@ function getInitialFormData(onEditing) {
       price: onEditing.price,
       service: onEditing.service,
       clientId: onEditing.clientId ? String(onEditing.clientId) : 'choose-client',
+      employeeId: onEditing.employeeId,
       didntCome: Boolean(onEditing.didntCome),
     }
   }
@@ -25,6 +26,7 @@ function getInitialFormData(onEditing) {
     price: '',
     service: 'choose-service',
     clientId: 'choose-client',
+    employeeId: 'choose-employee',
     didntCome: false,
   }
 }
@@ -38,6 +40,7 @@ export function AppointmentForm({
                                   onSuccess,
                                   showToast,
                                   alertsState,
+                                  employeesArray,
                                 }) {
 
   const [formData, setFormData] = useState(() => getInitialFormData(onEditing))
@@ -71,6 +74,10 @@ export function AppointmentForm({
 
     if (!formData.service || formData.service === 'choose-service') {
       newErrors.service = 'Выберите услугу';
+    }
+
+    if (!formData.employeeId || formData.employeeId === 'choose-employee') {
+      newErrors.employeeId = 'Выберите сотрудника';
     }
 
     if (formData.clientId === 'choose-client') {
@@ -139,14 +146,16 @@ export function AppointmentForm({
         ...formData,
         id: onEditing.id,
         notes: onEditing.notes,
-        clientId: Number(formData.clientId)
+        clientId: Number(formData.clientId),
+        employeeId: Number(formData.employeeId),
       };
       onUpdateAppointment(updatedAppointment);
       showToast("success", "Запись успешно обновлена", 3000)
     } else {
       const appointmentData = {
         ...formData,
-        clientId: Number(formData.clientId)
+        clientId: Number(formData.clientId),
+        employeeId: Number(formData.employeeId),
       };
       onAddAppointment(appointmentData);
       showToast("success", "Запись успешно создана", 3000)
@@ -176,6 +185,8 @@ export function AppointmentForm({
       className="inputs-container inputs-container--appointment"
       onSubmit={handleSubmitClick}
     >
+
+      {/*== ВЫБОР КЛИЕНТА ==*/}
       <select
         name="clientId"
         id=""
@@ -198,6 +209,7 @@ export function AppointmentForm({
       </select>
       {errors.client && <p className="error">{errors.client}</p>}
 
+      {/*== ВЫБОР УСЛУГИ ==*/}
       <select
         name="service"
         id=""
@@ -218,6 +230,7 @@ export function AppointmentForm({
       </select>
       {errors.service && <p className="error">{errors.service}</p>}
 
+      {/*== ВЫБОР ДАТЫ ==*/}
       <input
         type="date"
         name="date"
@@ -227,6 +240,7 @@ export function AppointmentForm({
       />
       {errors.date && <p className="error">{errors.date}</p>}
 
+      {/*== ВЫБОР ВРЕМЕНИ ==*/}
       <input
         type="time"
         name="time"
@@ -236,6 +250,40 @@ export function AppointmentForm({
       />
       {errors.time && <p className="error">{errors.time}</p>}
 
+      {/*== ВЫБОР МАСТЕРА ==*/}
+      <select
+        name="employeeId"
+        id=""
+        value={formData.employeeId}
+        onChange={handleChange}
+      >
+        <option
+          value="choose-employee"
+          className="employee-option"
+        >Выберите мастера
+        </option>
+        {employeesArray.map(employee => {
+          const appointmentDayOfWeek = new Date(`${formData.date}T${formData.time}`).getDay();
+
+          const canAssign = formData.date &&
+            formData.time &&
+            formData.service !== 'choose-service' &&
+            employee.status === 'active' &&
+            employee.workDays.includes(appointmentDayOfWeek) &&
+            employee.specialization.includes(formData.service);
+
+          return (
+          <option
+            value={employee.id}
+            key={employee.id}
+            disabled={!canAssign}
+          >{employee.firstname} {employee.surname}</option>
+          )
+        })}
+      </select>
+      {errors.employeeId && <p className="error">{errors.employeeId}</p>}
+
+      {/*== УСТАНОВКА СТОИМОСТИ ==*/}
       <input
         type="number"
         name="price"
@@ -246,16 +294,18 @@ export function AppointmentForm({
       />
       {errors.price && <p className="error">{errors.price}</p>}
 
-      <label className="checkbox-field">
-        Клиент не пришел(ла)?
-        <input
-          type="checkbox"
-          name="didntCome"
-          id=""
-          checked={formData.didntCome}
-          onChange={handleChange}
-        />
-      </label>
+      {/*== ПРИШЕЛ/НЕ ПРИШЕЛ ==*/}
+      {new Date(`${formData.date}T${formData.time}`) <= new Date() &&
+        <label className="checkbox-field">
+          Клиент не пришел(ла)?
+          <input
+            type="checkbox"
+            name="didntCome"
+            id=""
+            checked={formData.didntCome}
+            onChange={handleChange}
+          />
+        </label>}
 
       <button type="submit">
         {onEditing ? 'Сохранить' : 'Добавить'}

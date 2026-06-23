@@ -16,6 +16,7 @@ import {SERVICES_LABELS} from "../../constants/services.js";
 export function AppointmentsPage({
                                    appointmentsState,
                                    clientsState,
+                                   employeesState,
                                    alertsState,
                                    toastsState,
                                    openSidebarTab,
@@ -103,7 +104,7 @@ export function AppointmentsPage({
   let sortedAppointments = [...filteredAppointments];
 
   if (currentSort === 'default') {
-    sortedAppointments = [...filteredAppointments];
+    sortedAppointments = [...filteredAppointments].reverse();
   } else if (currentSort === 'appointment-down') {
     sortedAppointments = [...filteredAppointments].sort((a, b) => new Date(`${a.date}T${a.time}`) - new Date(`${b.date}T${b.time}`));
   } else if (currentSort === 'appointment-up') {
@@ -153,11 +154,16 @@ export function AppointmentsPage({
   // Получение информации о записи
   function getAppointmentStats(appointment) {
     const client = clientsState.clients.find(client => client.id === appointment.clientId);
+    const employee = employeesState.employees.find(employee => employee.id === appointment.employeeId);
 
     return {
       clientName: client ? `${client.firstname} ${client.surname}` : 'Неизвестный клиент',
       clientPhone: client ? client.tel : null,
       clientTelegram: client ? client.telegram : null,
+
+      employeeName: employee ? `${employee.firstname} ${employee.surname}` : 'Неизвестный мастер',
+      employeePhone: employee ? employee.tel : null,
+      employeeTelegram: employee ? employee.telegram : null,
 
       appointmentDateTime: new Date(`${appointment.date}T${appointment.time}`),
       appointmentYear: new Date(`${appointment.date}T${appointment.time}`).getFullYear(),
@@ -362,10 +368,11 @@ export function AppointmentsPage({
               <thead>
                 <tr>
                   <th>Дата и время</th>
-                  <th>Услуга</th>
-                  <th>Стоимость</th>
                   <th>Имя и фамилия клиента</th>
                   <th>Телефон клиента</th>
+                  <th>Услуга</th>
+                  <th>Мастер</th>
+                  <th>Стоимость</th>
                   <th>Явка клиента</th>
                   <th>Действия</th>
                 </tr>
@@ -377,14 +384,15 @@ export function AppointmentsPage({
                   return (
                     <tr key={appointment.id}>
                       <th>{appointmentStats.appointmentYear !== now.getFullYear() ? formatAppointmentYearDateTime(appointment.date, appointment.time) : formatAppointmentDateTime(appointment.date, appointment.time)}</th>
-                      <td>{SERVICES_LABELS[appointment.service]}</td>
-                      <td>
-                        <span className="data-page__money">{formatMoney(appointment.price)}</span>
-                      </td>
                       <td>{appointmentStats.clientName}</td>
                       <td>
                         {appointmentStats.clientPhone ?
                           <a href={`tel:+${appointmentStats.clientPhone}`}>{formatStoredPhone(appointmentStats.clientPhone)}</a> : 'Телефон не указан'}
+                      </td>
+                      <td>{SERVICES_LABELS[appointment.service]}</td>
+                      <td>{appointmentStats.employeeName}</td>
+                      <td>
+                        <span className="data-page__money">{formatMoney(appointment.price)}</span>
                       </td>
                       <td>
                         <span className="data-page__badge">{appointmentStats.appointmentDidVisit}</span>

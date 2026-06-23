@@ -1,7 +1,7 @@
 // noinspection D
 
 import {
-  formatAppointmentDateTime,
+  formatAppointmentDateTime, formatMoney,
   formatTimeUntilAppointment
 } from "../../utils/formatters.js";
 import {useState} from "react";
@@ -10,6 +10,7 @@ import {formatStoredPhone} from "../../utils/phone.js";
 export function AppointmentDetails({
                                      appointment,
                                      clientsArray,
+                                     employeesArray,
                                      handleUpdateAppointment,
                                    }) {
 
@@ -25,6 +26,9 @@ export function AppointmentDetails({
   // Получение клиента
   const client = (clientsArray.find(client => client.id === appointment.clientId) ? clientsArray.find(client => client.id === appointment.clientId) : null)
 
+  // Получение сотрудника
+  const employee = (employeesArray.find(employee => employee.id === appointment.employeeId) ? employeesArray.find(employee => employee.id === appointment.employeeId) : null)
+
   // Работа с временем записи
   const timeToAppointmentMs = new Date(`${appointment.date}T${appointment.time}`).getTime() - now.getTime();
   const isAppointmentEnded = timeToAppointmentMs < 0;
@@ -33,9 +37,11 @@ export function AppointmentDetails({
   function handleChangeNotesMode() {
     setIsEditingNotes(!isEditingNotes);
   }
+
   function handleEditNotes(event) {
     setDraftNotes(event.target.value);
   }
+
   function handleSubmitChangingNotes() {
     setIsEditingNotes(false);
     handleUpdateAppointment({...appointment, notes: draftNotes});
@@ -49,7 +55,7 @@ export function AppointmentDetails({
     'avatar--lavender',
     'avatar--sand',
   ];
-  const avatarColorStyle = client? AVATAR_COLOR_STYLES[client.id % AVATAR_COLOR_STYLES.length] : null;
+  const avatarColorStyle = client ? AVATAR_COLOR_STYLES[client.id % AVATAR_COLOR_STYLES.length] : null;
   const clientInitials = client && `${client?.firstname?.[0]}${client?.surname?.[0]}`;
 
   return (
@@ -86,6 +92,24 @@ export function AppointmentDetails({
           </div>
         )
       }
+
+      {/*== ИНФОРМАЦИЯ ПО ЗАПИСИ ==*/}
+      {/*TODO: для мастера сделать похожую карточку как у клиента в деталях записи*/}
+      {employee ?
+        <div>
+          <p>Мастер: {employee ? `${employee.firstname} ${employee.surname}` : 'Не указан'}</p>
+          <p>Телефон мастера: {employee?.tel ? formatStoredPhone(employee?.tel) : 'Не указан'}
+          </p>
+          <p>Telegram мастера: {employee?.telegram ? `@${employee?.telegram}` : 'Не указан'}</p>
+        </div>
+        :
+        <div>
+          <h2>Сотрудник не найден</h2>
+          <p>Эта запись связана с сотрудником, который был удален.
+          </p>
+        </div>
+      }
+      <p>Стоимость: {appointment.price ? formatMoney(appointment.price) : 'Не указана'}</p>
 
       {/*== ЗАМЕТКИ ПО ЗАПИСИ ==*/
       }

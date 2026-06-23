@@ -13,7 +13,7 @@ export function useAppointments() {
   }, [appointments]);
 
   function handleAddAppointment(appointmentData) {
-    setAppointments([...appointments, {id: Date.now(), ...appointmentData}]);
+    setAppointments([...appointments, {...appointmentData, id: Date.now(), price: Number(appointmentData.price)}]);
   }
 
   function handleDeleteAppointment(id) {
@@ -30,7 +30,7 @@ export function useAppointments() {
   }
 
   function handleUpdateAppointment(updatedAppointment) {
-    setAppointments(appointments.map(appointment => appointment.id === updatedAppointment.id ? updatedAppointment : appointment));
+    setAppointments(appointments.map(appointment => appointment.id === updatedAppointment.id ? {...updatedAppointment, price: Number(updatedAppointment.price)} : appointment));
     setEditingAppointment(null)
   }
 
