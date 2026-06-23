@@ -121,8 +121,13 @@ export function ClientsSection({
 
         {
           searchedClients.length === 0
-            ? <p>Клиентов нет</p>
-            : searchedClients.map(client => (
+            ?
+            <div className="clients-section__empty">
+              <h2>Нет подходящих клиентов</h2>
+              <p>Попробуйте изменить настройки фильтра</p>
+            </div>
+            :
+            searchedClients.map(client => (
 
               <ClientCard
                 onEdit={() => openClientEditModal(client)}

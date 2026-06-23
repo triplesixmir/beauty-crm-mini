@@ -5,7 +5,33 @@ import {
 } from "lucide-react"
 import {formatAppointmentDateTime} from "../../utils/formatters.js";
 
-export function ReviewCard({author, rating, text, appointment,}) {
+export function ReviewCard({
+                             reviewId,
+                             author,
+                             rating,
+                             text,
+                             appointment,
+                             openReviewEditModal,
+                             alertsState,
+                             toastsState,
+                             reviewsState,
+                           }) {
+
+  function handleDeleteClick() {
+    alertsState.openAlert({
+      title: `Удаление отзыва от ${author.firstname} ${author.surname} | запись ${formatAppointmentDateTime(appointment.date, appointment.time)}`,
+      description: "Вы уверены, что хотите удалить отзыв?",
+      secondDescription: "Это действие необратимо и все данные об отзыве будут удалены.",
+      submitButtonText: "Да, удалить",
+      cancelButtonText: "Нет, не удалять",
+      onSubmit: () => {
+        reviewsState.removeReview(reviewId);
+        alertsState.closeAlert();
+        toastsState.showToast("info", "Отзыв успешно удален", 3000)
+      },
+      onClose: alertsState.closeAlert,
+    })
+  }
 
   return (
     <article className="review-card">
@@ -16,8 +42,16 @@ export function ReviewCard({author, rating, text, appointment,}) {
       <p>{text}</p>
 
       <div className="review-card__actions">
-        <button type="button" aria-label="Редактировать отзыв"><PencilIcon /></button>
-        <button type="button" aria-label="Удалить отзыв"><TrashIcon /></button>
+        <button
+          type="button"
+          aria-label="Редактировать отзыв"
+          onClick={openReviewEditModal}
+        ><PencilIcon /></button>
+        <button
+          type="button"
+          aria-label="Удалить отзыв"
+          onClick={handleDeleteClick}
+        ><TrashIcon /></button>
       </div>
     </article>
   )

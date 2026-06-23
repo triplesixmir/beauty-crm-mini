@@ -229,18 +229,20 @@ export function EmployeeForm({
 
       {/*== РАБОЧИЕ ДНИ ==*/}
 
-      {weekDays.map((day) => {
-        return (
-          <label key={day.value}>{day.label}
-            <input
-              type="checkbox"
-              value={Number(day.value)}
-              checked={formData.workDays.includes(Number(day.value))}
-              onChange={handleChangeWorkDaysCheckbox}
-            />
-          </label>
-        )
-      })}
+      <div className="employee-form__workdays-checkboxes">
+        {weekDays.map((day) => {
+          return (
+            <label key={day.value}>{day.label}
+              <input
+                type="checkbox"
+                value={Number(day.value)}
+                checked={formData.workDays.includes(Number(day.value))}
+                onChange={handleChangeWorkDaysCheckbox}
+              />
+            </label>
+          )
+        })}
+      </div>
 
       {/*== СТАТУС ==*/}
       <select
@@ -263,14 +265,16 @@ export function EmployeeForm({
         onChange={handleChange}
       />
 
-      <button type="submit">
-        {onEditing ? 'Сохранить' : 'Добавить'}
-      </button>
-      <button
-        type="button"
-        onClick={handleCancel}
-      >Отменить
-      </button>
+      <div className="employee-form__actions">
+        <button type="submit">
+          {onEditing ? 'Сохранить' : 'Добавить'}
+        </button>
+        <button
+          type="button"
+          onClick={handleCancel}
+        >Отменить
+        </button>
+      </div>
 
     </form>
   )

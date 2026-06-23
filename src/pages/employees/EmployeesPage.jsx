@@ -27,7 +27,7 @@ export function EmployeesPage({
                                 openEmployeeAddModal,
                                 openEmployeeEditModal,
                                 openReviewAddModal,
-                                // openReviewEditModal,
+                                openReviewEditModal,
                                 reviewsState,
                                 clientsState,
                                 alertsState,
@@ -211,6 +211,19 @@ export function EmployeesPage({
 
   return (
     <main className="app-shell employees-page">
+      <header className="employees-page__header">
+        <div className="employees-page__section-heading">
+          <p className="section__eyebrow">Команда</p>
+          <h2>Сотрудники</h2>
+        </div>
+        <button
+          className="section__add-btn"
+          type="button"
+          onClick={openEmployeeAddModal}
+        >Добавить сотрудника
+        </button>
+      </header>
+
       {/*== ФИЛЬТРЫ ==*/}
       <section className="employees-page__filters">
         <select
@@ -321,15 +334,9 @@ export function EmployeesPage({
       <section className="employees-page__directory">
         <div className="employees-page__directory-header">
           <div className="employees-page__section-heading">
-            <p className="section__eyebrow">Команда</p>
-            <h2>Сотрудники</h2>
+            <p className="section__eyebrow">Список</p>
+            <h2>Все сотрудники</h2>
           </div>
-        <button
-          className="section__add-btn"
-          type="button"
-          onClick={openEmployeeAddModal}
-        >Добавить сотрудника
-        </button>
 
         <select
           className="employees-page__sort"
@@ -399,8 +406,8 @@ export function EmployeesPage({
           </div>
           :
           <div className="employees-page__empty">
-            <h2>Нет результатов</h2>
-            <p>Попробуйте изменить фильтры</p>
+            <h2>Нет подходящих сотрудников</h2>
+            <p>Попробуйте изменить настройки фильтра</p>
           </div>
         }
 
@@ -409,8 +416,11 @@ export function EmployeesPage({
       {/*== ОТЗЫВЫ КЛИЕНТОВ ==*/}
       <ReviewsSection
         reviewsState={reviewsState}
+        alertsState={alertsState}
+        toastsState={toastsState}
         appointments={appointments}
         openReviewAddModal={openReviewAddModal}
+        openReviewEditModal={openReviewEditModal}
         clients={clientsState.clients}
       />
 

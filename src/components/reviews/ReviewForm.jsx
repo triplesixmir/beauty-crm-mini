@@ -36,6 +36,8 @@ export function ReviewForm({
 
   const [formData, setFormData] = useState(getInitialFormData(onEditing));
   const [errors, setErrors] = useState({});
+  const [hoveredRating, setHoveredRating] = useState(null);
+  const displayedRating = hoveredRating ?? formData.rating;
 
   const period = {
     start: new Date(new Date(new Date(now).setDate(new Date(now).getDate() - 7)).setHours(0, 0, 0, 0)),
@@ -146,32 +148,26 @@ export function ReviewForm({
       {errors.appointmentId && <p className="error">{errors.appointmentId}</p>}
 
       {/*== ВЫБОР РЕЙТИНГА ==*/}
-      <div className="review-form__rating-container">
-        <StarIcon
-          className="review-form__rating-icon"
-          key={1}
-          onClick={() => setFormData({...formData, rating: 1})}
-        />
-        <StarIcon
-          className="review-form__rating-icon"
-          key={2}
-          onClick={() => setFormData({...formData, rating: 2})}
-        />
-        <StarIcon
-          className="review-form__rating-icon"
-          key={3}
-          onClick={() => setFormData({...formData, rating: 3})}
-        />
-        <StarIcon
-          className="review-form__rating-icon"
-          key={4}
-          onClick={() => setFormData({...formData, rating: 4})}
-        />
-        <StarIcon
-          className="review-form__rating-icon"
-          key={5}
-          onClick={() => setFormData({...formData, rating: 5})}
-        />
+      <div
+        className="review-form__rating-container"
+        onMouseLeave={() => setHoveredRating(null)}
+      >
+
+        {[1, 2, 3, 4, 5].map(rating => {
+
+          return (
+            <button
+              key={rating}
+              type="button"
+              className={`review-form__rating-icon ${rating <= displayedRating ? 'review-form__rating-icon--active' : ''}`}
+              onMouseEnter={() => setHoveredRating(rating)}
+              onClick={() => setFormData({...formData, rating})}
+            >
+              <StarIcon />
+            </button>
+          )
+        })}
+
       </div>
       {errors.rating && <p className="error">{errors.rating}</p>}
 

@@ -348,7 +348,7 @@ body:has(.side-navbar) {
 
 .data-page__filters {
   display: grid;
-  grid-template-columns: repeat(2, minmax(170px, max-content)) minmax(420px, 1fr) max-content;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: 12px;
   align-items: stretch;
   padding: 14px;
@@ -357,10 +357,6 @@ body:has(.side-navbar) {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(240, 247, 251, 0.66));
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82);
-}
-
-.clients-page .data-page__filters {
-  grid-template-columns: minmax(210px, max-content) minmax(420px, 1fr) max-content;
 }
 
 .data-page__search,
@@ -405,6 +401,7 @@ body:has(.side-navbar) {
 
 .data-page__range-card {
   min-width: 0;
+  grid-column: span 2;
   display: grid;
   grid-template-columns: minmax(170px, 0.9fr) repeat(2, minmax(110px, 0.55fr));
   gap: 12px 14px;
@@ -493,6 +490,7 @@ body:has(.side-navbar) {
 
 .data-page__reset-button {
   align-self: stretch;
+  min-width: 0;
   white-space: nowrap;
 }
 
@@ -943,6 +941,13 @@ body:has(.side-navbar) {
   gap: 24px;
 }
 
+.employees-page__header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .employees-page__filters,
 .employees-page__schedule,
 .employees-page__directory,
@@ -1112,6 +1117,10 @@ body:has(.side-navbar) {
   text-transform: uppercase;
 }
 
+.employees-page__schedule-table thead th:not(:first-child) {
+  text-align: center;
+}
+
 .employees-page__schedule-table tbody th,
 .employees-page__table tbody td:first-child {
   color: var(--heading);
@@ -1246,6 +1255,64 @@ body:has(.side-navbar) {
   margin-top: 4px;
 }
 
+.review-form__rating-container {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid rgba(84, 132, 166, 0.2);
+  border-radius: 12px;
+  background: rgba(240, 247, 251, 0.62);
+}
+
+.review-form__rating-icon {
+  width: 40px;
+  min-height: 40px;
+  display: grid;
+  place-items: center;
+  padding: 7px;
+  border-color: transparent;
+  border-radius: 10px;
+  background: transparent;
+  box-shadow: none;
+  color: #9aabb8;
+  transition: transform 140ms ease, color 140ms ease, background-color 140ms ease;
+}
+
+.review-form__rating-icon:hover {
+  transform: translateY(-1px);
+  border-color: transparent;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: none;
+  color: var(--warning);
+}
+
+.review-form__rating-icon:active {
+  transform: translateY(0);
+}
+
+.review-form__rating-icon:focus-visible {
+  outline-color: rgba(217, 152, 35, 0.38);
+  outline-offset: 2px;
+}
+
+.review-form__rating-icon svg {
+  width: 22px;
+  height: 22px;
+  fill: transparent;
+  stroke-width: 2;
+  transition: fill 140ms ease;
+}
+
+.review-form__rating-icon--active {
+  color: var(--warning);
+}
+
+.review-form__rating-icon--active svg {
+  fill: currentColor;
+}
+
 .inputs-container {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1256,6 +1323,70 @@ body:has(.side-navbar) {
   border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.68);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.inputs-container--employee {
+  gap: 14px;
+}
+
+.employee-form__specialization-checkboxes,
+.employee-form__workdays-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid rgba(84, 132, 166, 0.2);
+  border-radius: 12px;
+  background: rgba(240, 247, 251, 0.62);
+}
+
+.employee-form__specialization-checkboxes {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.employee-form__specialization-checkboxes label,
+.employee-form__workdays-checkboxes label {
+  min-width: 0;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: var(--heading);
+  font-size: 0.86rem;
+  font-weight: 700;
+  line-height: 1.2;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.employee-form__specialization-checkboxes label:hover,
+.employee-form__workdays-checkboxes label:hover {
+  border-color: rgba(8, 127, 191, 0.24);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.employee-form__specialization-checkboxes input,
+.employee-form__workdays-checkboxes input {
+  width: 18px;
+  min-width: 18px;
+  min-height: 18px;
+  height: 18px;
+  padding: 0;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.employee-form__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.modal__container .employee-form__actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 input,
@@ -2217,7 +2348,8 @@ body:has(.sidebar) .cards-grid {
   }
 
   .employees-page__directory-header,
-  .employees-page__reviews-header {
+  .employees-page__reviews-header,
+  .employees-page__header {
     align-items: stretch;
     flex-direction: column;
   }
@@ -2226,6 +2358,10 @@ body:has(.sidebar) .cards-grid {
   .employees-page__filter {
     width: 100%;
     margin-left: 0;
+  }
+
+  .employee-form__specialization-checkboxes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .finances-page__top-clients,
@@ -2269,6 +2405,13 @@ body:has(.sidebar) .cards-grid {
 
   .data-page__range-card {
     grid-column: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .employee-form__specialization-checkboxes,
+  .employee-form__workdays-checkboxes,
+  .employee-form__actions,
+  .modal__container .employee-form__actions {
     grid-template-columns: 1fr;
   }
 

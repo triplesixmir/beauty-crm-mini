@@ -1,4 +1,6 @@
-import {AppointmentCard} from "../../../components/appointments/AppointmentCard.jsx";
+import {
+  AppointmentCard
+} from "../../../components/appointments/AppointmentCard.jsx";
 import {
   formatAppointmentDateTime,
 } from "../../../utils/formatters.js";
@@ -60,7 +62,11 @@ export function AppointmentsSection({
 
         {
           appointments.length === 0
-            ? <p>Записей нет</p>
+            ?
+            <div className="appointments-section__empty">
+              <h2>Нет подходящих записей</h2>
+              <p>Попробуйте изменить настройки фильтра</p>
+            </div>
             : appointments.map(appointment => {
               const client = clients.find(client => client.id === appointment.clientId)
               const clientName = client ? `${client.firstname} ${client.surname}` : 'Клиента не существует'
