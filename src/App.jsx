@@ -24,7 +24,9 @@ import {DashboardPage} from "./pages/dashboard/DashboardPage.jsx";
 import {ClientsPage} from "./pages/clients/ClientsPage.jsx";
 import {AppointmentsPage} from "./pages/appointments/AppointmentsPage.jsx";
 import {FinancesPage} from "./pages/finances/FinancesPage.jsx";
-import {EmployeesPage} from "./pages/employees/EmployeesPage.jsx";
+import {
+  EmployeesPage,
+} from "./pages/employees/EmployeesPage.jsx";
 import {StatisticsPage} from "./pages/statistics/StatisticsPage.jsx";
 import {SettingsPage} from "./pages/settings/SettingsPage.jsx";
 import {SideNavbar} from "./components/layout/SideNavbar.jsx";
@@ -32,6 +34,7 @@ import {useEmployees} from "./hooks/useEmployees.js";
 import {EmployeeForm} from "./components/employees/EmployeeForm.jsx";
 import {useReviews} from "./hooks/useReviews.js";
 import {ReviewForm} from "./components/reviews/ReviewForm.jsx";
+import {EmployeeDetails} from "./components/employees/EmployeeDetails.jsx";
 
 function App() {
 
@@ -118,6 +121,10 @@ function App() {
   if (activeSidebarTab?.type === 'appointment') {
     activeAppointment = appointmentsState.appointments.find(appointment => appointment.id === activeSidebarTab.id);
   }
+  let activeEmployee;
+  if (activeSidebarTab?.type === 'employee') {
+    activeEmployee = employeesState.employees.find(employee => employee.id === activeSidebarTab.id);
+  }
 
   return (
     <>
@@ -182,9 +189,9 @@ function App() {
         <Route
           path="/finances"
           element={<FinancesPage
-          appointmentsState={appointmentsState}
-          clientsState={clientsState}
-          now={now}
+            appointmentsState={appointmentsState}
+            clientsState={clientsState}
+            now={now}
           />}
         />
         <Route
@@ -195,6 +202,7 @@ function App() {
             reviewsState={reviewsState}
             alertsState={alertsState}
             toastsState={toastsState}
+            openSidebarTab={sidebarsState.openSidebarTab}
             openEmployeeAddModal={openEmployeeAddModal}
             openEmployeeEditModal={openEmployeeEditModal}
             openReviewEditModal={openReviewEditModal}
@@ -299,6 +307,7 @@ function App() {
                 showToast={toastsState.showToast}
                 now={now}
                 alertsState={alertsState}
+                reviews={reviewsState.reviews}
               />
 
             </Modal>)}
@@ -343,6 +352,19 @@ function App() {
                 clientsArray={clientsState.clients}
                 employeesArray={employeesState.employees}
                 handleUpdateAppointment={appointmentsState.handleUpdateAppointment}
+              />
+            )}
+
+            {activeSidebarTab?.type === 'employee' && (
+              <EmployeeDetails
+                key={activeSidebarTab?.key ?? 'no-employee'}
+                employee={activeEmployee}
+                reviews={reviewsState.reviews}
+                appointments={appointmentsState.appointments}
+                employeesState={employeesState}
+                openSidebarTab={sidebarsState.openSidebarTab}
+                handleUpdateEmployee={employeesState.handleUpdateEmployee}
+                now={now}
               />
             )}
 

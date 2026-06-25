@@ -43,10 +43,11 @@ export function ClientDetails({
     return new Date(`${date}T${time}`);
   }
 
-  // Статистика популярности услуг у клиента
-  const serviceStats = SERVICES.map(service => ({
+  // ПОДСЧЕТ ЗАПИСЕЙ ПО КАЖДОЙ УСЛУГЕ
+  const servicesCounts = SERVICES.map(service => ({
     ...service,
     count: clientAppointments.filter(appointment => appointment.service === service.value).length,
+    percent: Math.round(clientAppointments.filter(appointment => appointment.service === service.value).length / clientAppointments.length * 100),
   }));
 
   // Работа с заметками
@@ -77,11 +78,11 @@ export function ClientDetails({
       <div className="client-details__info-list">
         <p>
           <span>Telegram</span>
-          <span>@{client.telegram ? client.telegram : 'Не указан'}</span>
+          <span>{client.telegram ? <a href={`https://t.me/${client.telegram}`}>@{client.telegram}</a> : 'Не указан'}</span>
         </p>
         <p>
           <span>Телефон</span>
-          <span>{client.tel ? formatStoredPhone(client.tel) : 'Не указан'}</span>
+          <span>{client.tel ? <a href={`tel:${client.tel}`}>{formatStoredPhone(client.tel)}</a> : 'Не указан'}</span>
         </p>
         <p>
           <span>Почта</span>
@@ -101,7 +102,7 @@ export function ClientDetails({
                 <th scope="col">Время</th>
                 <th scope="col">Услуга</th>
                 <th scope="col">Стоимость</th>
-                <th scope="col">Не пришел(ла)</th>
+                <th scope="col">Явка клиента</th>
               </tr>
             </thead>
             <tbody>
@@ -112,7 +113,7 @@ export function ClientDetails({
                   <td>{formatTime(getAppointmentDateTime(appointment.date, appointment.time))}</td>
                   <td>{SERVICES_LABELS[appointment.service]}</td>
                   <td>{formatMoney(appointment.price)}</td>
-                  <td>{getAppointmentDateTime(appointment.date, appointment.time) < now ? appointment.didntCome ? '■' : '□' : 'Запись не завершена'}</td>
+                  <td>{getAppointmentDateTime(appointment.date, appointment.time) < now ? appointment.didntCome ? 'Не явился(ась)' : 'Явился(ась)' : 'Сеанс не окончен'}</td>
                 </tr>
               ))}
             </tbody>
@@ -123,10 +124,26 @@ export function ClientDetails({
 
       {/*== СТАТИСТИКА КЛИЕНТА ==*/}
       <h2>Статистика</h2>
-      {/*TODO: На будущее: здесь сделать процентами, а то сейчас, если у человека 100 записей на укладку, то будет 100 этих прямоугольников, это многовато*/}
-      {serviceStats.map((service) => (
-        <p key={service.value}>{service.label}: {"".padStart(service.count, "█")} {service.count}</p>
-      ))}
+      <div className="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Услуга</th>
+              <th scope="col">Количество</th>
+              <th scope="col">Процент</th>
+            </tr>
+          </thead>
+          <tbody>
+            {servicesCounts.map((service) => (
+              <tr key={service.value}>
+                <th scope="row">{service.label}</th>
+                <td>{service.count}</td>
+                <td>{service.percent}%</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {/*== ЗАМЕТКИ КЛИЕНТА ==*/}
       <h2>Заметки</h2>

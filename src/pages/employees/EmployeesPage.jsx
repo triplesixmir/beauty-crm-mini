@@ -32,21 +32,14 @@ export function EmployeesPage({
                                 clientsState,
                                 alertsState,
                                 toastsState,
+                                openSidebarTab,
                                 now,
                               }) {
-
-  // + карточки: активные + и неактивные мастера +, общая зп +, свободные мастера +
-  // + график мастеров
-  // + таблица со всеми сотрудниками: статистика для мастеров внутри таблицы: кол-во записей, выручка, рейтинг
-  // + отзывы от клиентов (пока добавляться будут вручную, но предполагается авто-подтяг)
-  // - фильтры периодов (для карточек, для отзывов, для графиков, самих сотрудников не фильтруем, фильтруем только их результаты), сортировка по сотрудникам
-
-  // + колонки для таблицы: имя, фамилия, статус, кол-во записей (за период), рейтинг, свободен/не свободен, ближайшая запись, действия
 
   // КАРТОЧКИ СТАТИСТИКИ
   const activeEmployees = employeesState.employees.filter(employee => employee.status === 'active');
   const inactiveEmployees = employeesState.employees.filter(employee => employee.status === 'inactive' || employee.status === 'vacation');
-  const totalEmployeesPaycheck = employeesState.employees.reduce((sum, employee) => sum + Number(employee.salary), 0);
+  const totalEmployeesPaycheck = formatMoney(employeesState.employees.reduce((sum, employee) => sum + Number(employee.salary), 0));
   const employeesAtWork = employeesState.employees.filter(employee => employee.status === 'active' && employee.workDays.includes(now.getDay()));
 
   const [selectedSort, setSelectedSort] = useState('default');
@@ -209,6 +202,15 @@ export function EmployeesPage({
     })
   }
 
+  function handleOpenEmployeeDetails(employee) {
+    openSidebarTab({
+      type: "employee",
+      id: employee.id,
+      title: `${employee.firstname} ${employee.surname}`,
+      key: `employee:${employee.id}`,
+    });
+  }
+
   return (
     <main className="app-shell employees-page">
       <header className="employees-page__header">
@@ -294,38 +296,38 @@ export function EmployeesPage({
         </div>
 
         <div className="employees-page__table-wrapper">
-        <table className="employees-page__schedule-table">
-          <thead>
-            <tr>
-              <th scope="col">Сотрудник</th>
-              <th scope="col">Пн</th>
-              <th scope="col">Вт</th>
-              <th scope="col">Ср</th>
-              <th scope="col">Чт</th>
-              <th scope="col">Пт</th>
-              <th scope="col">Сб</th>
-              <th scope="col">Вс</th>
-            </tr>
-          </thead>
-          <tbody>
-            {employeesState.employees.map((employee) => {
-              const stats = getEmployeeStats(employee.id);
+          <table className="employees-page__schedule-table">
+            <thead>
+              <tr>
+                <th scope="col">Сотрудник</th>
+                <th scope="col">Пн</th>
+                <th scope="col">Вт</th>
+                <th scope="col">Ср</th>
+                <th scope="col">Чт</th>
+                <th scope="col">Пт</th>
+                <th scope="col">Сб</th>
+                <th scope="col">Вс</th>
+              </tr>
+            </thead>
+            <tbody>
+              {employeesState.employees.map((employee) => {
+                const stats = getEmployeeStats(employee.id);
 
-              return (
-                <tr key={employee.id}>
-                  <th scope="row">{`${employee.firstname} ${employee.surname}`}</th>
-                  <td>{stats.schedule.includes(1) ? "✔" : ""}</td>
-                  <td>{stats.schedule.includes(2) ? "✔" : ""}</td>
-                  <td>{stats.schedule.includes(3) ? "✔" : ""}</td>
-                  <td>{stats.schedule.includes(4) ? "✔" : ""}</td>
-                  <td>{stats.schedule.includes(5) ? "✔" : ""}</td>
-                  <td>{stats.schedule.includes(6) ? "✔" : ""}</td>
-                  <td>{stats.schedule.includes(0) ? "✔" : ""}</td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
+                return (
+                  <tr key={employee.id}>
+                    <th scope="row">{`${employee.firstname} ${employee.surname}`}</th>
+                    <td>{stats.schedule.includes(1) ? "✔" : ""}</td>
+                    <td>{stats.schedule.includes(2) ? "✔" : ""}</td>
+                    <td>{stats.schedule.includes(3) ? "✔" : ""}</td>
+                    <td>{stats.schedule.includes(4) ? "✔" : ""}</td>
+                    <td>{stats.schedule.includes(5) ? "✔" : ""}</td>
+                    <td>{stats.schedule.includes(6) ? "✔" : ""}</td>
+                    <td>{stats.schedule.includes(0) ? "✔" : ""}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
         </div>
 
       </section>
@@ -338,71 +340,83 @@ export function EmployeesPage({
             <h2>Все сотрудники</h2>
           </div>
 
-        <select
-          className="employees-page__sort"
-          name="sort"
-          id=""
-          value={selectedSort}
-          onChange={handleChangeSort}
-        >
-          {sorts.map(sort => (
-            <option
-              key={sort.value}
-              value={sort.value}
-            >{sort.label}
-            </option>
-          ))}
-        </select>
+          <select
+            className="employees-page__sort"
+            name="sort"
+            id=""
+            value={selectedSort}
+            onChange={handleChangeSort}
+          >
+            {sorts.map(sort => (
+              <option
+                key={sort.value}
+                value={sort.value}
+              >{sort.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         {sortedEmployees.length > 0
           ?
           <div className="employees-page__table-wrapper">
-          <table className="employees-page__table">
-            <thead>
-              <tr>
-                <th scope="col">Имя и фамилия</th>
-                <th scope="col">Статус</th>
-                <th scope="col">Кол-во записей</th>
-                <th scope="col">Выручка</th>
-                <th scope="col">Доступность</th>
-                <th scope="col">Ближайшая запись</th>
-                <th scope="col">Рейтинг</th>
-                <th scope="col">Действия</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedEmployees.map(employee => {
+            <table className="employees-page__table">
+              <thead>
+                <tr>
+                  <th scope="col">Имя и фамилия</th>
+                  <th scope="col">Статус</th>
+                  <th scope="col">Кол-во записей</th>
+                  <th scope="col">Выручка</th>
+                  <th scope="col">Доступность</th>
+                  <th scope="col">Ближайшая запись</th>
+                  <th scope="col">Рейтинг</th>
+                  <th scope="col">Действия</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedEmployees.map(employee => {
 
-                const stats = getEmployeeStats(employee.id);
+                  const stats = getEmployeeStats(employee.id);
 
-                return (
-                  <tr key={employee.id}>
-                    <td>{`${employee.firstname} ${employee.surname}`}</td>
-                    <td>{statuses.find(status => status.value === employee.status).label}</td>
-                    <td>{stats.appointmentsCount}</td>
-                    <td>{formatMoney(stats.revenue)}</td>
-                    <td>{stats.availability}</td>
-                    <td>{stats.nextAppointment ? formatAppointmentDateTime(stats.nextAppointment.date, stats.nextAppointment.time) : "Пока нет записей"}</td>
-                    <td>
-                      <span>{stats.rating ? stats.rating : null}</span> {formatReviewsCount(stats.reviewsCount)}
-                    </td>
-                    <td className="employees-page__actions">
-                      <button className="employees-page__action-button" onClick={() => openEmployeeEditModal(employee)} aria-label={`Редактировать ${employee.firstname} ${employee.surname}`}>
-                        <PencilIcon />
-                      </button>
-                      <button className="employees-page__action-button employees-page__action-button--danger" onClick={() => handleDeleteClick(employee)} aria-label={`Удалить ${employee.firstname} ${employee.surname}`}>
-                        <TrashIcon />
-                      </button>
-                      <button className="employees-page__action-button" aria-label={`Открыть данные ${employee.firstname} ${employee.surname}`}>
-                        <Maximize2Icon />
-                      </button>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+                  return (
+                    <tr key={employee.id}>
+                      <td>{`${employee.firstname} ${employee.surname}`}</td>
+                      <td>{statuses.find(status => status.value === employee.status).label}</td>
+                      <td>{stats.appointmentsCount}</td>
+                      <td>{formatMoney(stats.revenue)}</td>
+                      <td>{stats.availability}</td>
+                      <td>{stats.nextAppointment ? formatAppointmentDateTime(stats.nextAppointment.date, stats.nextAppointment.time) : "Пока нет записей"}</td>
+                      <td>
+                        <span>{stats.rating ? stats.rating : null}</span> {formatReviewsCount(stats.reviewsCount)}
+                      </td>
+                      <td className="employees-page__actions">
+                        <button
+                          className="employees-page__action-button"
+                          onClick={() => openEmployeeEditModal(employee)}
+                          aria-label={`Редактировать ${employee.firstname} ${employee.surname}`}
+                        >
+                          <PencilIcon />
+                        </button>
+                        <button
+                          className="employees-page__action-button employees-page__action-button--danger"
+                          onClick={() => handleDeleteClick(employee)}
+                          aria-label={`Удалить ${employee.firstname} ${employee.surname}`}
+                        >
+                          <TrashIcon />
+                        </button>
+                        <button
+                          className="employees-page__action-button"
+                          onClick={() => handleOpenEmployeeDetails(employee)}
+                          aria-label={`Открыть данные ${employee.firstname} ${employee.surname}`}
+                        >
+                          <Maximize2Icon />
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
           </div>
           :
           <div className="employees-page__empty">
@@ -422,6 +436,7 @@ export function EmployeesPage({
         openReviewAddModal={openReviewAddModal}
         openReviewEditModal={openReviewEditModal}
         clients={clientsState.clients}
+        employees={employeesState.employees}
       />
 
     </main>

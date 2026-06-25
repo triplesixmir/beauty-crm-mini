@@ -157,6 +157,7 @@ export function AppointmentsPage({
     const employee = employeesState.employees.find(employee => employee.id === appointment.employeeId);
 
     return {
+      client: client,
       clientName: client ? `${client.firstname} ${client.surname}` : 'Неизвестный клиент',
       clientPhone: client ? client.tel : null,
       clientTelegram: client ? client.telegram : null,
@@ -167,7 +168,7 @@ export function AppointmentsPage({
 
       appointmentDateTime: new Date(`${appointment.date}T${appointment.time}`),
       appointmentYear: new Date(`${appointment.date}T${appointment.time}`).getFullYear(),
-      appointmentDidVisit: new Date(`${appointment.date}T${appointment.time}`) < now ? !appointment.didntCome ? 'Явился(ась)' : 'Не явился(ась)' : 'Сеанс не закончился'
+      appointmentDidVisit: new Date(`${appointment.date}T${appointment.time}`) < now ? !appointment.didntCome ? 'Явился(ась)' : 'Не явился(ась)' : 'Сеанс не окончен'
     }
   }
 
@@ -197,6 +198,14 @@ export function AppointmentsPage({
     });
   }
 
+  function handleOpenClientDetails(client) {
+    openSidebarTab({
+      type: "client",
+      id: client.id,
+      title: `${client.firstname} ${client.surname}`,
+      key: `client:${client.id}`,
+    })
+  }
 
   return (
     <main className="app-shell appointments-page">
@@ -384,12 +393,13 @@ export function AppointmentsPage({
                   return (
                     <tr key={appointment.id}>
                       <th>{appointmentStats.appointmentYear !== now.getFullYear() ? formatAppointmentYearDateTime(appointment.date, appointment.time) : formatAppointmentDateTime(appointment.date, appointment.time)}</th>
-                      <td>{appointmentStats.clientName}</td>
+                      <td onClick={() => handleOpenClientDetails(appointmentStats.client)}>{appointmentStats.clientName}</td>
                       <td>
                         {appointmentStats.clientPhone ?
                           <a href={`tel:+${appointmentStats.clientPhone}`}>{formatStoredPhone(appointmentStats.clientPhone)}</a> : 'Телефон не указан'}
                       </td>
                       <td>{SERVICES_LABELS[appointment.service]}</td>
+                      {/*TODO: сделать так же по клику открытие сайдбара сотрудника*/}
                       <td>{appointmentStats.employeeName}</td>
                       <td>
                         <span className="data-page__money">{formatMoney(appointment.price)}</span>

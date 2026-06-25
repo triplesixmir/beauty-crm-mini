@@ -6,6 +6,7 @@ export function ReviewsSection({
                                  toastsState,
                                  appointments,
                                  clients,
+                                 employees,
                                  openReviewAddModal,
                                  openReviewEditModal,
                                }) {
@@ -28,7 +29,8 @@ export function ReviewsSection({
         {reviewsState.reviews.length > 0 ? reviewsState.reviews.map(review => {
 
             const reviewAppointment = appointments.find(appointment => appointment.id === Number(review.appointmentId));
-            const reviewAuthor = clients.find(client => client.id === Number(reviewAppointment.clientId));
+            const reviewAuthor = reviewAppointment ? clients.find(client => client.id === Number(reviewAppointment.clientId)) : null;
+            const reviewEmployee = reviewAppointment ? employees.find(employee => employee.id === Number(reviewAppointment.employeeId)) : null;
 
             return (
               <ReviewCard
@@ -38,11 +40,12 @@ export function ReviewsSection({
                 rating={review.rating}
                 text={review.text}
                 appointment={reviewAppointment}
+                employee={reviewEmployee}
                 openReviewEditModal={() => openReviewEditModal(review)}
-                removeReview={() => reviewsState.removeReview(review.id)}
                 alertsState={alertsState}
                 toastsState={toastsState}
                 reviewsState={reviewsState}
+                reviewEmployee={reviewEmployee}
               />
             )
           }) :

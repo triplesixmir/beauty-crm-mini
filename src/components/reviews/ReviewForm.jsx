@@ -32,6 +32,7 @@ export function ReviewForm({
                              onSuccess,
                              showToast,
                              now,
+                             reviews,
                            }) {
 
   const [formData, setFormData] = useState(getInitialFormData(onEditing));
@@ -118,6 +119,9 @@ export function ReviewForm({
     });
   }
 
+  const editingAppointment = appointments.find(appointment => appointment.id === onEditing?.appointmentId);
+  const editingClient = clients.find(client => client.id === editingAppointment?.clientId);
+
   return (
     <form
       className="inputs-container inputs-container--review"
@@ -129,21 +133,33 @@ export function ReviewForm({
         name="appointmentId"
         value={formData.appointmentId}
         onChange={handleChange}
+        disabled={Boolean(onEditing)}
       >
-        <option value="choose-appointmentId">Выберите источник отзыва</option>
-        {filteredAppointments.map(appointment => {
+        {onEditing
+          ? <option
+            value={editingAppointment ? editingAppointment.id : null}
+            disabled={true}
+          >{`${editingClient ? editingClient?.firstname : "Неизвестный"} ${editingClient ? editingClient?.surname : "клиент"} | ${editingAppointment ? formatAppointmentDateTime(editingAppointment.date, editingAppointment.time) : "Неизвестная запись"}`}</option>
+          :
+          <>
+            <option value="choose-appointmentId">Выберите источник отзыва</option>
+            {filteredAppointments.map(appointment => {
 
-          const client = clients.find(client => client.id === appointment.clientId);
+              const client = clients.find(client => client.id === appointment.clientId);
+              const isAlreadyReviewed = reviews.find(review => review.appointmentId === appointment.id);
 
-          return (
-            <option
-              value={appointment.id}
-              key={appointment.id}
-            >
-              {`${client?.firstname} ${client?.surname} | ${formatAppointmentDateTime(appointment.date, appointment.time)}`}
-            </option>
-          )
-        })}
+              return (
+                <option
+                  value={appointment.id}
+                  key={appointment.id}
+                  disabled={isAlreadyReviewed}
+                >
+                  {`${client?.firstname} ${client?.surname} | ${formatAppointmentDateTime(appointment.date, appointment.time)}`}
+                </option>
+              )
+            })}
+          </>
+        }
       </select>
       {errors.appointmentId && <p className="error">{errors.appointmentId}</p>}
 
