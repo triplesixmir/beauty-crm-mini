@@ -23,8 +23,8 @@ function getInitialFormData(onEditing) {
 }
 
 export function ReviewForm({
-                             appointments,
-                             clients,
+                             appointmentsArray,
+                             clientsArray,
                              onEditing,
                              onAddReview,
                              onUpdateReview,
@@ -44,7 +44,7 @@ export function ReviewForm({
     start: new Date(new Date(new Date(now).setDate(new Date(now).getDate() - 7)).setHours(0, 0, 0, 0)),
     end: new Date(now),
   }
-  const filteredAppointments = [...appointments].filter(appointment => new Date(`${appointment.date}T${appointment.time}`) <= period.end
+  const filteredAppointments = [...appointmentsArray].filter(appointment => new Date(`${appointment.date}T${appointment.time}`) <= period.end
     && new Date(`${appointment.date}T${appointment.time}`) >= period.start
     && appointment.didntCome === false
   );
@@ -76,7 +76,7 @@ export function ReviewForm({
   }
 
   function handleSaveReview() {
-    const appointment = appointments.find(appointment => Number(formData.appointmentId) === appointment.id);
+    const appointment = appointmentsArray.find(appointment => Number(formData.appointmentId) === appointment.id);
 
     if (onEditing) {
       onUpdateReview({
@@ -119,8 +119,8 @@ export function ReviewForm({
     });
   }
 
-  const editingAppointment = appointments.find(appointment => appointment.id === onEditing?.appointmentId);
-  const editingClient = clients.find(client => client.id === editingAppointment?.clientId);
+  const editingAppointment = appointmentsArray.find(appointment => appointment.id === onEditing?.appointmentId);
+  const editingClient = clientsArray.find(client => client.id === editingAppointment?.clientId);
 
   return (
     <form
@@ -145,7 +145,7 @@ export function ReviewForm({
             <option value="choose-appointmentId">Выберите источник отзыва</option>
             {filteredAppointments.map(appointment => {
 
-              const client = clients.find(client => client.id === appointment.clientId);
+              const client = clientsArray.find(client => client.id === appointment.clientId);
               const isAlreadyReviewed = reviews.find(review => review.appointmentId === appointment.id);
 
               return (

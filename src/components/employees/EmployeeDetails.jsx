@@ -8,31 +8,34 @@ import {
   formatMoney,
   formatTime
 } from "../../utils/formatters.js";
-import {SERVICES, SERVICES_LABELS} from "../../constants/services.js";
+import {SERVICES_LABELS} from "../../constants/services.js";
 
 // ИКОНКИ
 import {Check as CheckIcon, X as XIcon} from 'lucide-react';
+import {
+  getEmployeeServiceStats,
+  getEmployeeStats
+} from "../../utils/employeeStats.js";
 
 function getAppointmentDateTime(date, time) {
   return new Date(`${date}T${time}`);
 }
 
 export function EmployeeDetails({
-                                  employee,
-                                  reviews,
+                                  activeEmployee,
+                                  reviewsArray,
                                   handleUpdateEmployee,
-                                  employeesState,
                                   openSidebarTab,
-                                  appointments,
+                                  appointmentsArray,
                                   now,
                                 }) {
 
   // Стейты должны быть выше, чем early return
   const [isEditingNotes, setIsEditingNotes] = useState(false);
-  const [draftNotes, setDraftNotes] = useState(employee?.notes || '');
+  const [draftNotes, setDraftNotes] = useState(activeEmployee?.notes || '');
 
   // Early return, если нет сотрудника
-  if (!employee) return null;
+  if (!activeEmployee) return null;
 
   // Дни недели
   const weekDays = [
@@ -53,8 +56,8 @@ export function EmployeeDetails({
     'avatar--lavender',
     'avatar--sand',
   ];
-  const avatarColorStyle = AVATAR_COLOR_STYLES[employee.id % AVATAR_COLOR_STYLES.length];
-  const employeeInitials = `${employee.firstname?.[0] ?? ''}${employee.surname?.[0] ?? ''}`.toUpperCase();
+  const avatarColorStyle = AVATAR_COLOR_STYLES[activeEmployee.id % AVATAR_COLOR_STYLES.length];
+  const employeeInitials = `${activeEmployee.firstname?.[0] ?? ''}${activeEmployee.surname?.[0] ?? ''}`.toUpperCase();
 
   // Работа с заметками
   function handleChangeNotesMode() {
@@ -64,7 +67,7 @@ export function EmployeeDetails({
   function handleSubmitChangingNotes(event) {
     event.preventDefault();
 
-    handleUpdateEmployee({...employee, notes: draftNotes});
+    handleUpdateEmployee({...activeEmployee, notes: draftNotes});
     setIsEditingNotes(false);
   }
 
@@ -73,34 +76,9 @@ export function EmployeeDetails({
   }
 
   // Получение статистики сотрудника
-  function getEmployeeStats(employeeId) {
-
-    const employee = employeesState.employees.find(employee => employee.id === employeeId);
-    const employeeAppointments = appointments.filter(appointment => appointment.employeeId === employeeId);
-    const employeeEndedPaidAppointments = [...employeeAppointments].filter(appointment => new Date(`${appointment.date}T${appointment.time}`) < now && appointment.didntCome === false);
-    const employeeFutureAppointments = [...employeeAppointments].filter(appointment => new Date(`${appointment.date}T${appointment.time}`) > new Date());
-
-    const revenue = [...employeeEndedPaidAppointments].reduce((revenue, appointment) => revenue + Number(appointment.price), 0);
-    const nextAppointment = employeeFutureAppointments.length > 0 ? [...employeeFutureAppointments].sort((a, b) => new Date(`${a.date}T${a.time}`) - new Date(`${b.date}T${b.time}`))[0] : null;
-
-    // TODO: доделать доступность. Большая бизнес-логика
-    return {
-      appointmentsCount: employeeAppointments.length,
-      revenue: revenue,
-      schedule: [...employee.workDays],
-      availability: "—",
-      nextAppointment: nextAppointment || null,
-    }
-  }
-
-  const employeeAppointments = appointments.filter(appointment => appointment.employeeId === employee.id);
-  const sortedEmployeeAppointments = employeeAppointments.sort((a, b) => new Date(`${b.date}T${b.time}`) - new Date(`${a.date}T${a.time}`));
-
-  const servicesCounts = SERVICES.map(service => ({
-    ...service,
-    count: employeeAppointments.filter(appointment => appointment.service === service.value).length,
-    percent: Math.round(employeeAppointments.filter(appointment => appointment.service === service.value).length / employeeAppointments.length * 100),
-  }))
+  const employeeStats = getEmployeeStats(activeEmployee, appointmentsArray, reviewsArray, now)
+  const sortedEmployeeAppointments = [...employeeStats.employeeAppointments].sort((a, b) => new Date(`${b.date}T${b.time}`) - new Date(`${a.date}T${a.time}`));
+  const serviceStats = getEmployeeServiceStats(employeeStats.employeeAppointments);
 
   function openAppointmentDetailsSidebar(appointment) {
     openSidebarTab({
@@ -120,20 +98,20 @@ export function EmployeeDetails({
           <span className="employee-details__avatar-initials">{employeeInitials}</span>
         </div>
 
-        <h2 className="employee-details__name">{`${employee.firstname} ${employee.surname}`}</h2>
+        <h2 className="employee-details__name">{`${activeEmployee.firstname} ${activeEmployee.surname}`}</h2>
       </div>
 
       {/*== ОСНОВНАЯ ИНФОРМАЦИЯ О СОТРУДНИКЕ ==*/}
       <div className="employee-details__info-list">
         <p>
           <span>Telegram</span>
-          <span>{employee.telegram ?
-            <a href={`https://t.me/${employee.telegram}`}>@{employee.telegram}</a> : 'Не указан'}</span>
+          <span>{activeEmployee.telegram ?
+            <a href={`https://t.me/${activeEmployee.telegram}`}>@{activeEmployee.telegram}</a> : 'Не указан'}</span>
         </p>
         <p>
           <span>Телефон</span>
-          <span>{employee.tel ?
-            <a href={`tel:${employee.tel}`}>{formatStoredPhone(employee.tel)}</a> : 'Не указан'}</span>
+          <span>{activeEmployee.tel ?
+            <a href={`tel:${activeEmployee.tel}`}>{formatStoredPhone(activeEmployee.tel)}</a> : 'Не указан'}</span>
         </p>
         <div className="employee-details__block">
           <h2>Рабочие дни</h2>
@@ -154,7 +132,7 @@ export function EmployeeDetails({
               <tr>
                 {weekDays.map(day => {
                   return (
-                    <td key={day.value}>{employee.workDays.includes(day.value) ?
+                    <td key={day.value}>{activeEmployee.workDays.includes(day.value) ?
                       <CheckIcon /> : <XIcon />}</td>
                   )
                 })}
@@ -164,7 +142,7 @@ export function EmployeeDetails({
         </div>
         <div className="employee-details__block">
           <h2>Специализации</h2>
-          <ul className="employee-details__specializations">{employee.specialization.map(specialization => {
+          <ul className="employee-details__specializations">{activeEmployee.specialization.map(specialization => {
             return (
               <li key={specialization}>
                 {SERVICES_LABELS[specialization]}
@@ -201,7 +179,7 @@ export function EmployeeDetails({
                   <td>{formatTime(getAppointmentDateTime(appointment.date, appointment.time))}</td>
                   <td>{SERVICES_LABELS[appointment.service]}</td>
                   <td>{formatMoney(appointment.price)}</td>
-                  <td>{reviews.find(review => review.appointmentId === appointment.id)?.rating ?? '–'}</td>
+                  <td>{reviewsArray.find(review => review.appointmentId === appointment.id)?.rating ?? '–'}</td>
                 </tr>
               ))}
             </tbody>
@@ -222,7 +200,7 @@ export function EmployeeDetails({
             </tr>
           </thead>
           <tbody>
-            {servicesCounts.map((service) => (
+            {serviceStats.map((service) => (
               <tr key={service.value}>
                 <th scope="row">{service.label}</th>
                 <td>{service.count}</td>
@@ -244,8 +222,8 @@ export function EmployeeDetails({
         </thead>
         <tbody>
           <tr>
-            <td>{getEmployeeStats(employee.id).appointmentsCount}</td>
-            <td>{getEmployeeStats(employee.id).revenue}</td>
+            <td>{employeeStats.appointmentsCount}</td>
+            <td>{employeeStats.revenue}</td>
           </tr>
         </tbody>
       </table>
@@ -258,7 +236,7 @@ export function EmployeeDetails({
             value={draftNotes}
             onChange={handleEditNotes}
           />
-          : <p>{employee.notes || 'Заметок пока нет. Добавьте первую!'}</p>
+          : <p>{activeEmployee.notes || 'Заметок пока нет. Добавьте первую!'}</p>
         }
         {isEditingNotes
           ? <button

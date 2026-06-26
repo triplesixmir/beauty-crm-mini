@@ -13,6 +13,8 @@ import {
   Pencil as PencilIcon,
   Trash as TrashIcon,
   Maximize2 as Maximize2Icon,
+  Check as CheckIcon,
+  X as XIcon,
 } from "lucide-react"
 import {ReviewsSection} from "./sections/ReviewsSection.jsx";
 import {
@@ -20,10 +22,11 @@ import {
   formatMoney, formatReviewsCount
 } from "../../utils/formatters.js";
 import {useState} from "react";
+import {getEmployeeStats} from "../../utils/employeeStats.js";
 
 export function EmployeesPage({
                                 employeesState,
-                                appointments,
+                                appointmentsArray,
                                 openEmployeeAddModal,
                                 openEmployeeEditModal,
                                 openReviewAddModal,
@@ -47,9 +50,9 @@ export function EmployeesPage({
   const [selectedStatus, setSelectedStatus] = useState('all-statuses');
 
   let filteredEmployees = [...employeesState.employees];
-  let sortedEmployees = [...filteredEmployees];
+  let sortedEmployeesRows = [...filteredEmployees];
 
-  let filteredAppointments = [...appointments];
+  let filteredAppointmentsArray = [...appointmentsArray];
 
   const sorts = [
     {value: 'default', label: "По умолчанию"},
@@ -68,30 +71,6 @@ export function EmployeesPage({
     {value: 'inactive', label: "Неактивный"},
     {value: 'vacation', label: "Отпуск"}
   ]
-
-  function getEmployeeStats(employeeId) {
-
-    const employee = employeesState.employees.find(employee => employee.id === employeeId);
-    const employeeAppointments = [...filteredAppointments].filter(appointment => appointment.employeeId === employeeId);
-    const employeeEndedPaidAppointments = [...employeeAppointments].filter(appointment => new Date(`${appointment.date}T${appointment.time}`) < now && appointment.didntCome === false);
-    const employeeFutureAppointments = [...employeeAppointments].filter(appointment => new Date(`${appointment.date}T${appointment.time}`) > new Date());
-    const employeeReviews = reviewsState.reviews.filter(review => review.employeeId === employeeId);
-
-    const revenue = [...employeeEndedPaidAppointments].reduce((revenue, appointment) => revenue + Number(appointment.price), 0);
-    const rating = [...employeeReviews].reduce((rating, review) => rating + review.rating, 0) / employeeReviews.length;
-    const nextAppointment = employeeFutureAppointments.length > 0 ? [...employeeFutureAppointments].sort((a, b) => new Date(`${a.date}T${a.time}`) - new Date(`${b.date}T${b.time}`))[0] : null;
-
-    // TODO: доделать доступность. Большая бизнес-логика
-    return {
-      appointmentsCount: employeeAppointments.length,
-      revenue: revenue,
-      rating: Number.isNaN(rating) ? null : rating,
-      schedule: [...employee.workDays],
-      reviewsCount: employeeReviews.length,
-      availability: "—",
-      nextAppointment: nextAppointment || null,
-    }
-  }
 
   // ФИЛЬТРАЦИЯ
   // === ПО ПЕРИОДУ ===
@@ -127,22 +106,22 @@ export function EmployeesPage({
   // фильтрация записей
   // по периоду
   if (selectedPeriod === 'this-month') {
-    filteredAppointments = [...filteredAppointments].filter(appointment =>
+    filteredAppointmentsArray = [...filteredAppointmentsArray].filter(appointment =>
       new Date(`${appointment.date}T${appointment.time}:00`) >= new Date(period.start) &&
       new Date(`${appointment.date}T${appointment.time}:00`) <= new Date(period.end));
 
   } else if (selectedPeriod === 'this-week') {
-    filteredAppointments = [...filteredAppointments].filter(appointment =>
+    filteredAppointmentsArray = [...filteredAppointmentsArray].filter(appointment =>
       new Date(`${appointment.date}T${appointment.time}:00`) >= new Date(period.start) &&
       new Date(`${appointment.date}T${appointment.time}:00`) <= new Date(period.end));
 
   } else if (selectedPeriod === 'this-year') {
-    filteredAppointments = [...filteredAppointments].filter(appointment =>
+    filteredAppointmentsArray = [...filteredAppointmentsArray].filter(appointment =>
       new Date(`${appointment.date}T${appointment.time}:00`) >= new Date(period.start) &&
       new Date(`${appointment.date}T${appointment.time}:00`) <= new Date(period.end));
 
   } else if (selectedPeriod === 'all-time') {
-    filteredAppointments = [...appointments];
+    filteredAppointmentsArray = [...appointmentsArray];
   }
 
   // фильтрация сотрудников
@@ -159,6 +138,14 @@ export function EmployeesPage({
 
   // TODO: потом добавить сюда можно: доступен/нет, есть отзывы/нет (с привязкой к периоду) и т.д.
 
+  // СОЗДАНИЕ ОБЪЕКТА СТАТИСТИКИ + СОТРУДНИКА ДЛЯ СОРТИРОВКИ
+  const employeeRows = [...filteredEmployees].map(row => {
+    return {
+      employee: row,
+      stats: getEmployeeStats(row, filteredAppointmentsArray, reviewsState.reviews, now),
+    }
+  })
+
   // СОРТИРОВКА
 
   function handleChangeSort(event) {
@@ -166,23 +153,23 @@ export function EmployeesPage({
   }
 
   if (selectedSort === 'default') {
-    sortedEmployees = [...filteredEmployees];
+    sortedEmployeesRows = [...employeeRows];
   } else if (selectedSort === 'a-z') {
-    sortedEmployees = [...filteredEmployees].sort((a, b) => `${a.firstname} ${a.surname}`.localeCompare(`${b.firstname} ${b.surname}`));
+    sortedEmployeesRows = [...employeeRows].sort((a, b) => `${a.employee.firstname} ${a.employee.surname}`.localeCompare(`${b.employee.firstname} ${b.employee.surname}`));
   } else if (selectedSort === 'z-a') {
-    sortedEmployees = [...filteredEmployees].sort((a, b) => `${b.firstname} ${b.surname}`.localeCompare(`${a.firstname} ${a.surname}`));
+    sortedEmployeesRows = [...employeeRows].sort((a, b) => `${b.employee.firstname} ${b.employee.surname}`.localeCompare(`${a.employee.firstname} ${a.employee.surname}`));
   } else if (selectedSort === 'rating-up') {
-    sortedEmployees = [...filteredEmployees].sort((a, b) => getEmployeeStats(b.id).rating - getEmployeeStats(a.id).rating);
+    sortedEmployeesRows = [...employeeRows].sort((a, b) => a.stats.rating - b.stats.rating);
   } else if (selectedSort === 'rating-down') {
-    sortedEmployees = [...filteredEmployees].sort((a, b) => getEmployeeStats(a.id).rating - getEmployeeStats(b.id).rating);
+    sortedEmployeesRows = [...employeeRows].sort((a, b) => b.stats.rating - a.stats.rating);
   } else if (selectedSort === 'revenue-up') {
-    sortedEmployees = [...filteredEmployees].sort((a, b) => getEmployeeStats(b.id).revenue - getEmployeeStats(a.id).revenue);
+    sortedEmployeesRows = [...employeeRows].sort((a, b) => a.stats.revenue - b.stats.revenue);
   } else if (selectedSort === 'revenue-down') {
-    sortedEmployees = [...filteredEmployees].sort((a, b) => getEmployeeStats(a.id).revenue - getEmployeeStats(b.id).revenue);
+    sortedEmployeesRows = [...employeeRows].sort((a, b) => b.stats.revenue - a.stats.revenue);
   } else if (selectedSort === 'appointments-up') {
-    sortedEmployees = [...filteredEmployees].sort((a, b) => getEmployeeStats(b.id).appointmentsCount - getEmployeeStats(a.id).appointmentsCount);
+    sortedEmployeesRows = [...employeeRows].sort((a, b) => a.stats.appointmentsCount - b.stats.appointmentsCount);
   } else if (selectedSort === 'appointments-down') {
-    sortedEmployees = [...filteredEmployees].sort((a, b) => getEmployeeStats(a.id).appointmentsCount - getEmployeeStats(b.id).appointmentsCount);
+    sortedEmployeesRows = [...employeeRows].sort((a, b) => b.stats.appointmentsCount - a.stats.appointmentsCount);
   }
 
   // ДЕЙСТВИЯ С СОТРУДНИКАМИ
@@ -311,18 +298,18 @@ export function EmployeesPage({
             </thead>
             <tbody>
               {employeesState.employees.map((employee) => {
-                const stats = getEmployeeStats(employee.id);
+                const workDays = employee.workDays;
 
                 return (
                   <tr key={employee.id}>
                     <th scope="row">{`${employee.firstname} ${employee.surname}`}</th>
-                    <td>{stats.schedule.includes(1) ? "✔" : ""}</td>
-                    <td>{stats.schedule.includes(2) ? "✔" : ""}</td>
-                    <td>{stats.schedule.includes(3) ? "✔" : ""}</td>
-                    <td>{stats.schedule.includes(4) ? "✔" : ""}</td>
-                    <td>{stats.schedule.includes(5) ? "✔" : ""}</td>
-                    <td>{stats.schedule.includes(6) ? "✔" : ""}</td>
-                    <td>{stats.schedule.includes(0) ? "✔" : ""}</td>
+                    <td>{workDays.includes(1) ? <CheckIcon /> : <XIcon />}</td>
+                    <td>{workDays.includes(2) ? <CheckIcon /> : <XIcon />}</td>
+                    <td>{workDays.includes(3) ? <CheckIcon /> : <XIcon />}</td>
+                    <td>{workDays.includes(4) ? <CheckIcon /> : <XIcon />}</td>
+                    <td>{workDays.includes(5) ? <CheckIcon /> : <XIcon />}</td>
+                    <td>{workDays.includes(6) ? <CheckIcon /> : <XIcon />}</td>
+                    <td>{workDays.includes(0) ? <CheckIcon /> : <XIcon />}</td>
                   </tr>
                 )
               })}
@@ -357,7 +344,7 @@ export function EmployeesPage({
           </select>
         </div>
 
-        {sortedEmployees.length > 0
+        {sortedEmployeesRows.length > 0
           ?
           <div className="employees-page__table-wrapper">
             <table className="employees-page__table">
@@ -374,40 +361,38 @@ export function EmployeesPage({
                 </tr>
               </thead>
               <tbody>
-                {sortedEmployees.map(employee => {
-
-                  const stats = getEmployeeStats(employee.id);
+                {sortedEmployeesRows.map(row => {
 
                   return (
-                    <tr key={employee.id}>
-                      <td>{`${employee.firstname} ${employee.surname}`}</td>
-                      <td>{statuses.find(status => status.value === employee.status).label}</td>
-                      <td>{stats.appointmentsCount}</td>
-                      <td>{formatMoney(stats.revenue)}</td>
-                      <td>{stats.availability}</td>
-                      <td>{stats.nextAppointment ? formatAppointmentDateTime(stats.nextAppointment.date, stats.nextAppointment.time) : "Пока нет записей"}</td>
+                    <tr key={row.employee.id}>
+                      <td>{`${row.employee.firstname} ${row.employee.surname}`}</td>
+                      <td>{statuses.find(status => status.value === row.employee.status).label}</td>
+                      <td>{row.stats.appointmentsCount}</td>
+                      <td>{formatMoney(row.stats.revenue)}</td>
+                      <td>{row.stats.availability}</td>
+                      <td>{row.stats.nextAppointment ? formatAppointmentDateTime(row.stats.nextAppointment.date, row.stats.nextAppointment.time) : "Пока нет записей"}</td>
                       <td>
-                        <span>{stats.rating ? stats.rating : null}</span> {formatReviewsCount(stats.reviewsCount)}
+                        <span>{row.stats.rating ? row.stats.rating : null}</span> {formatReviewsCount(row.stats.reviewsCount)}
                       </td>
                       <td className="employees-page__actions">
                         <button
                           className="employees-page__action-button"
-                          onClick={() => openEmployeeEditModal(employee)}
-                          aria-label={`Редактировать ${employee.firstname} ${employee.surname}`}
+                          onClick={() => openEmployeeEditModal(row.employee)}
+                          aria-label={`Редактировать ${row.employee.firstname} ${row.employee.surname}`}
                         >
                           <PencilIcon />
                         </button>
                         <button
                           className="employees-page__action-button employees-page__action-button--danger"
-                          onClick={() => handleDeleteClick(employee)}
-                          aria-label={`Удалить ${employee.firstname} ${employee.surname}`}
+                          onClick={() => handleDeleteClick(row.employee)}
+                          aria-label={`Удалить ${row.employee.firstname} ${row.employee.surname}`}
                         >
                           <TrashIcon />
                         </button>
                         <button
                           className="employees-page__action-button"
-                          onClick={() => handleOpenEmployeeDetails(employee)}
-                          aria-label={`Открыть данные ${employee.firstname} ${employee.surname}`}
+                          onClick={() => handleOpenEmployeeDetails(row.employee)}
+                          aria-label={`Открыть данные ${row.employee.firstname} ${row.employee.surname}`}
                         >
                           <Maximize2Icon />
                         </button>
@@ -432,11 +417,11 @@ export function EmployeesPage({
         reviewsState={reviewsState}
         alertsState={alertsState}
         toastsState={toastsState}
-        appointments={appointments}
+        appointmentsArray={appointmentsArray}
         openReviewAddModal={openReviewAddModal}
         openReviewEditModal={openReviewEditModal}
-        clients={clientsState.clients}
-        employees={employeesState.employees}
+        clientsArray={clientsState.clients}
+        employeesArray={employeesState.employees}
       />
 
     </main>

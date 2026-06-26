@@ -8,12 +8,12 @@ import {Wallet as WalletIcon} from "lucide-react";
 import {formatAppointmentDateTime, formatMoney} from "../../../utils/formatters.js";
 
 export function DashboardSection({
-                                   clients,
-                                   appointments,
+                                   clientsArray,
+                                   appointmentsArray,
                                    now,
                                  }) {
 
-  const nearestAppointment = appointments
+  const nearestAppointment = appointmentsArray
     .filter((appointment) => {
       const appointmentDate = new Date(`${appointment.date}T${appointment.time}`);
 
@@ -26,15 +26,15 @@ export function DashboardSection({
       return firstDate - secondDate;
     })[0];
 
-  const endedAppointments = appointments.filter((appointment) => {
+  const endedAppointments = appointmentsArray.filter((appointment) => {
 
     const appointmentDate = new Date(`${appointment.date}T${appointment.time}`);
     return appointmentDate < now;
 
   })
 
-  const totalClients = clients.length;
-  const totalAppointments = appointments.length;
+  const totalClients = clientsArray.length;
+  const totalAppointments = appointmentsArray.length;
   const totalMoney = endedAppointments.reduce((sum, appointment) => {
     return sum + Number(appointment.price);
   }, 0)

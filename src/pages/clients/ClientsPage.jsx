@@ -11,10 +11,11 @@ import {
   Pencil as PencilIcon
 } from "lucide-react";
 import {formatStoredPhone} from "../../utils/phone.js";
+import {getClientStats} from "../../utils/clientStats.js";
 
 export function ClientsPage({
                               clientsState,
-                              appointments,
+                              appointmentsArray,
                               openSidebarTab,
                               openClientEditModal,
                               openClientAddModal,
@@ -58,7 +59,7 @@ export function ClientsPage({
 
   const [didVisitCheckbox, setDidVisitCheckbox] = useState(false);
 
-  const spentValues = clientsState.clients.map((client) => Number(getClientStats(client).clientTotalSpentThisYear));
+  const spentValues = clientsState.clients.map((client) => Number(getClientStats(client, appointmentsArray, now).totalSpentThisYear));
 
   const minSpentLimit = spentValues.length > 0 ? Math.min(...spentValues) : 0;
   const maxSpentLimit = spentValues.length > 0 ? Math.max(...spentValues) : 0;
@@ -67,12 +68,12 @@ export function ClientsPage({
   const [maxSpent, setMaxSpent] = useState(maxSpentLimit);
 
   if (didVisitCheckbox) {
-    filteredClients = filteredClients.filter(client => getClientStats(client).clientEndedAppointmentsThisYearCount > 0);
+    filteredClients = filteredClients.filter(client => getClientStats(client, appointmentsArray, now).endedAppointmentsThisYearCount > 0);
   }
 
   if (minSpent >= 0 && maxSpent >= 0 && minSpent <= maxSpent) {
-    filteredClients = filteredClients.filter(client => getClientStats(client).clientTotalSpentThisYear >= Number(minSpent));
-    filteredClients = filteredClients.filter(client => getClientStats(client).clientTotalSpentThisYear <= Number(maxSpent));
+    filteredClients = filteredClients.filter(client => getClientStats(client, appointmentsArray, now).totalSpentThisYear >= Number(minSpent));
+    filteredClients = filteredClients.filter(client => getClientStats(client, appointmentsArray, now).totalSpentThisYear <= Number(maxSpent));
   }
 
   function handleMinSpentChange(event) {
@@ -110,34 +111,6 @@ export function ClientsPage({
     setSearchTerm('');
   }
 
-  // Получение информации по клиенту
-  // TODO: на будущее — сделать получение инфы по каждому клиенту заранее и поместить в отдельный объект
-  function getClientStats(client) {
-    const clientTotalSpent = appointments.filter(appointment => appointment.clientId === client.id).reduce((acc, appointment) => acc + Number(appointment.price), 0);
-    const clientAppointments = appointments.filter(appointment => appointment.clientId === client.id);
-    const clientFutureAppointments = clientAppointments.filter((appointment) => new Date(`${appointment.date}T${appointment.time}`) > now);
-    const clientNearestAppointment = [...clientFutureAppointments].sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`))[0];
-
-    const clientAppointmentsThisYear = clientAppointments.filter((appointment) => {
-      const appointmentDate = new Date(`${appointment.date}T${appointment.time}`);
-      const currentYear = new Date().getFullYear();
-      return appointmentDate.getFullYear() === currentYear;
-    })
-    const clientEndedAppointmentsThisYearCount = clientAppointmentsThisYear.filter((appointment) => new Date(`${appointment.date}T${appointment.time}`) < now).length;
-    const clientEndedAppointmentsThisYear = clientAppointmentsThisYear.filter((appointment) => new Date(`${appointment.date}T${appointment.time}`) < now);
-    const clientTotalSpentThisYear = clientEndedAppointmentsThisYear.reduce((acc, appointment) => acc + Number(appointment.price), 0);
-
-    return {
-      clientTotalSpent: clientTotalSpent,
-      clientTotalSpentThisYear: clientTotalSpentThisYear,
-      clientAppointments: clientAppointments,
-      clientNearestAppointment: clientNearestAppointment,
-      clientAppointmentsThisYear: clientAppointmentsThisYear,
-      clientEndedAppointmentsThisYearCount: clientEndedAppointmentsThisYearCount,
-      clientEndedAppointmentsThisYear: clientEndedAppointmentsThisYear,
-    }
-  }
-
   // Работа с сортировкой клиентов
   const [currentSort, setCurrentSort] = useState('default');
   let sortedClients = [...filteredClients];
@@ -149,13 +122,13 @@ export function ClientsPage({
   } else if (currentSort === 'z-a') {
     sortedClients = [...filteredClients].sort((a, b) => `${b.firstname} ${b.surname}`.localeCompare(`${a.firstname} ${a.surname}`));
   } else if (currentSort === 'appointment-up') {
-    sortedClients = [...filteredClients].sort((a, b) => `${getClientStats(b).clientNearestAppointment?.date} ${getClientStats(b).clientNearestAppointment?.time}`.localeCompare(`${getClientStats(a).clientNearestAppointment?.date} ${getClientStats(a).clientNearestAppointment?.time}`));
+    sortedClients = [...filteredClients].sort((a, b) => `${getClientStats(b, appointmentsArray, now).nearestAppointment?.date} ${getClientStats(b, appointmentsArray, now).nearestAppointment?.time}`.localeCompare(`${getClientStats(a, appointmentsArray, now).nearestAppointment?.date} ${getClientStats(a, appointmentsArray, now).nearestAppointment?.time}`));
   } else if (currentSort === 'appointment-down') {
-    sortedClients = [...filteredClients].sort((a, b) => `${getClientStats(a).clientNearestAppointment?.date} ${getClientStats(a).clientNearestAppointment?.time}`.localeCompare(`${getClientStats(b).clientNearestAppointment?.date} ${getClientStats(b).clientNearestAppointment?.time}`));
+    sortedClients = [...filteredClients].sort((a, b) => `${getClientStats(a, appointmentsArray, now).nearestAppointment?.date} ${getClientStats(a, appointmentsArray, now).nearestAppointment?.time}`.localeCompare(`${getClientStats(b, appointmentsArray, now).nearestAppointment?.date} ${getClientStats(b, appointmentsArray, now).nearestAppointment?.time}`));
   } else if (currentSort === 'sum-up') {
-    sortedClients = [...filteredClients].sort((a, b) => getClientStats(a).clientTotalSpentThisYear - getClientStats(b).clientTotalSpentThisYear);
+    sortedClients = [...filteredClients].sort((a, b) => getClientStats(a, appointmentsArray, now).totalSpentThisYear - getClientStats(b, appointmentsArray, now).totalSpentThisYear);
   } else if (currentSort === 'sum-down') {
-    sortedClients = [...filteredClients].sort((a, b) => getClientStats(b).clientTotalSpentThisYear - getClientStats(a).clientTotalSpentThisYear);
+    sortedClients = [...filteredClients].sort((a, b) => getClientStats(b, appointmentsArray, now).totalSpentThisYear - getClientStats(a, appointmentsArray, now).totalSpentThisYear);
   }
 
   return (
@@ -280,7 +253,12 @@ export function ClientsPage({
             </label>
           </div>
 
-          <button className="data-page__reset-button" type="button" onClick={handleResetFilters}>Сбросить фильтры</button>
+          <button
+            className="data-page__reset-button"
+            type="button"
+            onClick={handleResetFilters}
+          >Сбросить фильтры
+          </button>
 
         </div>
 
@@ -299,16 +277,23 @@ export function ClientsPage({
               </tr>
             </thead>
             <tbody>
-              {sortedClients.map(client => (
-                <tr key={client.id}>
+              {sortedClients.map(client => {
+                const clientStats = getClientStats(client, appointmentsArray, now)
+
+                return <tr key={client.id}>
                   <th>{`${client.firstname} ${client.surname}`}</th>
-                  <td>{client.tel ? <a href={`tel:+${client.tel}`}>{formatStoredPhone(client.tel)}</a> : 'Телефон не указан'}</td>
+                  <td>{client.tel ?
+                    <a href={`tel:+${client.tel}`}>{formatStoredPhone(client.tel)}</a> : 'Телефон не указан'}</td>
                   <td>
                     <a href={`https://t.me/${client.telegram}`}>@{client.telegram}</a>
                   </td>
-                  <td><span className="data-page__badge">{getClientStats(client).clientEndedAppointmentsThisYearCount}</span></td>
-                  <td><span className="data-page__money">{formatMoney(getClientStats(client).clientTotalSpentThisYear)}</span></td>
-                  <td>{getClientStats(client).clientNearestAppointment ? formatAppointmentDateTime(getClientStats(client).clientNearestAppointment.date, getClientStats(client).clientNearestAppointment.time) : '—'}</td>
+                  <td>
+                    <span className="data-page__badge">{clientStats.endedAppointmentsThisYearCount}</span>
+                  </td>
+                  <td>
+                    <span className="data-page__money">{formatMoney(clientStats.totalSpentThisYear)}</span>
+                  </td>
+                  <td>{clientStats.nearestAppointment ? formatAppointmentDateTime(clientStats.nearestAppointment.date, clientStats.nearestAppointment.time) : '—'}</td>
                   <td className="clients-page__actions">
                     <button
                       className="clients-page__action-button"
@@ -330,7 +315,7 @@ export function ClientsPage({
                     </button>
                   </td>
                 </tr>
-              ))}
+              })}
             </tbody>
           </table>
         </div>

@@ -18,8 +18,8 @@ export function DashboardPage({
     <main className="app-shell">
 
       <DashboardSection
-        {...clientsState}
-        {...appointmentsState}
+        clientsArray={clientsState.clients}
+        appointmentsArray={appointmentsState.appointments}
         now={now}
       />
 
@@ -36,11 +36,12 @@ export function DashboardPage({
       />
 
       <AppointmentsSection
-        {...appointmentsState}
+        appointmentsArray={appointmentsState.appointments}
+        handleDeleteAppointment={appointmentsState.handleDeleteAppointment}
         openSidebarTab={sidebarsState.openSidebarTab}
         openAppointmentEditModal={openAppointmentEditModal}
         openAppointmentAddModal={openAppointmentAddModal}
-        clients={clientsState.clients}
+        clientsArray={clientsState.clients}
         openAlert={alertsState.openAlert}
         closeAlert={alertsState.closeAlert}
         showToast={toastsState.showToast}

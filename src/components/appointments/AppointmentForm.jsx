@@ -26,7 +26,7 @@ function getInitialFormData(onEditing) {
     price: '',
     service: 'choose-service',
     clientId: 'choose-client',
-    employeeId: 'choose-employee',
+    employeeId: 'choose-activeEmployee',
     didntCome: false,
   }
 }
@@ -76,7 +76,7 @@ export function AppointmentForm({
       newErrors.service = 'Выберите услугу';
     }
 
-    if (!formData.employeeId || formData.employeeId === 'choose-employee') {
+    if (!formData.employeeId || formData.employeeId === 'choose-activeEmployee') {
       newErrors.employeeId = 'Выберите сотрудника';
     }
 
@@ -258,26 +258,26 @@ export function AppointmentForm({
         onChange={handleChange}
       >
         <option
-          value="choose-employee"
-          className="employee-option"
+          value="choose-activeEmployee"
+          className="activeEmployee-option"
         >Выберите мастера
         </option>
-        {employeesArray.map(employee => {
+        {employeesArray.map(activeEmployee => {
           const appointmentDayOfWeek = new Date(`${formData.date}T${formData.time}`).getDay();
 
           const canAssign = formData.date &&
             formData.time &&
             formData.service !== 'choose-service' &&
-            employee.status === 'active' &&
-            employee.workDays.includes(appointmentDayOfWeek) &&
-            employee.specialization.includes(formData.service);
+            activeEmployee.status === 'active' &&
+            activeEmployee.workDays.includes(appointmentDayOfWeek) &&
+            activeEmployee.specialization.includes(formData.service);
 
           return (
           <option
-            value={employee.id}
-            key={employee.id}
+            value={activeEmployee.id}
+            key={activeEmployee.id}
             disabled={!canAssign}
-          >{employee.firstname} {employee.surname}</option>
+          >{activeEmployee.firstname} {activeEmployee.surname}</option>
           )
         })}
       </select>

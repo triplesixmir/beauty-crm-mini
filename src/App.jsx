@@ -163,7 +163,7 @@ function App() {
           path="/clients"
           element={<ClientsPage
             clientsState={clientsState}
-            appointments={appointmentsState.appointments}
+            appointmentsArray={appointmentsState.appointments}
             openSidebarTab={sidebarsState.openSidebarTab}
             openClientEditModal={openClientEditModal}
             openClientAddModal={openClientAddModal}
@@ -207,7 +207,7 @@ function App() {
             openEmployeeEditModal={openEmployeeEditModal}
             openReviewEditModal={openReviewEditModal}
             openReviewAddModal={openReviewAddModal}
-            appointments={appointmentsState.appointments}
+            appointmentsArray={appointmentsState.appointments}
             now={now}
           />}
         />
@@ -300,8 +300,8 @@ function App() {
                 onAddReview={reviewsState.addReview}
                 onUpdateReview={reviewsState.updateReview}
                 onEditing={reviewsState.editingReview}
-                clients={clientsState.clients}
-                appointments={appointmentsState.appointments}
+                clientsArray={clientsState.clients}
+                appointmentsArray={appointmentsState.appointments}
                 onCancel={closeReviewModal}
                 onSuccess={closeReviewModal}
                 showToast={toastsState.showToast}
@@ -340,7 +340,7 @@ function App() {
               <ClientDetails
                 key={activeSidebarTab?.key ?? 'no-client'}
                 client={activeClient}
-                appointments={appointmentsState.appointments}
+                appointmentsArray={appointmentsState.appointments}
                 handleUpdateClient={clientsState.handleUpdateClient}
               />
             )}
@@ -358,10 +358,9 @@ function App() {
             {activeSidebarTab?.type === 'employee' && (
               <EmployeeDetails
                 key={activeSidebarTab?.key ?? 'no-employee'}
-                employee={activeEmployee}
-                reviews={reviewsState.reviews}
-                appointments={appointmentsState.appointments}
-                employeesState={employeesState}
+                activeEmployee={activeEmployee}
+                reviewsArray={reviewsState.reviews}
+                appointmentsArray={appointmentsState.appointments}
                 openSidebarTab={sidebarsState.openSidebarTab}
                 handleUpdateEmployee={employeesState.handleUpdateEmployee}
                 now={now}

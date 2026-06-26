@@ -4,9 +4,9 @@ export function ReviewsSection({
                                  reviewsState,
                                  alertsState,
                                  toastsState,
-                                 appointments,
-                                 clients,
-                                 employees,
+                                 appointmentsArray,
+                                 clientsArray,
+                                 employeesArray,
                                  openReviewAddModal,
                                  openReviewEditModal,
                                }) {
@@ -28,9 +28,9 @@ export function ReviewsSection({
 
         {reviewsState.reviews.length > 0 ? reviewsState.reviews.map(review => {
 
-            const reviewAppointment = appointments.find(appointment => appointment.id === Number(review.appointmentId));
-            const reviewAuthor = reviewAppointment ? clients.find(client => client.id === Number(reviewAppointment.clientId)) : null;
-            const reviewEmployee = reviewAppointment ? employees.find(employee => employee.id === Number(reviewAppointment.employeeId)) : null;
+            const reviewAppointment = appointmentsArray.find(appointment => appointment.id === Number(review.appointmentId));
+            const reviewAuthor = reviewAppointment ? clientsArray.find(client => client.id === Number(reviewAppointment.clientId)) : null;
+            const reviewEmployee = reviewAppointment ? employeesArray.find(employee => employee.id === Number(reviewAppointment.employeeId)) : null;
 
             return (
               <ReviewCard
@@ -49,7 +49,7 @@ export function ReviewsSection({
               />
             )
           }) :
-          <div className="reviews-section__empty">
+          <div className="reviewsArray-section__empty">
             <h2>Нет подходящих отзывов</h2>
             <p>Попробуйте изменить настройки фильтра</p>
           </div>
