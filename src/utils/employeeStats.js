@@ -27,6 +27,7 @@ export function getEmployeeStats(
     reviewsCount: employeeReviews.length,
     availability: "—",
     nextAppointment: nextAppointment || null,
+    nextAppointmentDateTime: nextAppointment ? new Date(`${nextAppointment?.date}T${nextAppointment?.time}:00`) : null,
   }
 }
 

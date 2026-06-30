@@ -12,6 +12,11 @@ import {
   Trash as TrashIcon
 } from "lucide-react";
 import {SERVICES_LABELS} from "../../constants/services.js";
+import {getPeriodRange, isAppointmentInPeriod} from "../../utils/periods.js";
+import {
+  sortAppointments
+} from "../../utils/sorts/appointmentsSorts.js";
+import {APPOINTMENTS_SORTS} from "../../constants/sorts.js";
 
 export function AppointmentsPage({
                                    appointmentsState,
@@ -52,68 +57,12 @@ export function AppointmentsPage({
 
   const [currentPeriod, setCurrentPeriod] = useState('all-time');
 
-  function getPeriodStartEnd(period) {
-    if (period === 'this-month') {
-      return {
-        start: new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0),
-        end: new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999),
-      }
-    } else if (period === 'this-week') {
-      const daysFromMonday = (now.getDay() + 6) % 7;
-
-      const currentMoment = new Date();
-      const monday = new Date(currentMoment.setDate(currentMoment.getDate() - daysFromMonday));
-      const end = new Date(monday);
-      const sunday = new Date(end.setDate(end.getDate() + 6));
-
-      return {
-        start: monday.setHours(0, 0, 0, 0),
-        end: sunday.setHours(23, 59, 59, 999),
-      }
-    } else if (period === 'this-year') {
-      return {
-        start: new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0),
-        end: new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999),
-      }
-    }
-  }
-
-  const period = getPeriodStartEnd(currentPeriod)
-
-  if (currentPeriod === 'this-month') {
-    filteredAppointments = [...filteredAppointments].filter(appointment =>
-      new Date(`${appointment.date}T${appointment.time}:00`) >= new Date(period.start) &&
-      new Date(`${appointment.date}T${appointment.time}:00`) <= new Date(period.end));
-
-  } else if (currentPeriod === 'this-week') {
-    filteredAppointments = [...filteredAppointments].filter(appointment =>
-      new Date(`${appointment.date}T${appointment.time}:00`) >= new Date(period.start) &&
-      new Date(`${appointment.date}T${appointment.time}:00`) <= new Date(period.end));
-
-  } else if (currentPeriod === 'this-year') {
-    filteredAppointments = [...filteredAppointments].filter(appointment =>
-      new Date(`${appointment.date}T${appointment.time}:00`) >= new Date(period.start) &&
-      new Date(`${appointment.date}T${appointment.time}:00`) <= new Date(period.end));
-
-  } else if (currentPeriod === 'all-time') {
-    filteredAppointments = [...filteredAppointments];
-  }
+  const periodRange = getPeriodRange(currentPeriod, now)
+  filteredAppointments = filteredAppointments.filter(appointment => isAppointmentInPeriod(appointment, periodRange) === true);
 
   // Сортировка записей
-  const [currentSort, setCurrentSort] = useState('default');
-  let sortedAppointments = [...filteredAppointments];
-
-  if (currentSort === 'default') {
-    sortedAppointments = [...filteredAppointments].reverse();
-  } else if (currentSort === 'appointment-down') {
-    sortedAppointments = [...filteredAppointments].sort((a, b) => new Date(`${a.date}T${a.time}`) - new Date(`${b.date}T${b.time}`));
-  } else if (currentSort === 'appointment-up') {
-    sortedAppointments = [...filteredAppointments].sort((a, b) => new Date(`${b.date}T${b.time}`) - new Date(`${a.date}T${a.time}`));
-  } else if (currentSort === 'sum-up') {
-    sortedAppointments = [...filteredAppointments].sort((a, b) => Number(a.price) - Number(b.price));
-  } else if (currentSort === 'sum-down') {
-    sortedAppointments = [...filteredAppointments].sort((a, b) => Number(b.price) - Number(a.price));
-  }
+  const [selectedSort, setSelectedSort] = useState('default');
+  const sortedAppointments = sortAppointments(filteredAppointments, selectedSort);
 
   function handleMinCostChange(event) {
     if (Number(event.target.value) < minCostLimit) {
@@ -239,14 +188,13 @@ export function AppointmentsPage({
             className="data-page__sort"
             name="sort"
             id=""
-            value={currentSort}
-            onChange={(event) => setCurrentSort(event.target.value)}
+            value={selectedSort}
+            onChange={(event) => setSelectedSort(event.target.value)}
           >
-            <option value="default">По умолчанию</option>
-            <option value="appointment-down">Ближайшие сначала</option>
-            <option value="appointment-up">Позднейшие сначала</option>
-            <option value="sum-up">По стоимости ↑</option>
-            <option value="sum-down">По стоимости ↓</option>
+            {APPOINTMENTS_SORTS.map(sort => <option
+              key={sort.value}
+              value={sort.value}
+            >{sort.label}</option>)}
           </select>
 
           <select

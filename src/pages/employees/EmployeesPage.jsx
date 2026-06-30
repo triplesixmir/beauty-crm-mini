@@ -23,6 +23,9 @@ import {
 } from "../../utils/formatters.js";
 import {useState} from "react";
 import {getEmployeeStats} from "../../utils/employeeStats.js";
+import {getPeriodRange, isAppointmentInPeriod} from "../../utils/periods.js";
+import {sortEmployees} from "../../utils/sorts/employeesSorts.js";
+import {EMPLOYEES_SORTS} from "../../constants/sorts.js";
 
 export function EmployeesPage({
                                 employeesState,
@@ -50,21 +53,8 @@ export function EmployeesPage({
   const [selectedStatus, setSelectedStatus] = useState('all-statuses');
 
   let filteredEmployees = [...employeesState.employees];
-  let sortedEmployeesRows = [...filteredEmployees];
 
   let filteredAppointmentsArray = [...appointmentsArray];
-
-  const sorts = [
-    {value: 'default', label: "По умолчанию"},
-    {value: 'a-z', label: "А – Я"},
-    {value: 'z-a', label: "Я – А"},
-    {value: 'rating-up', label: "По рейтингу ↑"},
-    {value: 'rating-down', label: "По рейтингу ↓"},
-    {value: 'revenue-up', label: "По выручке ↑"},
-    {value: 'revenue-down', label: "По выручке ↓"},
-    {value: 'appointments-up', label: "По количеству записей ↑"},
-    {value: 'appointments-down', label: "По количеству записей ↓"},
-  ]
 
   const statuses = [
     {value: 'active', label: "Активный"},
@@ -73,59 +63,15 @@ export function EmployeesPage({
   ]
 
   // ФИЛЬТРАЦИЯ
+  // Получение начала и конца периода
+  const periodRange = getPeriodRange(selectedPeriod, now)
+
+  // == ЗАПИСИ ==
   // === ПО ПЕРИОДУ ===
-  // получение начала и конца периода
-  function getPeriodStartEnd(period) {
-    if (period === 'this-month') {
-      return {
-        start: new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0),
-        end: new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999),
-      }
-    } else if (period === 'this-week') {
-      const daysFromMonday = (now.getDay() + 6) % 7;
+  filteredAppointmentsArray = [...filteredAppointmentsArray].filter(appointment => isAppointmentInPeriod(appointment, periodRange) === true)
 
-      const currentMoment = new Date(now);
-      const monday = new Date(currentMoment.setDate(currentMoment.getDate() - daysFromMonday));
-      const end = new Date(monday);
-      const sunday = new Date(end.setDate(end.getDate() + 6));
-
-      return {
-        start: monday.setHours(0, 0, 0, 0),
-        end: sunday.setHours(23, 59, 59, 999),
-      }
-    } else if (period === 'this-year') {
-      return {
-        start: new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0),
-        end: new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999),
-      }
-    }
-  }
-
-  const period = getPeriodStartEnd(selectedPeriod)
-
-  // фильтрация записей
-  // по периоду
-  if (selectedPeriod === 'this-month') {
-    filteredAppointmentsArray = [...filteredAppointmentsArray].filter(appointment =>
-      new Date(`${appointment.date}T${appointment.time}:00`) >= new Date(period.start) &&
-      new Date(`${appointment.date}T${appointment.time}:00`) <= new Date(period.end));
-
-  } else if (selectedPeriod === 'this-week') {
-    filteredAppointmentsArray = [...filteredAppointmentsArray].filter(appointment =>
-      new Date(`${appointment.date}T${appointment.time}:00`) >= new Date(period.start) &&
-      new Date(`${appointment.date}T${appointment.time}:00`) <= new Date(period.end));
-
-  } else if (selectedPeriod === 'this-year') {
-    filteredAppointmentsArray = [...filteredAppointmentsArray].filter(appointment =>
-      new Date(`${appointment.date}T${appointment.time}:00`) >= new Date(period.start) &&
-      new Date(`${appointment.date}T${appointment.time}:00`) <= new Date(period.end));
-
-  } else if (selectedPeriod === 'all-time') {
-    filteredAppointmentsArray = [...appointmentsArray];
-  }
-
-  // фильтрация сотрудников
-  // по статусу
+  // == СОТРУДНИКИ ==
+  // === ПО СТАТУСУ ===
   if (selectedStatus === 'active') {
     filteredEmployees = [...filteredEmployees].filter(employee => employee.status === 'active');
   } else if (selectedStatus === 'inactive') {
@@ -147,30 +93,11 @@ export function EmployeesPage({
   })
 
   // СОРТИРОВКА
-
   function handleChangeSort(event) {
     setSelectedSort(event.target.value);
   }
 
-  if (selectedSort === 'default') {
-    sortedEmployeesRows = [...employeeRows];
-  } else if (selectedSort === 'a-z') {
-    sortedEmployeesRows = [...employeeRows].sort((a, b) => `${a.employee.firstname} ${a.employee.surname}`.localeCompare(`${b.employee.firstname} ${b.employee.surname}`));
-  } else if (selectedSort === 'z-a') {
-    sortedEmployeesRows = [...employeeRows].sort((a, b) => `${b.employee.firstname} ${b.employee.surname}`.localeCompare(`${a.employee.firstname} ${a.employee.surname}`));
-  } else if (selectedSort === 'rating-up') {
-    sortedEmployeesRows = [...employeeRows].sort((a, b) => a.stats.rating - b.stats.rating);
-  } else if (selectedSort === 'rating-down') {
-    sortedEmployeesRows = [...employeeRows].sort((a, b) => b.stats.rating - a.stats.rating);
-  } else if (selectedSort === 'revenue-up') {
-    sortedEmployeesRows = [...employeeRows].sort((a, b) => a.stats.revenue - b.stats.revenue);
-  } else if (selectedSort === 'revenue-down') {
-    sortedEmployeesRows = [...employeeRows].sort((a, b) => b.stats.revenue - a.stats.revenue);
-  } else if (selectedSort === 'appointments-up') {
-    sortedEmployeesRows = [...employeeRows].sort((a, b) => a.stats.appointmentsCount - b.stats.appointmentsCount);
-  } else if (selectedSort === 'appointments-down') {
-    sortedEmployeesRows = [...employeeRows].sort((a, b) => b.stats.appointmentsCount - a.stats.appointmentsCount);
-  }
+  const sortedEmployeesRows = sortEmployees(employeeRows, selectedSort);
 
   // ДЕЙСТВИЯ С СОТРУДНИКАМИ
   function handleDeleteClick(employee) {
@@ -334,7 +261,7 @@ export function EmployeesPage({
             value={selectedSort}
             onChange={handleChangeSort}
           >
-            {sorts.map(sort => (
+            {EMPLOYEES_SORTS.map(sort => (
               <option
                 key={sort.value}
                 value={sort.value}

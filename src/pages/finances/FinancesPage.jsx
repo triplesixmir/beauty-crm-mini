@@ -17,6 +17,7 @@ import {
 import {SERVICES_LABELS} from "../../constants/services.js";
 import {FinanceCard} from "../../components/finances/FinanceCard.jsx";
 import {TopClientCard} from "../../components/finances/TopClientCard.jsx";
+import {getPeriodRange, isAppointmentInPeriod} from "../../utils/periods.js";
 
 export function FinancesPage({
                                appointmentsState,
@@ -31,54 +32,11 @@ export function FinancesPage({
   // Фильтры
   const [currentPeriod, setCurrentPeriod] = useState('all-time');
 
-  function getPeriodStartEnd(period) {
-    if (period === 'this-month') {
-      return {
-        start: new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0),
-        end: new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999),
-      }
-    } else if (period === 'this-week') {
-      const daysFromMonday = (now.getDay() + 6) % 7;
+  const periodRange = getPeriodRange(currentPeriod, now)
 
-      const currentMoment = new Date(now);
-      const monday = new Date(currentMoment.setDate(currentMoment.getDate() - daysFromMonday));
-      const end = new Date(monday);
-      const sunday = new Date(end.setDate(end.getDate() + 6));
-
-      return {
-        start: new Date(monday.setHours(0, 0, 0, 0)),
-        end: new Date(sunday.setHours(23, 59, 59, 999)),
-      }
-    } else if (period === 'this-year') {
-      return {
-        start: new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0),
-        end: new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999),
-      }
-    }
-  }
-
-  let filteredAppointments = [...paidAppointments];
-  let filteredFutureAppointments = [...futureAppointments];
-  let filteredNotPaidAppointments = [...notPaidAppointments];
-
-  const period = getPeriodStartEnd(currentPeriod)
-
-  if (currentPeriod === 'this-month' || currentPeriod === 'this-week' || currentPeriod === 'this-year') {
-    filteredAppointments = [...paidAppointments].filter(appointment =>
-      new Date(`${appointment.date}T${appointment.time}:00`) >= period.start &&
-      new Date(`${appointment.date}T${appointment.time}:00`) <= period.end);
-    filteredFutureAppointments = [...futureAppointments].filter(appointment =>
-      new Date(`${appointment.date}T${appointment.time}:00`) >= period.start &&
-      new Date(`${appointment.date}T${appointment.time}:00`) <= period.end);
-    filteredNotPaidAppointments = [...notPaidAppointments].filter(appointment =>
-      new Date(`${appointment.date}T${appointment.time}:00`) >= period.start &&
-      new Date(`${appointment.date}T${appointment.time}:00`) <= period.end);
-
-  } else if (currentPeriod === 'all-time') {
-    filteredAppointments = [...paidAppointments];
-    filteredFutureAppointments = [...futureAppointments];
-    filteredNotPaidAppointments = [...notPaidAppointments];
-  }
+  const filteredAppointments = [...paidAppointments].filter(appointment => isAppointmentInPeriod(appointment, periodRange) === true);
+  const filteredFutureAppointments = [...futureAppointments].filter(appointment => isAppointmentInPeriod(appointment, periodRange) === true);
+  const filteredNotPaidAppointments = [...notPaidAppointments].filter(appointment => isAppointmentInPeriod(appointment, periodRange) === true);
 
   // Данные для карточек
   const totalRevenue = filteredAppointments.reduce((sum, appointment) => sum + Number(appointment.price), 0);
@@ -97,6 +55,8 @@ export function FinancesPage({
       totalSpent: totalSpent,
     }
   }).sort((a, b) => b.totalSpent - a.totalSpent).slice(0, 5).filter(client => client.totalSpent > 0);
+
+  // TODO: добавить сюда сортировку
 
   return (
     <main className="app-shell finances-page">
